@@ -1,8 +1,10 @@
 import express from 'express'
-import { generatePosts } from '../controllers/postController.js'
+import { generatePosts, savePosts, getPosts } from '../controllers/postController.js'
 
 const router = express.Router()
 
-router.post('/generate', generatePosts)
+router.post('/generate-posts', generatePosts)
+router.post('/save-posts', savePosts)
+router.get('/', getPosts)
 
 export default router
