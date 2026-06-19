@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import Menu from '../components/Menu'
-import { FaEdit, FaTrash } from "react-icons/fa"
+
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 
-function truncate(text, maxLength = 15) {
+function truncate(text, maxLength = 50) {
   if (!text) return ''
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text
 }
@@ -18,7 +18,54 @@ export default function BusinessPage() {
   const [form, setForm] = useState(false)
   const [error, setError] = useState('')
   const [editId, setEditId] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [success, setSuccess] = useState('')
 
+
+  useEffect(() => {
+    fetchBusinesses()
+  }, [])
+
+  function showSuccess(message) {
+    setSuccess(message)
+    setTimeout(() => setSuccess(''), 3000)
+  }
+  function showError(message) {
+    setError(message)
+    setTimeout(() => setError(''), 3000)
+  }
+
+  function resetForm() {
+    setBusinessName('')
+    setBusinessDescription('')
+    setBusinessCategory('')
+    setEditId(null)
+    setForm(false)
+  }
+  function handleEdit(business) {
+    setBusinessName(business.name)
+    setBusinessDescription(business.description)
+    setEditId(business._id)
+    setForm(true)
+  }
+  // Delete a business
+  async function handleDelete(id) {
+    const confirmDelete = window.confirm('Are you sure you want to delete this business?')
+    if (!confirmDelete) return
+
+    try {
+      const res = await fetch(`${apiUrl}/businesses/${id}`, {
+        method: 'DELETE',
+      })
+      if (!res.ok) throw new Error('Failed to delete business')
+
+      setBusinesses((prev) => prev.filter((b) => b._id !== id))
+      showSuccess('Business deleted successfully!')
+
+    } catch (err) {
+      setError(err.message)
+    }
+  }
   async function fetchBusinesses() {
     try {
       setLoading(true)
@@ -34,36 +81,69 @@ export default function BusinessPage() {
     }
   }
 
-  useEffect(() => {
-    fetchBusinesses()
-  }, [])
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch(`${apiUrl}/businesses`, {
-        method: 'POST',
+      const isEditing = Boolean(editId)
+      const url = isEditing
+        ? `${apiUrl}/businesses/${editId}`
+        : `${apiUrl}/businesses`
+      const method = isEditing ? 'PUT' : 'POST'
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: businessName,
           description: businessDescription,
-          category: businessCategory
+          category: businessCategory,
         }),
       })
-      if (!res.ok) throw new Error('Failed to create business')
+      if (!res.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} business`)
 
-      setBusinessName('')
-      setBusinessDescription('')
-      setBusinessCategory('')
-      await fetchBusinesses()
+      resetForm()
+      await fetchBusinesses()  
+      showSuccess(isEditing ? 'Business updated successfully!' : 'Business created successfully!')
+
+
     } catch (err) {
       setError(err.message)
     }
+
   }
+  // {
+  //   error && (
+  //     <p className="mb-4 text-sm text-red-500">{error}</p>
+  //   )
+  // }
+
+  // {
+  //   success && (
+  //     <p className="mb-4 text-sm text-green-600">{success}</p>
+  //   )
+  // }
+  const itemsPerPage = 6
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const currentBusinesses = businesses.slice(startIndex, startIndex + itemsPerPage)
+  const totalPages = Math.ceil(businesses.length / itemsPerPage)
 
   return (
     <div className="min-h-screen bg-green-400">
       <Menu />
+      {(error || success) && (
+        <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+          {error && (
+            <div className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-3 text-sm font-bold text-white shadow-lg">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="flex items-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-sm font-bold text-white shadow-lg ">
+              {success}
+            </div>
+          )}
+          </div>
+      )}
       <div className="flex flex-col items-center mt-15 gap-6">
         <h1 className="mb-6 text-2xl font-semibold text-neutral-800">
           Business
@@ -71,6 +151,9 @@ export default function BusinessPage() {
 
         {form ? (
           <div className="mx-auto w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+            <h2 className="mb-4 text-lg font-semibold text-neutral-800">
+              {editId ? 'Edit Business' : 'Create Business'}
+            </h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
                 <label
@@ -126,7 +209,7 @@ export default function BusinessPage() {
               <div className="mt-2 flex gap-3">
                 <button
                   type="button"
-                  onClick={() => setForm((prev) => !prev)}
+                  onClick={resetForm}
                   className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
                 >
                   Cancel
@@ -136,13 +219,13 @@ export default function BusinessPage() {
                   type="submit"
                   className="flex-1 rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600"
                 >
-                  Save
+                  {editId ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>
           </div>
         ) : (
-          <div className="mx-auto w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+          <div className="mx-auto w-full max-w-3xl rounded-lg bg-white p-8 shadow-md">
             <div className='mb-6 flex items-center justify-between'>
               <h2 className="text-lg font-semibold text-neutral-800">
                 Businesses
@@ -157,9 +240,9 @@ export default function BusinessPage() {
             </div>
 
 
-            {error && (
+            {/* {error && (
               <p className="mb-4 text-sm text-red-500">{error}</p>
-            )}
+            )} */}
 
             {loading ? (
               <p className="text-sm text-neutral-500">Loading...</p>
@@ -177,12 +260,12 @@ export default function BusinessPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {businesses.map((business, index) => (
+                    {currentBusinesses.map((business, index) => (
                       <tr
                         key={business._id}
                         className="border-b border-neutral-100 text-neutral-800"
                       >
-                        <td className='pl-2 py-2 pr-2'>{index + 1}</td>
+                        <td className='pl-2 py-2 pr-2'>{startIndex + index + 1}</td>
                         <td className="pl-2 py-2 pr-4">{business.name}</td>
                         <td className="pl-2 py-2 text-neutral-600">
                           {truncate(business.description)}
@@ -191,12 +274,12 @@ export default function BusinessPage() {
                           <button className='rounded-md p-2 text-green-300 hover:bg-green-500 transition'
                             title='Edit'
                             onClick={() => handleEdit(business)}>
-                            <FaEdit size={16} />
+                            ✏️
                           </button>
                           <button className='rounded-md p-2 text-red-400 hover:bg-red-500 transition'
                             title='Delete'
                             onClick={() => handleDelete(business._id)}>
-                            <FaTrash size={16} />
+                            🗑️
                           </button>
                         </td>
 
@@ -204,11 +287,27 @@ export default function BusinessPage() {
                     ))}
                   </tbody>
                 </table>
+                {businesses.length > itemsPerPage && (
+                  <div className='mt-4 flex justify-end gap-4'>
+                    <button onClick={() => setCurrentPage((p) => p - 1)}
+                      disabled={currentPage === 1}
+                      className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 disabled:opacity-50">
+                      Previous
+                    </button>
+                    <span className='text-sm text-neutral-700'>Page {currentPage} of {totalPages}</span>
+                    <button onClick={() => setCurrentPage((p) => p + 1)}
+                      disabled={currentPage === totalPages}
+                      className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 disabled:opacity-50">
+                      Next
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
       </div>
     </div>
+
   )
 }
