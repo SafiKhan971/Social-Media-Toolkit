@@ -26,16 +26,16 @@ export async function getBusinessById(req, res) {
 // POST /api/businesses
 export async function createBusiness(req, res) {
   try {
-    const { name, description } = req.body
+    const { name, category, description } = req.body
     console.log(name)
 
-    if (!name || !description) {
+    if (!name || !description || !category) {
       return res
         .status(400)
-        .json({ message: 'name and description are required' })
+        .json({ message: 'please fill all fields' })
     }
 
-    const business = await Business.create({ name, description })
+    const business = await Business.create({ name, description, category })
     res.status(201).json(business)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -45,11 +45,11 @@ export async function createBusiness(req, res) {
 // PUT /api/businesses/:id
 export async function updateBusiness(req, res) {
   try {
-    const { name, description } = req.body
+    const { name, description, category } = req.body
 
     const business = await Business.findByIdAndUpdate(
       req.params.id,
-      { name, description },
+      { name, description, category },
       { new: true, runValidators: true }
     )
 

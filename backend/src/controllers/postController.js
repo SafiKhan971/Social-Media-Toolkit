@@ -40,6 +40,7 @@ function getFallbackImage() {
 
 export async function getBusinessImageUrl(query) {
   try {
+    console.log('Search query:', query)
     const response = await axios.get(
       'https://api.unsplash.com/search/photos',
       {
@@ -53,10 +54,18 @@ export async function getBusinessImageUrl(query) {
       }
     )
 
-    const image = response.data.results[0]
+    console.log('Unsplash results:', response.data)
+
+    const image = response.data.results?.[0]
 
     return image?.urls?.regular || getFallbackImage()
   } catch (err) {
+    console.log(
+      'Unsplash error:',
+      err.response?.status,
+      err.response?.data || err.message
+    )
+
     return getFallbackImage()
   }
 }
@@ -85,7 +94,9 @@ export async function generatePosts(req, res) {
     const errors = []
 
     for (let i = 0; i < count; i++) {
-      const imageUrl = await getBusinessImageUrl(business.name)
+      const imageUrl = await getBusinessImageUrl(
+        `${business.category} ${business.description}`
+      )
 
       try {
         const caption = await generateCaption(business)

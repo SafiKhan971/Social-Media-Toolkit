@@ -12,6 +12,7 @@ function truncate(text, maxLength = 15) {
 export default function BusinessPage() {
   const [businessName, setBusinessName] = useState('')
   const [businessDescription, setBusinessDescription] = useState('')
+  const [businessCategory, setBusinessCategory] = useState('')
   const [businesses, setBusinesses] = useState([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState(false)
@@ -46,12 +47,14 @@ export default function BusinessPage() {
         body: JSON.stringify({
           name: businessName,
           description: businessDescription,
+          category: businessCategory
         }),
       })
       if (!res.ok) throw new Error('Failed to create business')
 
       setBusinessName('')
       setBusinessDescription('')
+      setBusinessCategory('')
       await fetchBusinesses()
     } catch (err) {
       setError(err.message)
@@ -86,22 +89,39 @@ export default function BusinessPage() {
                 />
               </div>
 
-              <div>
-                <label
-                  htmlFor="businessDescription"
-                  className="mb-1 block text-sm font-medium text-neutral-700"
-                >
-                  Business Description
-                </label>
-                <textarea
-                  id="businessDescription"
-                  value={businessDescription}
-                  onChange={(e) => setBusinessDescription(e.target.value)}
-                  rows={4}
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
-                  placeholder="Describe the business"
-                />
-              </div>
+            <div>
+              <label
+                htmlFor="businessCategory"
+                className="mb-1 block text-sm font-medium text-neutral-700"
+              >
+                Business Category
+              </label>
+              <input
+                id="businessCategory"
+                type="text"
+                value={businessCategory}
+                onChange={(e) => setBusinessCategory(e.target.value)}
+                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                placeholder="Enter business category"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="businessDescription"
+                className="mb-1 block text-sm font-medium text-neutral-700"
+              >
+                Business Description
+              </label>
+              <textarea
+                id="businessDescription"
+                value={businessDescription}
+                onChange={(e) => setBusinessDescription(e.target.value)}
+                rows={4}
+                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                placeholder="Describe the business"
+              />
+            </div>
 
               <div className="mt-2 flex gap-3">
                 <button
