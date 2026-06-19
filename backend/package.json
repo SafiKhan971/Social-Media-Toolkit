@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "seed:businesses": "node src/seeders/businessSeeder.js"
   },
   "keywords": [],
   "author": "",
