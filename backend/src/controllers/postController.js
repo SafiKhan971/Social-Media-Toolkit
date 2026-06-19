@@ -70,56 +70,141 @@ export async function getBusinessImageUrl(query) {
   }
 }
 
+export async function getBusinessImages(query, count = 10) {
+  try {
+    const response = await axios.get(
+      'https://api.unsplash.com/search/photos',
+      {
+        params: {
+          query,
+          per_page: count,
+        },
+        headers: {
+          Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
+        },
+      }
+    )
+
+    return response.data.results || []
+  } catch (err) {
+    console.error(err.message)
+    return []
+  }
+}
+
 export async function generatePosts(req, res) {
   try {
-    const { businessId, numberOfPosts } = req.body
+    const {
+      postType = 'business',
+      businessId,
+      description,
+      numberOfPosts,
+    } = req.body
 
-    if (!businessId || !numberOfPosts) {
-      return res
-        .status(400)
-        .json({ message: 'businessId and numberOfPosts are required' })
+    if (postType === 'business' && !businessId) {
+      return res.status(400).json({
+        message: 'Business is required',
+      })
+    }
+
+    if (postType === 'instant' && !description?.trim()) {
+      return res.status(400).json({
+        message: 'Description is required',
+      })
     }
 
     const count = parseInt(numberOfPosts, 10)
+
     if (Number.isNaN(count) || count < 1) {
-      return res.status(400).json({ message: 'numberOfPosts must be a positive number' })
+      return res.status(400).json({
+        message: 'numberOfPosts must be a positive number',
+      })
     }
 
-    const business = await Business.findById(businessId)
-    if (!business) {
-      return res.status(404).json({ message: 'Business not found' })
+    let business = null
+    let imageQuery = ''
+    let captionData = {}
+
+    if (postType === 'business') {
+      business = await Business.findById(businessId)
+
+      if (!business) {
+        return res.status(404).json({
+          message: 'Business not found',
+        })
+      }
+
+      imageQuery = `${business.category} ${business.description}`
+
+      captionData = {
+        name: business.name,
+        category: business.category,
+        description: business.description,
+      }
+    } else {
+      imageQuery = description
+
+      captionData = {
+        name: 'Instant Post',
+        category: 'Custom',
+        description,
+      }
     }
+
+    // Fetch multiple images once
+    const images = await getBusinessImages(imageQuery, Math.max(count, 10))
 
     const posts = []
     const errors = []
 
     for (let i = 0; i < count; i++) {
-      const imageUrl = await getBusinessImageUrl(
-        `${business.category} ${business.description}`
-      )
-
       try {
-        const caption = await generateCaption(business)
-        // const caption = "This is sample caption"
-        posts.push({ imageUrl, caption })
+        const caption = await generateCaption(captionData)
+
+        const image =
+          images.length > 0
+            ? images[i % images.length]
+            : null
+
+        const imageUrl =
+          image?.urls?.regular ||
+          image?.urls?.small ||
+          getFallbackImage()
+
+        posts.push({
+          imageUrl,
+          caption,
+        })
       } catch (err) {
-        // Keep going so one failed caption doesn't kill the whole batch —
-        // surface the image and the error for that post instead.
-        posts.push({ imageUrl, caption: null, error: err.message })
+        posts.push({
+          imageUrl: getFallbackImage(),
+          caption: null,
+          error: err.message,
+        })
+
         errors.push(err.message)
       }
     }
 
-    res.json({
-      business: { id: business._id, name: business.name },
+    return res.json({
+      postType,
+      ...(business && {
+        business: {
+          id: business._id,
+          name: business.name,
+        },
+      }),
       posts,
-      ...(errors.length ? { warnings: errors } : {}),
+      ...(errors.length > 0 && {
+        warnings: errors,
+      }),
     })
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    return res.status(500).json({
+      message: err.message,
+    })
   }
 }
-
 export async function savePosts(req, res) {
   try {
     const { businessId, posts } = req.body
@@ -179,6 +264,22 @@ export async function getPosts(req, res) {
       totalPages: Math.ceil(total / limit),
       currentPage: page,
     })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
+export async function deletePost(req, res) {
+  try {
+    const { id } = req.params
+
+    const post = await Post.findByIdAndDelete(id)
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+
+    res.json({ message: 'Post deleted successfully' })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }

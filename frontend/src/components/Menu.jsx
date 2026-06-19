@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import viteLogo from '../assets/vite.svg'
+import smtLogo from '../assets/smt-logo.svg'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -11,7 +11,7 @@ export default function Menu() {
   return (
     <div className="flex justify-center py-6">
       <nav className="flex items-center gap-3 rounded-md bg-white p-2 shadow-sm">
-        <img src={viteLogo} alt="Vite logo" className="h-6 w-6" />
+        <img src={smtLogo} alt="SMT logo" className="h-6 w-6" />
         <div className="flex items-center gap-2">
           {links.map((link) => (
             <NavLink
