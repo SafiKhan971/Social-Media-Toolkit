@@ -303,7 +303,7 @@ export default function PostPage() {
           {/* ================= ALL POSTS TAB ================= */}
           {activeTab === 'all' && (
             <div>
-              <h1 className="mb-6 text-2xl font-semibold">
+              <h1 className="mb-6 text-2xl font-semibold text-white">
                 All Posts
               </h1>
 
