@@ -537,7 +537,7 @@ export default function PostPage() {
 
           {/* ================= ALL POSTS TAB ================= */}
           {activeTab === 'all' && (
-            <div>
+            <div >
               <h1 className="mb-6 text-2xl font-semibold text-white">
                 All Posts
               </h1>
@@ -546,11 +546,11 @@ export default function PostPage() {
                 <p className="text-gray-600">Loading posts...</p>
               ) : (
                 <>
-                  <div className="grid gap-6 md:grid-cols-3">
+                  <div className="grid gap-3 md:grid-cols-3">
                     {posts.map((post) => (
                       <div
                         key={post._id}
-                        className="rounded-lg bg-white p-4 shadow"
+                        className="rounded-lg bg-white p-4 shadow flex flex-col h-full"
                       >
                         <img
                           src={post.imageUrl}
@@ -561,31 +561,46 @@ export default function PostPage() {
                           {post.businessId?.name}
                         </p>
 
-                        <p className="mt-1 text-sm">
+                        <p className="mt-1 text-sm flex-grow">
                           {post.caption}
                         </p>
 
-                        <div className="mt-3 flex gap-2 flex-row">
-                          <button
-                            onClick={() => handleDownload(post)}
-                            className="rounded bg-blue-500 px-3 py-1 text-white text-xs"
-                          >
-                            📥 Download
-                          </button>
+                        <div className="mt-3 flex gap-3 flex-row">
+                          <div className="group relative">
+                            <button
+                              onClick={() => handleDownload(post)}
+                              className="rounded bg-blue-500 px-3 py-1 text-white text-xs cursor-pointer"
+                            >
+                              📥 Download
+                            </button>
+                            <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                              Download post
+                            </span>
+                          </div>
 
-                          <button
-                            onClick={() => handleCopyCaption(post.caption)}
-                            className="rounded bg-gray-500 px-3 py-1 text-white text-xs"
-                          >
-                            📋 Copy Caption
-                          </button>
+                          <div className="group relative">
+                            <button
+                              onClick={() => handleCopyCaption(post.caption)}
+                              className="rounded bg-gray-500 px-3 py-1 text-white text-xs cursor-pointer"
+                            >
+                              📋 Copy Caption
+                            </button>
+                            <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                              Copy caption to clipboard
+                            </span>
+                          </div>
 
-                          <button
-                            onClick={() => handleDelete(post._id)}
-                            className="rounded bg-red-500 px-3 py-1 text-white text-xs"
-                          >
-                            🗑 Delete
-                          </button>
+                          <div className="group relative">
+                            <button
+                              onClick={() => handleDelete(post._id)}
+                              className="rounded bg-red-500 px-3 py-1 text-white text-xs cursor-pointer"
+                            >
+                              🗑 Delete
+                            </button>
+                            <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                              Delete this post
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
