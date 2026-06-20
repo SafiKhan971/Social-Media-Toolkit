@@ -24,7 +24,7 @@ export default function PostPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [postType, setPostType] = useState('business')
-const [instantDescription, setInstantDescription] = useState('')
+  const [instantDescription, setInstantDescription] = useState('')
 
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL
@@ -69,20 +69,20 @@ const [instantDescription, setInstantDescription] = useState('')
       setLoading(true)
 
       const { data } = await axios.post(
-  `${apiUrl}/posts/generate-posts`,
-  {
-    postType,
-    businessId:
-      postType === 'business'
-        ? selectedBusiness
-        : null,
-    description:
-      postType === 'instant'
-        ? instantDescription
-        : null,
-    numberOfPosts,
-  }
-)
+        `${apiUrl}/posts/generate-posts`,
+        {
+          postType,
+          businessId:
+            postType === 'business'
+              ? selectedBusiness
+              : null,
+          description:
+            postType === 'instant'
+              ? instantDescription
+              : null,
+          numberOfPosts,
+        }
+      )
 
       setGeneratedPosts(data.posts)
       setPreviewMode(true)
@@ -359,81 +359,81 @@ const [instantDescription, setInstantDescription] = useState('')
                   </h1>
 
                   <div>
-  <label className="mb-2 block text-sm font-medium">
-    Post Type
-  </label>
+                    <label className="mb-2 block text-sm font-medium">
+                      Post Type
+                    </label>
 
-  <div className="flex gap-6">
-    <label className="flex items-center gap-2">
-      <input
-        type="radio"
-        name="postType"
-        value="business"
-        checked={postType === 'business'}
-        onChange={(e) => setPostType(e.target.value)}
-      />
-      Business Post
-    </label>
+                    <div className="flex gap-6">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="postType"
+                          value="business"
+                          checked={postType === 'business'}
+                          onChange={(e) => setPostType(e.target.value)}
+                        />
+                        Business Post
+                      </label>
 
-    <label className="flex items-center gap-2">
-      <input
-        type="radio"
-        name="postType"
-        value="instant"
-        checked={postType === 'instant'}
-        onChange={(e) => setPostType(e.target.value)}
-      />
-      Instant Post
-    </label>
-  </div>
-</div>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="postType"
+                          value="instant"
+                          checked={postType === 'instant'}
+                          onChange={(e) => setPostType(e.target.value)}
+                        />
+                        Instant Post
+                      </label>
+                    </div>
+                  </div>
 
                   <form
                     onSubmit={handleSubmit}
                     className="flex flex-col gap-4"
                   >
                     {postType === 'business' ? (
-  <div>
-    <label className="mb-1 block text-sm font-medium">
-      Select Business
-    </label>
+                      <div>
+                        <label className="mb-1 block text-sm font-medium">
+                          Select Business
+                        </label>
 
-    <select
-      value={selectedBusiness}
-      onChange={(e) => setSelectedBusiness(e.target.value)}
-      className="w-full rounded-md border px-3 py-2"
-    >
-      <option value="" disabled>
-        Select Business
-      </option>
+                        <select
+                          value={selectedBusiness}
+                          onChange={(e) => setSelectedBusiness(e.target.value)}
+                          className="w-full rounded-md border px-3 py-2"
+                        >
+                          <option value="" disabled>
+                            Select Business
+                          </option>
 
-      {businesses.map((business) => (
-        <option
-          key={business._id}
-          value={business._id}
-        >
-          {business.name}
-        </option>
-      ))}
-    </select>
-  </div>
-) : (
-  <div>
-    <label className="mb-1 block text-sm font-medium">
-      Post Description
-    </label>
+                          {businesses.map((business) => (
+                            <option
+                              key={business._id}
+                              value={business._id}
+                            >
+                              {business.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="mb-1 block text-sm font-medium">
+                          Post Description
+                        </label>
 
-    <textarea
-      rows={5}
-      value={instantDescription}
-      onChange={(e) =>
-        setInstantDescription(e.target.value)
-      }
-      placeholder="Describe what kind of post you want to generate..."
-      className="w-full rounded-md border px-3 py-2"
-    />
-  </div>
-)}
+                        <textarea
+                          rows={5}
+                          value={instantDescription}
+                          onChange={(e) =>
+                            setInstantDescription(e.target.value)
+                          }
+                          placeholder="Describe what kind of post you want to generate..."
+                          className="w-full rounded-md border px-3 py-2"
+                        />
+                      </div>
+                    )}
 
                     {/* Number of Posts */}
                     <div>
@@ -565,24 +565,24 @@ const [instantDescription, setInstantDescription] = useState('')
                           {post.caption}
                         </p>
 
-                        <div className="mt-3 flex gap-2 flex-wrap">
+                        <div className="mt-3 flex gap-2 flex-row">
                           <button
                             onClick={() => handleDownload(post)}
-                            className="rounded bg-blue-600 px-3 py-1 text-white text-xs"
+                            className="rounded bg-blue-500 px-3 py-1 text-white text-xs"
                           >
                             📥 Download
                           </button>
 
                           <button
                             onClick={() => handleCopyCaption(post.caption)}
-                            className="rounded bg-gray-700 px-3 py-1 text-white text-xs"
+                            className="rounded bg-gray-500 px-3 py-1 text-white text-xs"
                           >
                             📋 Copy Caption
                           </button>
 
                           <button
                             onClick={() => handleDelete(post._id)}
-                            className="rounded bg-red-600 px-3 py-1 text-white text-xs"
+                            className="rounded bg-red-500 px-3 py-1 text-white text-xs"
                           >
                             🗑 Delete
                           </button>
