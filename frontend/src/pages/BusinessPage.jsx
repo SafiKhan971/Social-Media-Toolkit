@@ -111,17 +111,6 @@ export default function BusinessPage() {
     }
 
   }
-  // {
-  //   error && (
-  //     <p className="mb-4 text-sm text-red-500">{error}</p>
-  //   )
-  // }
-
-  // {
-  //   success && (
-  //     <p className="mb-4 text-sm text-green-600">{success}</p>
-  //   )
-  // }
   const itemsPerPage = 6
   const startIndex = (currentPage - 1) * itemsPerPage
   const currentBusinesses = businesses.slice(startIndex, startIndex + itemsPerPage)
@@ -238,12 +227,6 @@ export default function BusinessPage() {
                 + Create
               </button>
             </div>
-
-
-            {/* {error && (
-              <p className="mb-4 text-sm text-red-500">{error}</p>
-            )} */}
-
             {loading ? (
               <p className="text-sm text-neutral-500">Loading...</p>
             ) : businesses.length === 0 ? (
@@ -308,6 +291,5 @@ export default function BusinessPage() {
         )}
       </div>
     </div>
-
   )
 }
