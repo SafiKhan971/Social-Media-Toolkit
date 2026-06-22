@@ -314,7 +314,7 @@ export default function PostPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-green-400">
+    <div className="min-h-screen bg-gradient-to-br from-green-500 to-green-700">
       <Menu />
 
       <div className="mx-auto max-w-5xl p-4">
@@ -359,7 +359,7 @@ export default function PostPage() {
                   </h1>
 
                   <div>
-                    <label className="mb-2 block text-sm font-medium">
+                    <label className="mb-3 block text-sm font-bold">
                       Post Type
                     </label>
 
@@ -394,7 +394,7 @@ export default function PostPage() {
                   >
                     {postType === 'business' ? (
                       <div>
-                        <label className="mb-1 block text-sm font-medium">
+                        <label className="mb-1 block text-sm font-bold mt-3">
                           Select Business
                         </label>
 
@@ -437,7 +437,7 @@ export default function PostPage() {
 
                     {/* Number of Posts */}
                     <div>
-                      <label className="mb-1 block text-sm font-medium">
+                      <label className="mb-1 block text-sm font-bold">
                         Number of Posts
                       </label>
 
