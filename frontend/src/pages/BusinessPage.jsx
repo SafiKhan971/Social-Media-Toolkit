@@ -102,7 +102,7 @@ export default function BusinessPage() {
       if (!res.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} business`)
 
       resetForm()
-      await fetchBusinesses()  
+      await fetchBusinesses()
       showSuccess(isEditing ? 'Business updated successfully!' : 'Business created successfully!')
 
 
@@ -117,7 +117,7 @@ export default function BusinessPage() {
   const totalPages = Math.ceil(businesses.length / itemsPerPage)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-500 to-green-700">
+    <div className="min-h-screen app-gradient">
       <Menu />
       {(error || success) && (
         <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
@@ -131,12 +131,12 @@ export default function BusinessPage() {
               {success}
             </div>
           )}
-          </div>
+        </div>
       )}
       <div className="mx-auto max-w-5xl p-4">
         <div className="mx-auto max-w-4xl p-6">
           <div className="flex flex-col items-center gap-6">
-            <h1 className="mb-6 text-2xl font-semibold text-neutral-800">
+            <h1 className="mb-6 text-2xl font-semibold text-neutral-800 text-white">
               Business
             </h1>
 
@@ -208,7 +208,7 @@ export default function BusinessPage() {
 
                     <button
                       type="submit"
-                      className="flex-1 rounded-md bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-600"
+                      className="flex-1 rounded-md app-gradient px-4 py-2 text-sm font-medium text-white "
                     >
                       {editId ? 'Update' : 'Create'}
                     </button>
@@ -224,7 +224,7 @@ export default function BusinessPage() {
 
                   <button
                     onClick={() => setForm(true)}
-                    className="rounded-lg bg-green-400 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-500 hover:shadow-md"
+                    className="rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-500 hover:shadow-md"
                   >
                     + Create
                   </button>
@@ -237,7 +237,7 @@ export default function BusinessPage() {
                   <div className='overflow-hidden border border-neutral-200 shadow-sm'>
                     <table className="w-full text-left text-sm">
                       <thead>
-                        <tr className="bg-green-300 text-green-900">
+                        <tr className="app-gradient">
                           <th className="py-3 pl-2 text-left font-semibold">Sr No</th>
                           <th className="py-3 pl-2 text-left font-semibold">Name</th>
                           <th className="py-3 pl-2 text-left font-semibold">Description</th>

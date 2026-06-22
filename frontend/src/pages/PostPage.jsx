@@ -314,7 +314,7 @@ export default function PostPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-500 to-green-700">
+    <div className="min-h-screen app-gradient">
       <Menu />
 
       <div className="mx-auto max-w-5xl p-4">
@@ -455,7 +455,7 @@ export default function PostPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="rounded-md bg-green-500 px-4 py-2 text-white"
+                      className="rounded-md app-gradient px-4 py-2 text-white"
                     >
                       {loading ? 'Generating...' : 'Generate'}
                     </button>
