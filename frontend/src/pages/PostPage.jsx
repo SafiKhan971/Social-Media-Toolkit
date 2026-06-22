@@ -464,9 +464,18 @@ export default function PostPage() {
               ) : (
                 /* PREVIEW MODE */
                 <div className='ml-auto mb-2 ml-auto mb-2'>
-                  <h1 className="flex items-center gap-2 rounded-md bg-green-700 px-4 py-2 text-white">
-                    Generated Posts Preview
-                  </h1>
+                    <div className="mb-2 flex w-full items-center justify-between rounded-md app-gradient px-4 py-2"> 
+                      <h1 className="font-medium text-white">
+                        Generated Posts Preview
+                      </h1>
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="flex items-center gap-2 rounded-md bg-white px-4 py-2 text-white app-gradient"
+                      >
+                        <FaRedo />
+                        Retry
+                      </button>
+                 </div>
 
                   <div className="mt-6 flex items-center justify-between mb-2">
                     <button

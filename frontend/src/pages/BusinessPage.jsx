@@ -136,10 +136,6 @@ export default function BusinessPage() {
       <div className="mx-auto max-w-5xl p-4">
         <div className="mx-auto max-w-4xl p-6">
           <div className="flex flex-col items-center gap-6">
-            <h1 className="mb-6 text-2xl font-semibold text-neutral-800 text-white">
-              Business
-            </h1>
-
             {form ? (
               <div className="w-full rounded-lg bg-white p-8 shadow-md">
                 <h2 className="mb-4 text-lg font-semibold text-neutral-800">
@@ -237,8 +233,8 @@ export default function BusinessPage() {
                   <div className='overflow-hidden border border-neutral-200 shadow-sm'>
                     <table className="w-full text-left text-sm">
                       <thead>
-                        <tr className="app-gradient">
-                          <th className="py-3 pl-2 text-left font-semibold">Sr No</th>
+                        <tr className="app-gradient text-white">
+                          <th className="py-3 pl-4 text-left font-semibold">Sr No</th>
                           <th className="py-3 pl-2 text-left font-semibold">Name</th>
                           <th className="py-3 pl-2 text-left font-semibold">Description</th>
                           <th className="py-3 pl-2 text-left font-semibold">Action</th>
@@ -250,7 +246,7 @@ export default function BusinessPage() {
                             key={business._id}
                             className="border-b border-neutral-100 text-neutral-800"
                           >
-                            <td className='pl-2 py-2 pr-2'>{startIndex + index + 1}</td>
+                            <td className='pl-4 py-2 pr-2'>{startIndex + index + 1}</td>
                             <td className="pl-2 py-2 pr-4">{business.name}</td>
                             <td className="pl-2 py-2 text-neutral-600">
                               {truncate(business.description)}
