@@ -36,7 +36,7 @@ export default function Menu() {
               className={({ isActive }) =>
                 `rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-green-400 text-white'
+                  ? 'app-gradient text-white'
                     : 'text-neutral-600 hover:bg-neutral-100'
                 }`
               }

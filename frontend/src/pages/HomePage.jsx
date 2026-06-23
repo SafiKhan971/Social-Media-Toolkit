@@ -4,7 +4,7 @@ import smtLogo from '../assets/smt-logo.svg'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-500 to-green-700">
+    <div className="min-h-screen app-gradient">
       <Menu />
 
       <div className="mx-auto max-w-6xl px-6 py-16">
