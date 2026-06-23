@@ -44,6 +44,7 @@ export default function BusinessPage() {
   }
   function handleEdit(business) {
     setBusinessName(business.name)
+    setBusinessCategory(business.category)
     setBusinessDescription(business.description)
     setEditId(business._id)
     setForm(true)
