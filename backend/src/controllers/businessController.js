@@ -3,8 +3,23 @@ import Business from '../models/Business.js'
 // GET /api/businesses
 export async function getBusinesses(req, res) {
   try {
-    const businesses = await Business.find().sort({ createdAt: -1 })
-    res.json(businesses)
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 6
+
+    const skip = (page - 1) * limit
+
+    const businesses = await Business.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+
+    const total = await Business.countDocuments()
+
+    res.json({
+      businesses,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
@@ -27,7 +42,6 @@ export async function getBusinessById(req, res) {
 export async function createBusiness(req, res) {
   try {
     const { name, category, description } = req.body
-    console.log(name)
 
     if (!name || !description || !category) {
       return res
@@ -75,5 +89,19 @@ export async function deleteBusiness(req, res) {
     res.json({ message: 'Business deleted', id: req.params.id })
   } catch (err) {
     res.status(500).json({ message: err.message })
+  }
+}
+
+export async function getAllBusinesses(req, res) {
+  try {
+    const businesses = await Business.find()
+
+    res.json({
+      businesses,
+    })
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    })
   }
 }

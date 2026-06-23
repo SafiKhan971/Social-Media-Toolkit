@@ -48,10 +48,8 @@ export default function PostPage() {
   async function fetchBusinesses() {
     try {
       setLoading(true)
-      const res = await fetch(`${apiUrl}/businesses`)
-      if (!res.ok) throw new Error('Failed to load businesses')
-      const data = await res.json()
-      setBusinesses(data)
+      const data = await api.get(`${apiUrl}/businesses/all`)
+      setBusinesses(data.data.businesses)
       setError('')
     } catch (err) {
       setError(err.message)
