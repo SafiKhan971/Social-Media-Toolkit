@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Menu from '../components/Menu'
-import axios from 'axios'
+import api from '../services/api'
 import { FaRedo, FaSave } from 'react-icons/fa'
 import { toast } from 'sonner'
 import { toPng } from 'html-to-image'
@@ -33,7 +33,7 @@ export default function PostPage() {
     try {
       setLoadingPosts(true)
 
-      const { data } = await axios.get(`${apiUrl}/posts?page=${pageNumber}&limit=6`)
+      const { data } = await api.get(`${apiUrl}/posts?page=${pageNumber}&limit=6`)
 
       setPosts(data.posts)
       setTotalPages(data.totalPages)
@@ -68,7 +68,7 @@ export default function PostPage() {
     try {
       setLoading(true)
 
-      const { data } = await axios.post(
+      const { data } = await api.post(
         `${apiUrl}/posts/generate-posts`,
         {
           postType,
@@ -115,7 +115,7 @@ export default function PostPage() {
     const toastId = toast.loading('Saving posts...')
 
     try {
-      await axios.post(`${apiUrl}/posts/save-posts`, {
+      await api.post(`${apiUrl}/posts/save-posts`, {
         businessId: selectedBusiness,
         posts: generatedPosts,
       })
@@ -142,7 +142,7 @@ export default function PostPage() {
     const toastId = toast.loading('Saving post...')
 
     try {
-      await axios.post(`${apiUrl}/posts/save-posts`, {
+      await api.post(`${apiUrl}/posts/save-posts`, {
         businessId: selectedBusiness,
         posts: [post],
       })
@@ -159,7 +159,7 @@ export default function PostPage() {
     const toastId = toast.loading('Saving all posts...')
 
     try {
-      await axios.post(`${apiUrl}/posts/save-posts`, {
+      await api.post(`${apiUrl}/posts/save-posts`, {
         businessId: selectedBusiness,
         posts: generatedPosts,
       })
@@ -289,7 +289,7 @@ export default function PostPage() {
     if (!result.isConfirmed) return
 
     try {
-      await axios.delete(`${apiUrl}/posts/${id}`)
+      await api.delete(`${apiUrl}/posts/${id}`)
 
       setPosts((prev) => prev.filter((p) => p._id !== id))
 
