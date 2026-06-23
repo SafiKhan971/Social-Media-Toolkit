@@ -6,7 +6,7 @@ export async function protect(req, res, next) {
 
     if (!authHeader?.startsWith('Bearer ')) {
       return res.status(401).json({
-        message: 'Unauthorized',
+        message: 'No token provided',
       })
     }
 
@@ -20,9 +20,9 @@ export async function protect(req, res, next) {
     req.userId = decoded.id
 
     next()
-  } catch {
-    res.status(401).json({
-      message: 'Unauthorized',
+  } catch (err) {
+    return res.status(401).json({
+      message: err.message,
     })
   }
 }

@@ -5,10 +5,12 @@ import {
   createBusiness,
   updateBusiness,
   deleteBusiness,
+  getAllBusinesses
 } from '../controllers/businessController.js'
 
 const router = express.Router()
 
+router.get('/all', getAllBusinesses)
 router.get('/', getBusinesses)
 router.get('/:id', getBusinessById)
 router.post('/', createBusiness)

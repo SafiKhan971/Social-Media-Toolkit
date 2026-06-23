@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Menu from '../components/Menu'
+import api from '../services/api'
 
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
@@ -20,10 +21,11 @@ export default function BusinessPage() {
   const [editId, setEditId] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [success, setSuccess] = useState('')
+  const [totalPages, setTotalPages] = useState(1)
 
 
   useEffect(() => {
-    fetchBusinesses()
+    fetchBusinesses(1)
   }, [])
 
   function showSuccess(message) {
@@ -55,9 +57,7 @@ export default function BusinessPage() {
     if (!confirmDelete) return
 
     try {
-      const res = await fetch(`${apiUrl}/businesses/${id}`, {
-        method: 'DELETE',
-      })
+      const res = await api.delete(`${apiUrl}/businesses/${id}`)
       if (!res.ok) throw new Error('Failed to delete business')
 
       setBusinesses((prev) => prev.filter((b) => b._id !== id))
@@ -67,14 +67,16 @@ export default function BusinessPage() {
       setError(err.message)
     }
   }
-  async function fetchBusinesses() {
+
+  async function fetchBusinesses(page = 1) {
     try {
       setLoading(true)
-      const res = await fetch(`${apiUrl}/businesses`)
-      if (!res.ok) throw new Error('Failed to load businesses')
-      const data = await res.json()
-      setBusinesses(data)
-      setError('')
+
+      const { data } = await api.get(`${apiUrl}/businesses?page=${page}&limit=6`)
+
+      setBusinesses(data.businesses)
+      setCurrentPage(data.currentPage)
+      setTotalPages(data.totalPages)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -82,40 +84,41 @@ export default function BusinessPage() {
     }
   }
 
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+
     try {
       const isEditing = Boolean(editId)
-      const url = isEditing
-        ? `${apiUrl}/businesses/${editId}`
-        : `${apiUrl}/businesses`
-      const method = isEditing ? 'PUT' : 'POST'
 
-      const res = await fetch(url, {
+      const url = isEditing
+        ? `/businesses/${editId}`
+        : `/businesses`
+
+      const method = isEditing ? 'put' : 'post'
+
+      await api({
+        url,
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        data: {
           name: businessName,
           description: businessDescription,
           category: businessCategory,
-        }),
+        },
       })
-      if (!res.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} business`)
 
       resetForm()
       await fetchBusinesses()
-      showSuccess(isEditing ? 'Business updated successfully!' : 'Business created successfully!')
 
-
+      showSuccess(
+        isEditing
+          ? 'Business updated successfully!'
+          : 'Business created successfully!'
+      )
     } catch (err) {
-      setError(err.message)
+      setError(err.response?.data?.message || err.message)
     }
-
   }
-  const itemsPerPage = 6
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const currentBusinesses = businesses.slice(startIndex, startIndex + itemsPerPage)
-  const totalPages = Math.ceil(businesses.length / itemsPerPage)
 
   return (
     <div className="min-h-screen app-gradient">
@@ -242,12 +245,12 @@ export default function BusinessPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {currentBusinesses.map((business, index) => (
+                        {businesses.map((business, index) => (
                           <tr
                             key={business._id}
                             className="border-b border-neutral-100 text-neutral-800"
                           >
-                            <td className='pl-4 py-2 pr-2'>{startIndex + index + 1}</td>
+                            <td className='pl-4 py-2 pr-2'>{index + 1}</td>
                             <td className="pl-2 py-2 pr-4">{business.name}</td>
                             <td className="pl-2 py-2 text-neutral-600">
                               {truncate(business.description)}
@@ -269,21 +272,26 @@ export default function BusinessPage() {
                         ))}
                       </tbody>
                     </table>
-                    {businesses.length > itemsPerPage && (
+                    
                       <div className='mt-4 flex justify-end gap-4'>
-                        <button onClick={() => setCurrentPage((p) => p - 1)}
+                        <button
                           disabled={currentPage === 1}
-                          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 disabled:opacity-50">
-                          Previous
+                          onClick={() => fetchBusinesses(currentPage - 1)}
+                        >
+                          Prev
                         </button>
-                        <span className='text-sm text-neutral-700'>Page {currentPage} of {totalPages}</span>
-                        <button onClick={() => setCurrentPage((p) => p + 1)}
+
+                        <span>
+                          Page {currentPage} of {totalPages}
+                        </span>
+
+                        <button
                           disabled={currentPage === totalPages}
-                          className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100 disabled:opacity-50">
+                          onClick={() => fetchBusinesses(currentPage + 1)}
+                        >
                           Next
                         </button>
                       </div>
-                    )}
                   </div>
                 )}
               </div>
