@@ -67,7 +67,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-green-400">
+    <div className="min-h-screen app-gradient">
       <Menu />
 
       <div className="flex justify-center px-4 py-12">
