@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import smtLogo from '../assets/smt-logo.svg'
 import { toast } from 'sonner'
+import Swal from 'sweetalert2'
 
 
 export default function Menu() {
@@ -8,18 +9,37 @@ export default function Menu() {
 
   const token = localStorage.getItem('token')
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: 'Logout?',
+      text: 'You will need to login again to access your account.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#d33',
+    })
+
+    if (!result.isConfirmed) return
+
     localStorage.removeItem('token')
     localStorage.removeItem('user')
 
-    navigate('/login')
-    toast.success("Logout successfully")
+    await Swal.fire({
+      title: 'Logged out',
+      icon: 'success',
+      timer: 1200,
+      showConfirmButton: false,
+    })
+
+    window.location.href = '/login'
   }
 
   const links = [
     { to: '/', label: 'Home' },
     { to: '/business', label: 'Business' },
     { to: '/post', label: 'Post' },
+
   ]
 
   return (
@@ -34,10 +54,9 @@ export default function Menu() {
               to={link.to}
               end={link.to === '/'}
               className={({ isActive }) =>
-                `rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                  isActive
+                `rounded-md px-4 py-2 text-sm font-medium transition-colors ${isActive
                   ? 'app-gradient text-white'
-                    : 'text-neutral-600 hover:bg-neutral-100'
+                  : 'text-neutral-600 hover:bg-neutral-100'
                 }`
               }
             >
@@ -57,10 +76,9 @@ export default function Menu() {
               <NavLink
                 to="/login"
                 className={({ isActive }) =>
-                  `rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                    isActive
-                    ? 'app-gradient text-white'
-                      : 'text-neutral-600 hover:bg-neutral-100'
+                  `rounded-md px-4 py-2 text-sm font-medium transition-colors ${isActive
+                    ? 'bg-green-400 text-white'
+                    : 'text-neutral-600 hover:bg-neutral-100'
                   }`
                 }
               >
@@ -70,10 +88,9 @@ export default function Menu() {
               <NavLink
                 to="/register"
                 className={({ isActive }) =>
-                  `rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                    isActive
-                    ? 'app-gradient text-white'
-                      : 'text-neutral-600 hover:bg-neutral-100'
+                  `rounded-md px-4 py-2 text-sm font-medium transition-colors ${isActive
+                    ? 'bg-green-400 text-white'
+                    : 'text-neutral-600 hover:bg-neutral-100'
                   }`
                 }
               >

@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import Menu from '../components/Menu'
 import api from '../services/api'
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom'
+
+
+
 
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
@@ -14,6 +19,8 @@ export default function BusinessPage() {
   const [businessName, setBusinessName] = useState('')
   const [businessDescription, setBusinessDescription] = useState('')
   const [businessCategory, setBusinessCategory] = useState('')
+  const [businessServices, setBusinessServices] = useState('')
+  const [logo, setLogo] = useState(null)
   const [businesses, setBusinesses] = useState([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState(false)
@@ -22,6 +29,7 @@ export default function BusinessPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [success, setSuccess] = useState('')
   const [totalPages, setTotalPages] = useState(1)
+
 
 
   useEffect(() => {
@@ -51,20 +59,47 @@ export default function BusinessPage() {
     setEditId(business._id)
     setForm(true)
   }
-  // Delete a business
+
+  const navigate = useNavigate()
+
+  function handlePackages(id) {
+    navigate(`/businesses/${id}/packages`)
+  }
+
+
   async function handleDelete(id) {
-    const confirmDelete = window.confirm('Are you sure you want to delete this business?')
-    if (!confirmDelete) return
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This business will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it',
+    })
+
+    if (!result.isConfirmed) return
 
     try {
-      const res = await api.delete(`${apiUrl}/businesses/${id}`)
-      if (!res.ok) throw new Error('Failed to delete business')
+      await api.delete(`/businesses/${id}`)
 
-      setBusinesses((prev) => prev.filter((b) => b._id !== id))
-      showSuccess('Business deleted successfully!')
+      setBusinesses((prev) =>
+        prev.filter((b) => b._id !== id)
+      )
 
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Business has been deleted.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      })
     } catch (err) {
-      setError(err.message)
+      Swal.fire({
+        title: 'Error!',
+        text: err.response?.data?.message || err.message,
+        icon: 'error',
+      })
     }
   }
 
@@ -97,13 +132,32 @@ export default function BusinessPage() {
 
       const method = isEditing ? 'put' : 'post'
 
+      const formData = new FormData()
+
+      formData.append('name', businessName)
+      formData.append('category', businessCategory)
+      formData.append('description', businessDescription)
+
+      formData.append(
+        'services',
+        JSON.stringify(
+          businessServices
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        )
+      )
+
+      if (logo) {
+        formData.append('logo', logo)
+      }
+
       await api({
         url,
         method,
-        data: {
-          name: businessName,
-          description: businessDescription,
-          category: businessCategory,
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
       })
 
@@ -178,6 +232,57 @@ export default function BusinessPage() {
                       className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
                       placeholder="Enter business category"
                     />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      Services
+                    </label>
+
+                    <textarea
+                      value={businessServices}
+                      onChange={(e) => setBusinessServices(e.target.value)}
+                      rows={3}
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+                      placeholder="Web Development, SEO, Digital Marketing"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      Business Logo
+                    </label>
+
+                    <div className="flex items-center gap-3">
+                      <label
+                        htmlFor="businessLogo"
+                        className="cursor-pointer rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+                      >
+                        Choose Logo
+                      </label>
+
+                      <span className="max-w-xs truncate text-sm text-neutral-500">
+                        {logo ? logo.name : 'No file selected'}
+                      </span>
+
+                      <input
+                        id="businessLogo"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => setLogo(e.target.files?.[0] || null)}
+                      />
+                    </div>
+
+                    {logo && (
+                      <div className="mt-4">
+                        <img
+                          src={URL.createObjectURL(logo)}
+                          alt="Logo Preview"
+                          className="h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -266,32 +371,39 @@ export default function BusinessPage() {
                                 onClick={() => handleDelete(business._id)}>
                                 🗑️
                               </button>
+                              <button
+                                className="rounded-md p-2 text-blue-400 hover:bg-blue-500 transition"
+                                title="Packages"
+                                onClick={() => handlePackages(business._id)}
+                              >
+                                📦
+                              </button>
                             </td>
 
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                    
-                      <div className='mt-4 flex justify-end gap-4'>
-                        <button
-                          disabled={currentPage === 1}
-                          onClick={() => fetchBusinesses(currentPage - 1)}
-                        >
-                          Prev
-                        </button>
 
-                        <span>
-                          Page {currentPage} of {totalPages}
-                        </span>
+                    <div className='mt-4 flex justify-end gap-4'>
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() => fetchBusinesses(currentPage - 1)}
+                      >
+                        Prev
+                      </button>
 
-                        <button
-                          disabled={currentPage === totalPages}
-                          onClick={() => fetchBusinesses(currentPage + 1)}
-                        >
-                          Next
-                        </button>
-                      </div>
+                      <span>
+                        Page {currentPage} of {totalPages}
+                      </span>
+
+                      <button
+                        disabled={currentPage === totalPages}
+                        onClick={() => fetchBusinesses(currentPage + 1)}
+                      >
+                        Next
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

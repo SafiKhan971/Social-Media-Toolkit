@@ -17,6 +17,16 @@ const businessSchema = new mongoose.Schema(
       required: [true, 'Business category is required'],
       trim: true,
     },
+    services: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    logo: {
+      type: String, // image URL or uploaded file path
+      default: '',
+    },
   },
   { timestamps: true }
 )
