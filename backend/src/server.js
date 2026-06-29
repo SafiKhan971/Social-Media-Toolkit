@@ -7,8 +7,10 @@ import cors from 'cors'
 import { connectDB } from './config/db.js'
 import businessRoutes from './routes/businessRoutes.js'
 import postRoutes from './routes/postRoutes.js'
+import packageRoutes from './routes/packageRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import {protect} from './middlewares/auth.js'
+import path from 'path'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -22,7 +24,12 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/businesses', protect, businessRoutes)
 app.use('/api/posts', protect, postRoutes)
+app.use('/api/packages', protect, packageRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/uploads',express.static(
+    path.join(process.cwd(), 'uploads')
+  )
+)
 
 // 404 handler
 app.use((req, res) => {
