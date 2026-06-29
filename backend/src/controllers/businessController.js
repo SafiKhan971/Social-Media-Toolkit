@@ -41,15 +41,27 @@ export async function getBusinessById(req, res) {
 // POST /api/businesses
 export async function createBusiness(req, res) {
   try {
-    const { name, category, description } = req.body
+    const {
+      name,
+      category,
+      description,
+      services,
+    } = req.body
 
-    if (!name || !description || !category) {
-      return res
-        .status(400)
-        .json({ message: 'please fill all fields' })
-    }
+    const logo = req.file
+      ? `/uploads/logos/${req.file.filename}`
+      : ''
 
-    const business = await Business.create({ name, description, category })
+    const business = await Business.create({
+      name,
+      category,
+      description,
+      services: services
+        ? JSON.parse(services)
+        : [],
+      logo,
+    })
+
     res.status(201).json(business)
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -59,21 +71,43 @@ export async function createBusiness(req, res) {
 // PUT /api/businesses/:id
 export async function updateBusiness(req, res) {
   try {
-    const { name, description, category } = req.body
+    const updateData = {
+      name: req.body.name,
+      category: req.body.category,
+      description: req.body.description,
+    }
 
-    const business = await Business.findByIdAndUpdate(
-      req.params.id,
-      { name, description, category },
-      { new: true, runValidators: true }
-    )
+    if (req.body.services) {
+      updateData.services = JSON.parse(
+        req.body.services
+      )
+    }
+
+    if (req.file) {
+      updateData.logo = `/uploads/logos/${req.file.filename}`
+    }
+
+    const business =
+      await Business.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
 
     if (!business) {
-      return res.status(404).json({ message: 'Business not found' })
+      return res.status(404).json({
+        message: 'Business not found',
+      })
     }
 
     res.json(business)
   } catch (err) {
-    res.status(500).json({ message: err.message })
+    res.status(500).json({
+      message: err.message,
+    })
   }
 }
 
