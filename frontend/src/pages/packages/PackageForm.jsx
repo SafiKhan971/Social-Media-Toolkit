@@ -78,7 +78,7 @@ export default function PackageForm({
     const payload = {
       business: businessId,
       title,
-      price: Number(price),
+      price,
       services,
       duration,
       startDate,
@@ -137,7 +137,6 @@ export default function PackageForm({
                   </label>
 
                   <input
-                    type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     placeholder="Enter price"
