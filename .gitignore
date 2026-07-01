@@ -5,6 +5,7 @@ frontend/dist/
 
 backend/.env
 backend/node_modules/
+backend/uploads/
 
 .vite/
 node_modules/
