@@ -46,6 +46,9 @@ export async function createBusiness(req, res) {
       category,
       description,
       services,
+      website,
+      email,
+      officeAddress
     } = req.body
 
     const logo = req.file
@@ -56,6 +59,12 @@ export async function createBusiness(req, res) {
       name,
       category,
       description,
+      website: website || '',
+      email: email || '',
+      officeAddress: officeAddress || '',
+      phones: req.body.phones ? JSON.parse(req.body.phones) : [],
+      socialLinks: req.body.socialLinks ? JSON.parse(req.body.socialLinks) : [],
+
       services: services
         ? JSON.parse(services)
         : [],
@@ -75,8 +84,17 @@ export async function updateBusiness(req, res) {
       name: req.body.name,
       category: req.body.category,
       description: req.body.description,
+      website: req.body.website || '',
+      email: req.body.email || '',
+      officeAddress: req.body.officeAddress || ''
     }
-
+    if(req.body.phones){
+      updateData.phones=JSON.parse(req.body.phones)
+    }
+    if (req.body.socialLinks) {
+      updateData.socialLinks=JSON.parse(req.body.socialLinks)
+    }
+  
     if (req.body.services) {
       updateData.services = JSON.parse(
         req.body.services

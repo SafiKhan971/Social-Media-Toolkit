@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Menu from '../components/Menu'
 import api from '../services/api'
 import Swal from 'sweetalert2'
-import { useNavigate } from 'react-router-dom'
+import {useNavigate } from 'react-router-dom'
 
 
 
@@ -29,6 +29,12 @@ export default function BusinessPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [success, setSuccess] = useState('')
   const [totalPages, setTotalPages] = useState(1)
+  const [website, setWebsite] = useState('')
+  const [businessEmail, setBusinessEmail] = useState('')
+  const [officeAddress, setOfficeAddress] = useState('')
+  const [phones, setPhones] = useState([''])
+  const [socialLinks, setSocialLinks] = useState([{ platform: '', url: '' }])
+
 
 
 
@@ -49,15 +55,52 @@ export default function BusinessPage() {
     setBusinessName('')
     setBusinessDescription('')
     setBusinessCategory('')
+    setBusinessServices('')
+    setLogo(null)
+    setWebsite('')
+    setBusinessEmail('')
+    setOfficeAddress('')
+    setPhones([''])
+    setSocialLinks([{ platform: '', url: '' }])
     setEditId(null)
     setForm(false)
+
   }
   function handleEdit(business) {
     setBusinessName(business.name)
     setBusinessCategory(business.category)
+    setBusinessServices((business.services || []).join(', '))
+    setWebsite(business.website || '')
+    setBusinessEmail(business.email || '')
+    setOfficeAddress(business.officeAddress || '')
+    setPhones(business.phones && business.phones.length > 0 ? business.phones : [''])
+    setSocialLinks(business.socialLinks && business.socialLinks.length > 0 ? business.socialLinks : [{ platform: '', url: '' }])
     setBusinessDescription(business.description)
     setEditId(business._id)
     setForm(true)
+  }
+  function handlePhoneChange(index, value) {
+    const updatedPhones = [...phones]
+    updatedPhones[index] = value
+    setPhones(updatedPhones)
+  }
+  function addPhone() {
+    setPhones([...phones, ''])
+  }
+  function removePhone(index) {
+    setPhones(phones.filter((_, i) => i !== index))
+  }
+  function handleSocialChange(index, field, value) {
+    const updatedSocialLinks = [...socialLinks]
+    updatedSocialLinks[index] = { ...updatedSocialLinks[index], [field]: value }
+    setSocialLinks(updatedSocialLinks)
+  }
+  function addSocialLink() {
+    setSocialLinks([...socialLinks, { platform: '', url: '' }])
+  }
+
+  function removeSocialLink(index) {
+    setSocialLinks(socialLinks.filter((_, i) => i !== index))
   }
 
   const navigate = useNavigate()
@@ -137,6 +180,15 @@ export default function BusinessPage() {
       formData.append('name', businessName)
       formData.append('category', businessCategory)
       formData.append('description', businessDescription)
+      formData.append('email', businessEmail)
+      formData.append('phones', JSON.stringify(phones.map((p) =>
+        p.trim()).filter(Boolean)
+      ))
+      formData.append('website', website)
+      formData.append('officeAddress', officeAddress)
+      formData.append('socialLinks', JSON.stringify(
+        socialLinks.filter((s) => s.platform && s.url)
+      ))
 
       formData.append(
         'services',
@@ -200,37 +252,200 @@ export default function BusinessPage() {
                   {editId ? 'Edit Business' : 'Create Business'}
                 </h2>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                  <div>
-                    <label
-                      htmlFor="businessName"
-                      className="mb-1 block text-sm font-medium text-neutral-700"
-                    >
-                      Business Name
-                    </label>
-                    <input
-                      id="businessName"
-                      type="text"
-                      value={businessName}
-                      onChange={(e) => setBusinessName(e.target.value)}
-                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
-                      placeholder="Enter business name"
-                    />
+                  <div className='grid grid-cols-2 gap-4 ' >
+                    <div>
+                      <label
+                        htmlFor="businessName"
+                        className="mb-1 block text-sm font-medium text-neutral-700"
+                      >
+                        Business Name
+                      </label>
+                      <input
+                        id="businessName"
+                        type="text"
+                        value={businessName}
+                        onChange={(e) => setBusinessName(e.target.value)}
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        placeholder="Enter business name"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="businessCategory"
+                        className="mb-1 block text-sm font-medium text-neutral-700"
+                      >
+                        Business Category
+                      </label>
+                      <input
+                        id="businessCategory"
+                        type="text"
+                        value={businessCategory}
+                        onChange={(e) => setBusinessCategory(e.target.value)}
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        placeholder="Enter business category"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-neutral-700">
+                        Business Logo
+                      </label>
+
+                      <div className="flex items-center gap-3">
+                        <label
+                          htmlFor="businessLogo"
+                          className="cursor-pointer rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+                        >
+                          Choose Logo
+                        </label>
+
+                        <span className="max-w-xs truncate text-sm text-neutral-500">
+                          {logo ? logo.name : 'No file selected'}
+                        </span>
+
+                        <input
+                          id="businessLogo"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => setLogo(e.target.files?.[0] || null)}
+                        />
+                      </div>
+
+                      {logo && (
+                        <div className="mt-4">
+                          <img
+                            src={URL.createObjectURL(logo)}
+                            alt="Logo Preview"
+                            className="h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    {/* ---------- Phone Numbers (multiple) ---------- */}
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-neutral-700">Phone Numbers</label>
+                      <div className="flex flex-col gap-2">
+                        {phones.map((phone, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <input
+                              type="tel"
+                              value={phone}
+                              onChange={(e) => handlePhoneChange(index, e.target.value)}
+                              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                              placeholder="+92 300 1234567"
+                            />
+                            {phones.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removePhone(index)}
+                                className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={addPhone}
+                          className="mt-1 w-fit rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-100"
+                        >
+                          + Add Phone
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* ---------- Website & Email ---------- */}
+
+                    <div>
+                      <label htmlFor="website" className="mb-1 block text-sm font-medium text-neutral-700">
+                        Website
+                      </label>
+                      <input
+                        id="website"
+                        type="url"
+                        value={website}
+                        onChange={(e) => setWebsite(e.target.value)}
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        placeholder="https://example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="businessEmail" className="mb-1 block text-sm font-medium text-neutral-700">
+                        Business Email
+                      </label>
+                      <input
+                        id="businessEmail"
+                        type="email"
+                        value={businessEmail}
+                        onChange={(e) => setBusinessEmail(e.target.value)}
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        placeholder="contact@business.com"
+                      />
+                    </div>
+
+
+                    {/* ---------- Social Media Links (multiple) ---------- */}
+                    <div className='col-span-2'>
+                      <label className="mb-1 block text-sm font-medium text-neutral-700">Social Media Links</label>
+                      <div className="flex flex-col gap-2">
+                        {socialLinks.map((social, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <select
+                              value={social.platform}
+                              onChange={(e) => handleSocialChange(index, 'platform', e.target.value)}
+                              className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                            >
+                              <option value="">Platform</option>
+                              <option value="facebook">Facebook</option>
+                              <option value="instagram">Instagram</option>
+                              <option value="twitter">Twitter / X</option>
+                              <option value="linkedin">LinkedIn</option>
+                              <option value="youtube">YouTube</option>
+                              <option value="tiktok">TikTok</option>
+                              <option value="other">Other</option>
+                            </select>
+                            <input
+                              type="url"
+                              value={social.url}
+                              onChange={(e) => handleSocialChange(index, 'url', e.target.value)}
+                              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                              placeholder="https://facebook.com/yourpage"
+                            />
+                            {socialLinks.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => removeSocialLink(index)}
+                                className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={addSocialLink}
+                          className="mt-1 w-fit rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-100"
+                        >
+                          + Add Social Link
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="businessCategory"
-                      className="mb-1 block text-sm font-medium text-neutral-700"
-                    >
-                      Business Category
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      Office Address
                     </label>
-                    <input
-                      id="businessCategory"
-                      type="text"
-                      value={businessCategory}
-                      onChange={(e) => setBusinessCategory(e.target.value)}
+                    <textarea
+                      value={officeAddress}
+                      onChange={(e) => setOfficeAddress(e.target.value)}
+                      rows={3}
                       className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
-                      placeholder="Enter business category"
+                      placeholder="Office address, city, area"
                     />
                   </div>
 
@@ -243,48 +458,10 @@ export default function BusinessPage() {
                       value={businessServices}
                       onChange={(e) => setBusinessServices(e.target.value)}
                       rows={3}
-                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
                       placeholder="Web Development, SEO, Digital Marketing"
                     />
                   </div>
-
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-neutral-700">
-                      Business Logo
-                    </label>
-
-                    <div className="flex items-center gap-3">
-                      <label
-                        htmlFor="businessLogo"
-                        className="cursor-pointer rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
-                      >
-                        Choose Logo
-                      </label>
-
-                      <span className="max-w-xs truncate text-sm text-neutral-500">
-                        {logo ? logo.name : 'No file selected'}
-                      </span>
-
-                      <input
-                        id="businessLogo"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => setLogo(e.target.files?.[0] || null)}
-                      />
-                    </div>
-
-                    {logo && (
-                      <div className="mt-4">
-                        <img
-                          src={URL.createObjectURL(logo)}
-                          alt="Logo Preview"
-                          className="h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm"
-                        />
-                      </div>
-                    )}
-                  </div>
-
                   <div>
                     <label
                       htmlFor="businessDescription"
