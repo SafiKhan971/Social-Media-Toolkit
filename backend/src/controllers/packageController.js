@@ -118,3 +118,25 @@ export const deletePackage = async (req, res) => {
     })
   }
 }
+
+export const getAllPackages = async (req, res) => {
+  try {
+    const packages = await Package.find({
+      business: req.params.id,
+    })
+
+    if (!packages) {
+      return res.status(404).json({
+        message: 'Package not found',
+      })
+    }
+
+    res.json({
+      packages
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    })
+  }
+}

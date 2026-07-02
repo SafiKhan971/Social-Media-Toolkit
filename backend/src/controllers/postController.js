@@ -1,73 +1,15 @@
 import axios from 'axios'
 import Business from '../models/Business.js'
 import Post from '../models/Post.js'
-import { groqClient } from '../utils/groqClient.js'
 import { generatePostImage } from '../utils/generatePostImage.js'
+import { generatePackagePostImage } from '../utils/generatePackagePostImage.js'
+import { generateCaption } from '../utils/generateCaption.js'
+import { generateTagline } from '../utils/generateTagline.js'
 import path from 'path'
-
-
-export async function generateCaption(business) {
-  try {
-    const prompt = `Write a short engaging social media caption (1-2 sentences).
-    Business name: ${business.name}
-    Business description: ${business.description}
-    Make it natural, marketing friendly, and engaging.`
-
-    const completion = await groqClient.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.8,
-      max_tokens: 60,
-    })
-
-    const caption = completion.choices[0].message.content.trim()
-
-    if (!caption) {
-      throw new Error('No caption generated')
-    }
-
-    return caption
-  } catch (err) {
-    throw new Error(`Caption generation failed: ${err.message}`)
-  }
-}
+import Package from '../models/Package.js'
 
 function getFallbackImage() {
   return 'https://picsum.photos/600/400'
-}
-
-export async function getBusinessImageUrl(query) {
-  try {
-    const response = await axios.get(
-      'https://api.unsplash.com/search/photos',
-      {
-        params: {
-          query,
-          per_page: 1,
-        },
-        headers: {
-          Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
-        },
-      }
-    )
-
-    const image = response.data.results?.[0]
-
-    return image?.urls?.regular || getFallbackImage()
-  } catch (err) {
-    console.log(
-      'Unsplash error:',
-      err.response?.status,
-      err.response?.data || err.message
-    )
-
-    return getFallbackImage()
-  }
 }
 
 export async function getBusinessImages(query, count = 10) {
@@ -77,9 +19,9 @@ export async function getBusinessImages(query, count = 10) {
       {
         params: {
           query,
+          order_by: 'relevant',
           per_page: count,
-          order_by: relevant,
-          orientation: squarish
+          orientation: 'squarish',
         },
         headers: {
           Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
@@ -87,119 +29,153 @@ export async function getBusinessImages(query, count = 10) {
       }
     )
 
-    return response.data.results || []
+    const images = response.data.results || []
+
+    if (images.length === 0) {
+      console.log(`No images found for "${query}". Using fallback image.`)
+      return [getFallbackImage()]
+    }
+
+    return images
   } catch (err) {
     console.error(err.message)
-    return []
+    console.log('Using fallback image.')
+    return [getFallbackImage()]
   }
 }
 
-
-
-// New Code
+// generate package posts
 export async function generatePosts(req, res) {
   try {
     const {
       postType = 'business',
       businessId,
+      type,
+      packageId,
       description,
       numberOfPosts,
     } = req.body
 
     if (postType === 'business' && !businessId) {
-      return res.status(400).json({ message: 'Business is required' })
+      return res.status(400).json({
+        message: 'Business is required',
+      })
     }
 
     if (postType === 'instant' && !description?.trim()) {
-      return res.status(400).json({ message: 'Description is required' })
+      return res.status(400).json({
+        message: 'Description is required',
+      })
+    }
+
+    if (type === '2' && !packageId) {
+      return res.status(400).json({
+        message: 'Package is required',
+      })
     }
 
     const count = parseInt(numberOfPosts, 10)
 
     if (Number.isNaN(count) || count < 1) {
-      return res.status(400).json({ message: 'numberOfPosts must be a positive number' })
+      return res.status(400).json({
+        message: 'Number of posts must be greater than 0',
+      })
     }
 
     let business = null
+    let packageData = null
     let imageQuery = ''
-    let captionData = {}
-
-    // const logo = req.file
-    //   ? `${req.protocol}://${req.get('host')}/uploads/logos/${req.file.filename}`
-    //   : ''
+    let promptData = {}
 
     if (postType === 'business') {
       business = await Business.findById(businessId)
 
       if (!business) {
-        return res.status(404).json({ message: 'Business not found' })
+        return res.status(404).json({
+          message: 'Business not found',
+        })
       }
 
-      imageQuery = `${business.category} ${business.description}`
+      if (type === '2') {
+        packageData = await Package.findById(packageId)
 
-      captionData = {
+        if (!packageData) {
+          return res.status(404).json({
+            message: 'Package not found',
+          })
+        }
+      }
+
+      imageQuery = `${business.category}`
+
+      promptData = {
         name: business.name,
         category: business.category,
         description: business.description,
         services: business.services,
-        logoUrl: business.logo
-          ? `${req.protocol}://${req.get('host')}${business.logo}`
-          : null,
       }
-
     } else {
       imageQuery = description
 
-      captionData = {
+      promptData = {
         name: 'Instant Post',
         category: 'Custom',
         description,
-        logoUrl: null,
       }
     }
 
-    const images = await getBusinessImages(imageQuery, Math.max(count, 10))
+    const images = await getBusinessImages(
+      imageQuery,
+      Math.max(count, 10)
+    )
 
     const posts = []
     const errors = []
 
     for (let i = 0; i < count; i++) {
       try {
-        const caption = await generateCaption(captionData)
+        let text = ''
+
+        if (type === '2') {
+          text = await generateTagline(promptData)
+        } else {
+          text = await generateCaption(promptData)
+        }
 
         const image =
-          images.length > 0 ? images[i % images.length] : null
-
-        const backgroundUrl =
-          image?.urls?.regular ||
-          image?.urls?.small ||
-          getFallbackImage()
+          images.length > 0
+            ? images[i % images.length]
+            : null
 
 
-        console.log('business.logo:', business?.logo)
+        const backgroundUrl = image?.urls?.regular || image?.urls?.small
 
-        const logoPath = business?.logo
-          ? path.join(process.cwd(), business.logo.replace(/^\//, ''))
-          : null
+        const logoPath =
+          business?.logo
+            ? path.join(
+              process.cwd(),
+              business.logo.replace(/^\//, '')
+            )
+            : null
 
-        console.log('resolved logoPath:', logoPath)
-
-        // 🔥 THIS IS THE IMPORTANT PART
-        const imagePath = await generatePostImage({
-          businessName: captionData.name,
-          description: caption,
+        const imagePath = await generatePackagePostImage({
+          businessName: business.name,
+          tagline: text,
+          packageData,
           logoUrl: logoPath,
           backgroundUrl,
         })
 
         posts.push({
-          caption,
+          caption: text,
           imageUrl: `${req.protocol}://${req.get('host')}${imagePath}`,
         })
       } catch (err) {
+        console.error(err)
+
         posts.push({
-          imageUrl: getFallbackImage(),
           caption: null,
+          imageUrl: getFallbackImage(),
           error: err.message,
         })
 
@@ -208,20 +184,160 @@ export async function generatePosts(req, res) {
     }
 
     return res.json({
+      message: 'Posts generated successfully',
       postType,
+      type,
       ...(business && {
         business: {
           id: business._id,
           name: business.name,
         },
       }),
+      ...(packageData && {
+        package: {
+          id: packageData._id,
+          title: packageData.title,
+          price: packageData.price,
+        },
+      }),
       posts,
-      ...(errors.length > 0 && { warnings: errors }),
+      ...(errors.length > 0 && {
+        warnings: errors,
+      }),
     })
   } catch (err) {
-    return res.status(500).json({ message: err.message })
+    console.error(err)
+
+    return res.status(500).json({
+      message: err.message,
+    })
   }
 }
+
+// generate general posts 
+// export async function generatePosts(req, res) {
+//   try {
+//     const {
+//       postType = 'business',
+//       businessId,
+//       description,
+//       numberOfPosts,
+//     } = req.body
+
+//     if (postType === 'business' && !businessId) {
+//       return res.status(400).json({ message: 'Business is required' })
+//     }
+
+//     if (postType === 'instant' && !description?.trim()) {
+//       return res.status(400).json({ message: 'Description is required' })
+//     }
+
+//     const count = parseInt(numberOfPosts, 10)
+
+//     if (Number.isNaN(count) || count < 1) {
+//       return res.status(400).json({ message: 'numberOfPosts must be a positive number' })
+//     }
+
+//     let business = null
+//     let imageQuery = ''
+//     let captionData = {}
+
+//     if (postType === 'business') {
+//       business = await Business.findById(businessId)
+
+//       if (!business) {
+//         return res.status(404).json({ message: 'Business not found' })
+//       }
+
+//       imageQuery = `${business.category} ${business.description}`
+
+//       captionData = {
+//         name: business.name,
+//         category: business.category,
+//         description: business.description,
+//         services: business.services,
+//         logoUrl: business.logo
+//           ? `${req.protocol}://${req.get('host')}${business.logo}`
+//           : null,
+//       }
+
+//     } else {
+//       imageQuery = description
+
+//       captionData = {
+//         name: 'Instant Post',
+//         category: 'Custom',
+//         description,
+//         logoUrl: null,
+//       }
+//     }
+
+//     const images = await getBusinessImages(imageQuery, Math.max(count, 10))
+
+//     const posts = []
+//     const errors = []
+
+//     for (let i = 0; i < count; i++) {
+//       try {
+//         const caption = await generateCaption(captionData)
+
+//         const image =
+//           images.length > 0 ? images[i % images.length] : null
+
+//         const backgroundUrl =
+//           image?.urls?.regular ||
+//           image?.urls?.small ||
+//           getFallbackImage()
+
+
+//         console.log('business.logo:', business?.logo)
+
+//         const logoPath = business?.logo
+//           ? path.join(process.cwd(), business.logo.replace(/^\//, ''))
+//           : null
+
+//         console.log('resolved logoPath:', logoPath)
+
+//         // 🔥 THIS IS THE IMPORTANT PART
+//         const imagePath = await generatePostImage({
+//           businessName: captionData.name,
+//           description: caption,
+//           logoUrl: logoPath,
+//           backgroundUrl,
+//         })
+
+//         posts.push({
+//           caption,
+//           imageUrl: `${req.protocol}://${req.get('host')}${imagePath}`,
+//         })
+//       } catch (err) {
+//         posts.push({
+//           imageUrl: getFallbackImage(),
+//           caption: null,
+//           error: err.message,
+//         })
+
+//         errors.push(err.message)
+//       }
+//     }
+
+//     return res.json({
+//       postType,
+//       ...(business && {
+//         business: {
+//           id: business._id,
+//           name: business.name,
+//         },
+//       }),
+//       posts,
+//       ...(errors.length > 0 && { warnings: errors }),
+//     })
+//   } catch (err) {
+//     return res.status(500).json({ message: err.message })
+//   }
+// }
+
+
 
 export async function savePosts(req, res) {
   try {
