@@ -27,8 +27,30 @@ const businessSchema = new mongoose.Schema(
       type: String, // image URL or uploaded file path
       default: '',
     },
+    phones: [{
+      type:String,
+      trim: true
+    }],
+    website: {
+      type: String
+    },
+    email: {
+      type: String,
+      required: [true,'Email is required'],
+      trim: true
+    },
+    officeAddress: {
+      type: String
+    },
+    socialLinks: [
+      {
+        platform: { type: String },
+        url: { type: String }
+      }
+    ]
   },
-  { timestamps: true }
-)
+  {
+    timestamps: true
+  })
 
 export default mongoose.model('Business', businessSchema)
