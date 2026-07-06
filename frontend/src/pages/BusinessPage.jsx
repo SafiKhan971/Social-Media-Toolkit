@@ -305,6 +305,35 @@ export default function BusinessPage() {
                         placeholder="Enter business category"
                       />
                     </div>
+                    {/* ---------- Website & Email ---------- */}
+
+                    <div>
+                      <label htmlFor="website" className="mb-1 block text-sm font-medium text-neutral-700">
+                        Website
+                      </label>
+                      <input
+                        id="website"
+                        type="url"
+                        value={website}
+                        onChange={(e) => setWebsite(e.target.value)}
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        placeholder="https://example.com"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="businessEmail" className="mb-1 block text-sm font-medium text-neutral-700">
+                        Business Email
+                      </label>
+                      <input
+                        id="businessEmail"
+                        type="email"
+                        value={businessEmail}
+                        onChange={(e) => setBusinessEmail(e.target.value)}
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        placeholder="contact@business.com"
+                      />
+                    </div>
                     <div>
                       <label className="mb-1 block text-sm font-medium text-neutral-700">
                         Business Logo
@@ -374,38 +403,6 @@ export default function BusinessPage() {
                         </button>
                       </div>
                     </div>
-
-                    {/* ---------- Website & Email ---------- */}
-
-                    <div>
-                      <label htmlFor="website" className="mb-1 block text-sm font-medium text-neutral-700">
-                        Website
-                      </label>
-                      <input
-                        id="website"
-                        type="url"
-                        value={website}
-                        onChange={(e) => setWebsite(e.target.value)}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
-                        placeholder="https://example.com"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="businessEmail" className="mb-1 block text-sm font-medium text-neutral-700">
-                        Business Email
-                      </label>
-                      <input
-                        id="businessEmail"
-                        type="email"
-                        value={businessEmail}
-                        onChange={(e) => setBusinessEmail(e.target.value)}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
-                        placeholder="contact@business.com"
-                      />
-                    </div>
-
-
                     {/* ---------- Social Media Links (multiple) ---------- */}
                     <div className='col-span-2'>
                       <label className="mb-1 block text-sm font-medium text-neutral-700">Social Media Links</label>
