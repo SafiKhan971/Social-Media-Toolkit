@@ -3,12 +3,31 @@ import Menu from '../components/Menu'
 import api from '../services/api'
 import Swal from 'sweetalert2'
 import {useNavigate } from 'react-router-dom'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '../components/tailgrids/core/dropdown'
+import { Pagination } from '../components/tailgrids/core/pagination'
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRoot,
+  TableRow
+} from '../components/tailgrids/core/table'
+import { Badge } from '../components/tailgrids/core/badge'
+import { MenuKebab1 } from '../components/tailgrids/core/icons'
+import { LogoHoverPreview } from '../components/LogoHoverPreview'
 
 
 
 
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
+const serverUrl = apiUrl.replace('/api', '')
 
 function truncate(text, maxLength = 50) {
   if (!text) return ''
@@ -516,72 +535,81 @@ export default function BusinessPage() {
                 ) : businesses.length === 0 ? (
                   <p className="text-sm text-neutral-500">No businesses yet.</p>
                 ) : (
-                  <div className='overflow-hidden border border-neutral-200 shadow-sm'>
-                    <table className="w-full text-left text-sm">
-                      <thead>
-                        <tr className="app-gradient text-white">
-                          <th className="py-3 pl-4 text-left font-semibold">Sr No</th>
-                          <th className="py-3 pl-2 text-left font-semibold">Name</th>
-                          <th className="py-3 pl-2 text-left font-semibold">Description</th>
-                          <th className="py-3 pl-2 text-left font-semibold">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {businesses.map((business, index) => (
-                          <tr
-                            key={business._id}
-                            className="border-b border-neutral-100 text-neutral-800"
-                          >
-                            <td className='pl-4 py-2 pr-2'>{index + 1}</td>
-                            <td className="pl-2 py-2 pr-4">{business.name}</td>
-                            <td className="pl-2 py-2 text-neutral-600">
-                              {truncate(business.description)}
-                            </td>
-                            <td className='flex items-center gap-2 pl-2 py-2'>
-                              <button className='rounded-md p-2 text-green-300 hover:bg-green-500 transition'
-                                title='Edit'
-                                onClick={() => handleEdit(business)}>
-                                ✏️
-                              </button>
-                              <button className='rounded-md p-2 text-red-400 hover:bg-red-500 transition'
-                                title='Delete'
-                                onClick={() => handleDelete(business._id)}>
-                                🗑️
-                              </button>
-                              <button
-                                className="rounded-md p-2 text-blue-400 hover:bg-blue-500 transition"
-                                title="Packages"
-                                onClick={() => handlePackages(business._id)}
-                              >
-                                ➕
-                              </button>
-                            </td>
+                <div className="overflow-hidden">
+  <TableRoot fullBleed className="mb-1">
+<TableHeader>
+  <TableRow>
+    <TableHead>Sr No</TableHead>
+    <TableHead>Name</TableHead>
+    <TableHead>Category</TableHead>
+    <TableHead>Logo</TableHead>
+    <TableHead>Email</TableHead>
+    <TableHead>Action</TableHead>
+  </TableRow>
+</TableHeader>
 
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+<TableBody>
+  {businesses.map((business, index) => (
+    <TableRow key={business._id} className="text-sm">
+      <TableCell className="whitespace-nowrap">{index + 1}</TableCell>
 
-                    <div className='mt-4 flex justify-end gap-4'>
-                      <button
-                        disabled={currentPage === 1}
-                        onClick={() => fetchBusinesses(currentPage - 1)}
-                      >
-                        Prev
-                      </button>
+      <TableCell className="font-medium text-title-50 whitespace-nowrap">
+        {business.name}
+      </TableCell>
 
-                      <span>
-                        Page {currentPage} of {totalPages}
-                      </span>
+      <TableCell>
+        <Badge color="info">{business.category}</Badge>
+      </TableCell>
 
-                      <button
-                        disabled={currentPage === totalPages}
-                        onClick={() => fetchBusinesses(currentPage + 1)}
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </div>
+    <TableCell>
+  {business.logo ? (
+    <LogoHoverPreview
+      src={`${serverUrl}${business.logo}`}
+      alt={business.name}
+    />
+  ) : (
+    <div className="h-10 w-10 rounded-full bg-neutral-100 flex items-center justify-center text-xs text-neutral-400">
+      N/A
+    </div>
+  )}
+</TableCell>
+
+      <TableCell className="text-text-100 whitespace-nowrap">
+        {business.email || '—'}
+      </TableCell>
+
+      <TableCell>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100">
+            <MenuKebab1 className="h-5 w-5 text-neutral-600" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent placement="bottom end" className="p-2">
+            <DropdownMenuItem onClick={() => handleEdit(business)}>
+              ✏️ Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDelete(business._id)}>
+              🗑️ Delete
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handlePackages(business._id)}>
+              ➕ Packages
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+  </TableRoot>
+
+<div className="mt-5">
+  <Pagination
+    currentPage={currentPage}
+    totalPages={totalPages}
+    sideLayout="full"         
+    onPageChange={(page) => fetchBusinesses(page)}
+  />
+</div>
+</div>
                 )}
               </div>
             )}
