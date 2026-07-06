@@ -5,6 +5,23 @@ import Menu from '../../components/Menu'
 import { deletePackage, getPackages } from '../../services/packageService'
 import { useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '../../components/tailgrids/core/dropdown'
+import { Pagination } from '../../components/tailgrids/core/pagination'
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRoot,
+  TableRow
+} from '../../components/tailgrids/core/table'
+import { Badge } from '../../components/tailgrids/core/badge'
+import { MenuKebab1 } from '../../components/tailgrids/core/icons'
 
 export default function PackagesIndex() {
 
@@ -138,154 +155,96 @@ export default function PackagesIndex() {
                 >
                   + Create
                 </button>
+                
 
               </div>
+{loading ? (
+  <p className="text-sm text-neutral-500">Loading...</p>
+) : packages.length === 0 ? (
+  <p className="text-sm text-neutral-500">No packages found.</p>
+) : (
+  <>
+    <TableRoot fullBleed className="mb-1">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Sr No</TableHead>
+          <TableHead>Package</TableHead>
+          <TableHead>Price</TableHead>
+          <TableHead>Duration</TableHead>
+          <TableHead>Services</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Action</TableHead>
+        </TableRow>
+      </TableHeader>
 
-              {loading ? (
-                <p className="text-sm text-neutral-500">
-                  Loading...
-                </p>
-              ) : packages.length === 0 ? (
-                <p className="text-sm text-neutral-500">
-                  No packages found.
-                </p>
-              ) : (
-                <>
-                  <div className="overflow-hidden border border-neutral-200 shadow-sm">
+      <TableBody>
+        {packages.map((pkg, index) => (
+          <TableRow key={pkg._id} className="text-sm">
+            <TableCell className="whitespace-nowrap">
+              {(currentPage - 1) * 10 + index + 1}
+            </TableCell>
 
-                    <table className="w-full text-left text-sm">
+            <TableCell className="font-medium text-title-50 whitespace-nowrap">
+              {pkg.title}
+            </TableCell>
 
-                      <thead>
+            <TableCell className="font-semibold text-text-100 whitespace-nowrap">
+              Rs. {pkg.price}
+            </TableCell>
 
-                        <tr className="app-gradient text-white">
+            <TableCell className="whitespace-nowrap">
+              {pkg.duration}
+            </TableCell>
 
-                          <th className="py-3 pl-4 font-semibold">
-                            Sr No
-                          </th>
+            <TableCell className="text-text-100">
+              {truncate(pkg.services.join(', '))}
+            </TableCell>
 
-                          <th className="py-3 pl-2 font-semibold">
-                            Package
-                          </th>
+            <TableCell>
+              <Badge
+                color={pkg.status === 'Active' ? 'success' : 'error'}
+                prefixIcon={
+                  <span
+                    className={`size-1.5 rounded-full ${
+                      pkg.status === 'Active' ? 'bg-success-500' : 'bg-error-500'
+                    }`}
+                  />
+                }
+              >
+                {pkg.status}
+              </Badge>
+            </TableCell>
 
-                          <th className="py-3 pl-2 font-semibold">
-                            Price
-                          </th>
+            <TableCell>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100">
+                  <MenuKebab1 className="h-5 w-5 text-neutral-600" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent placement="bottom end" className="p-2">
+                  <DropdownMenuItem onClick={() => handleEdit(pkg)}>
+                    ✏️ Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleDelete(pkg._id)}>
+                    🗑️ Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </TableRoot>
 
-                          <th className="py-3 pl-2 font-semibold">
-                            Duration
-                          </th>
-
-                          <th className="py-3 pl-2 font-semibold">
-                            Services
-                          </th>
-
-                          <th className="py-3 pl-2 font-semibold">
-                            Status
-                          </th>
-
-                          <th className="py-3 pl-2 font-semibold">
-                            Action
-                          </th>
-
-                        </tr>
-
-                      </thead>
-
-                      <tbody>
-
-                        {packages.map((pkg, index) => (
-
-                          <tr
-                            key={pkg._id}
-                            className="border-b border-neutral-100 text-neutral-800"
-                          >
-
-                            <td className="py-2 pl-4">
-                              {(currentPage - 1) * 10 + index + 1}
-                            </td>
-
-                            <td className="py-2 pl-2">
-                              {pkg.title}
-                            </td>
-
-                            <td className="py-2 pl-2">
-                              Rs. {pkg.price}
-                            </td>
-
-                            <td className="py-2 pl-2">
-                              {pkg.duration}
-                            </td>
-
-                            <td className="py-2 pl-2">
-                              {truncate(pkg.services.join(', '))}
-                            </td>
-
-                            <td className="py-2 pl-2">
-
-                              <span
-                                className={`rounded-full px-3 py-1 text-xs font-medium ${pkg.status === 'Active'
-                                  ? 'bg-green-100 text-green-700'
-                                  : 'bg-red-100 text-red-700'
-                                  }`}
-                              >
-                                {pkg.status}
-                              </span>
-
-                            </td>
-
-                            <td className="flex items-center gap-2 py-2 pl-2">
-
-                              <button
-                                title="Edit"
-                                onClick={() => handleEdit(pkg)}
-                                className="rounded-md p-2 text-green-400 transition hover:bg-green-500"
-                              >
-                                ✏️
-                              </button>
-
-                              <button
-                                title="Delete"
-                                onClick={() => handleDelete(pkg._id)}
-                                className="rounded-md p-2 text-red-400 transition hover:bg-red-500"
-                              >
-                                🗑️
-                              </button>
-
-                            </td>
-
-                          </tr>
-
-                        ))}
-
-                      </tbody>
-
-                    </table>
-
-                  </div>
-
-                  <div className="mt-4 flex justify-end gap-4">
-
-                    <button
-                      disabled={currentPage === 1}
-                      onClick={() => fetchPackageList(currentPage - 1)}
-                    >
-                      Prev
-                    </button>
-
-                    <span>
-                      Page {currentPage} of {totalPages}
-                    </span>
-
-                    <button
-                      disabled={currentPage === totalPages}
-                      onClick={() => fetchPackageList(currentPage + 1)}
-                    >
-                      Next
-                    </button>
-
-                  </div>
-                </>
-              )}
+    <div className="mt-5">
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        sideLayout="full"
+        onPageChange={(page) => fetchPackageList(page)}
+      />
+    </div>
+  </>
+)}
 
             </div>
           </div>
