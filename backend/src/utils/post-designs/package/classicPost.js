@@ -233,7 +233,7 @@ export async function classicPost({
   if (contactInfo.length > 0) {
     ctx.textAlign = 'center'
     ctx.fillStyle = '#ffffff'
-    ctx.font = '16px Arial'
+    ctx.font = '18px Arial'
     let currentY = footerY
 
     contactInfo.forEach((info) => {
