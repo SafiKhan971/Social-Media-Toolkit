@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Menu from '../components/Menu'
 import api from '../services/api'
 import Swal from 'sweetalert2'
-import {useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,11 +51,12 @@ export default function BusinessPage() {
   const [website, setWebsite] = useState('')
   const [businessEmail, setBusinessEmail] = useState('')
   const [officeAddress, setOfficeAddress] = useState('')
-  const [phones, setPhones] = useState([''])
-  const [socialLinks, setSocialLinks] = useState([{ platform: '', url: '' }])
-
-
-
+  const [phones, setPhones] = useState([])
+  const [phoneInput, setPhoneInput] = useState('')
+  const [socialLinks, setSocialLinks] = useState([])
+  const [socialPlatform, setSocialPlatform] = useState('')
+  const [socialUrl, setSocialUrl] = useState('')
+  // const [socialLinks, setSocialLinks] = useState([{ platform: '', url: '' }])
 
   useEffect(() => {
     fetchBusinesses(1)
@@ -79,8 +80,8 @@ export default function BusinessPage() {
     setWebsite('')
     setBusinessEmail('')
     setOfficeAddress('')
-    setPhones([''])
-    setSocialLinks([{ platform: '', url: '' }])
+    setPhones([])
+    setSocialLinks([])
     setEditId(null)
     setForm(false)
 
@@ -92,30 +93,27 @@ export default function BusinessPage() {
     setWebsite(business.website || '')
     setBusinessEmail(business.email || '')
     setOfficeAddress(business.officeAddress || '')
-    setPhones(business.phones && business.phones.length > 0 ? business.phones : [''])
-    setSocialLinks(business.socialLinks && business.socialLinks.length > 0 ? business.socialLinks : [{ platform: '', url: '' }])
+    setPhones(business.phones || [])
+    setSocialLinks(business.socialLinks || [])
     setBusinessDescription(business.description)
     setEditId(business._id)
     setForm(true)
   }
-  function handlePhoneChange(index, value) {
-    const updatedPhones = [...phones]
-    updatedPhones[index] = value
-    setPhones(updatedPhones)
-  }
   function addPhone() {
-    setPhones([...phones, ''])
+    const trimmed = phoneInput.trim()
+    if (!trimmed) return
+    setPhones([...phones, trimmed])
+    setPhoneInput('')
   }
   function removePhone(index) {
     setPhones(phones.filter((_, i) => i !== index))
   }
-  function handleSocialChange(index, field, value) {
-    const updatedSocialLinks = [...socialLinks]
-    updatedSocialLinks[index] = { ...updatedSocialLinks[index], [field]: value }
-    setSocialLinks(updatedSocialLinks)
-  }
   function addSocialLink() {
-    setSocialLinks([...socialLinks, { platform: '', url: '' }])
+    if (!socialPlatform || !socialUrl.trim()) return
+    setSocialLinks([...socialLinks, { platform: socialPlatform, url: socialUrl.trim() }])
+    setSocialPlatform('')
+    setSocialUrl('')
+    // setSocialLinks([...socialLinks, { platform: '', url: '' }])
   }
 
   function removeSocialLink(index) {
@@ -373,82 +371,100 @@ export default function BusinessPage() {
                     {/* ---------- Phone Numbers (multiple) ---------- */}
                     <div>
                       <label className="mb-1 block text-sm font-medium text-neutral-700">Phone Numbers</label>
-                      <div className="flex flex-col gap-2">
-                        {phones.map((phone, index) => (
-                          <div key={index} className="flex items-center gap-2">
-                            <input
-                              type="tel"
-                              value={phone}
-                              onChange={(e) => handlePhoneChange(index, e.target.value)}
-                              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
-                              placeholder="+92 300 1234567"
-                            />
-                            {phones.length > 1 && (
-                              <button
-                                type="button"
-                                onClick={() => removePhone(index)}
-                                className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50"
-                              >
-                                ✕
-                              </button>
-                            )}
-                          </div>
-                        ))}
+
+                      <div className="flex gap-2">
+                        <input
+                          type="tel"
+                          value={phoneInput}
+                          onChange={(e) => setPhoneInput(e.target.value)}
+                          placeholder="+92 300 1234567"
+                          className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                        />
                         <button
                           type="button"
                           onClick={addPhone}
-                          className="mt-1 w-fit rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-100"
+                          className="rounded-md app-gradient px-4 text-white"
                         >
-                          + Add Phone
+                          Add
                         </button>
                       </div>
-                    </div>
-                    {/* ---------- Social Media Links (multiple) ---------- */}
-                    <div className='col-span-2'>
-                      <label className="mb-1 block text-sm font-medium text-neutral-700">Social Media Links</label>
-                      <div className="flex flex-col gap-2">
-                        {socialLinks.map((social, index) => (
-                          <div key={index} className="flex items-center gap-2">
-                            <select
-                              value={social.platform}
-                              onChange={(e) => handleSocialChange(index, 'platform', e.target.value)}
-                              className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+
+                      {phones.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {phones.map((phone, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm"
                             >
-                              <option value="">Platform</option>
-                              <option value="facebook">Facebook</option>
-                              <option value="instagram">Instagram</option>
-                              <option value="twitter">Twitter / X</option>
-                              <option value="linkedin">LinkedIn</option>
-                              <option value="youtube">YouTube</option>
-                              <option value="tiktok">TikTok</option>
-                              <option value="other">Other</option>
-                            </select>
-                            <input
-                              type="url"
-                              value={social.url}
-                              onChange={(e) => handleSocialChange(index, 'url', e.target.value)}
-                              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
-                              placeholder="https://facebook.com/yourpage"
-                            />
-                            {socialLinks.length > 1 && (
+                              <span>{phone}</span>
                               <button
                                 type="button"
-                                onClick={() => removeSocialLink(index)}
-                                className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50"
+                                onClick={() => removePhone(index)}
+                                className="text-red-500"
                               >
-                                ✕
+                                ×
                               </button>
-                            )}
-                          </div>
-                        ))}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {/* ---------- Social Media Links (multiple) ---------- */}
+                    <div className="col-span-2">
+                      <label className="mb-1 block text-sm font-medium text-neutral-700">Social Media Links</label>
+
+                      <div className="flex gap-2">
+                        <select
+                          value={socialPlatform}
+                          onChange={(e) => setSocialPlatform(e.target.value)}
+                          className="rounded-md border border-neutral-300 px-2 py-2 text-sm focus:border-green-500 focus:outline-none"
+                        >
+                          <option value="">Platform</option>
+                          <option value="facebook">Facebook</option>
+                          <option value="instagram">Instagram</option>
+                          <option value="twitter">Twitter / X</option>
+                          <option value="linkedin">LinkedIn</option>
+                          <option value="youtube">YouTube</option>
+                          <option value="tiktok">TikTok</option>
+                          <option value="other">Other</option>
+                        </select>
+
+                        <input
+                          type="url"
+                          value={socialUrl}
+                          onChange={(e) => setSocialUrl(e.target.value)}
+                          placeholder="https://facebook.com/yourpage"
+                          className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                        />
+
                         <button
                           type="button"
                           onClick={addSocialLink}
-                          className="mt-1 w-fit rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-100"
+                          className="rounded-md app-gradient px-4 text-white"
                         >
-                          + Add Social Link
+                          Add
                         </button>
                       </div>
+
+                      {socialLinks.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {socialLinks.map((social, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm"
+                            >
+                              <span>{social.platform}: {social.url}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeSocialLink(index)}
+                                className="text-red-500"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -532,81 +548,81 @@ export default function BusinessPage() {
                 ) : businesses.length === 0 ? (
                   <p className="text-sm text-neutral-500">No businesses yet.</p>
                 ) : (
-                <div className="overflow-hidden">
-  <TableRoot fullBleed className="mb-1">
-<TableHeader>
-  <TableRow>
-    <TableHead>Sr No</TableHead>
-    <TableHead>Name</TableHead>
-    <TableHead>Category</TableHead>
-    <TableHead>Logo</TableHead>
-    <TableHead>Email</TableHead>
-    <TableHead>Action</TableHead>
-  </TableRow>
-</TableHeader>
+                  <div className="overflow-hidden">
+                    <TableRoot fullBleed className="mb-1">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Sr No</TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Category</TableHead>
+                          <TableHead>Logo</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
 
-<TableBody>
-  {businesses.map((business, index) => (
-    <TableRow key={business._id} className="text-sm">
-      <TableCell className="whitespace-nowrap">{index + 1}</TableCell>
+                      <TableBody>
+                        {businesses.map((business, index) => (
+                          <TableRow key={business._id} className="text-sm">
+                            <TableCell className="whitespace-nowrap">{index + 1}</TableCell>
 
-      <TableCell className="font-medium text-title-50 whitespace-nowrap">
-        {business.name}
-      </TableCell>
+                            <TableCell className="font-medium text-title-50 whitespace-nowrap">
+                              {business.name}
+                            </TableCell>
 
-      <TableCell>
-        <Badge color="info">{business.category}</Badge>
-      </TableCell>
+                            <TableCell>
+                              <Badge color="info">{business.category}</Badge>
+                            </TableCell>
 
-    <TableCell>
-  {business.logo ? (
-    <LogoHoverPreview
-      src={`${serverUrl}${business.logo}`}
-      alt={business.name}
-    />
-  ) : (
-    <div className="h-10 w-10 rounded-full bg-neutral-100 flex items-center justify-center text-xs text-neutral-400">
-      N/A
-    </div>
-  )}
-</TableCell>
+                            <TableCell>
+                              {business.logo ? (
+                                <LogoHoverPreview
+                                  src={`${serverUrl}${business.logo}`}
+                                  alt={business.name}
+                                />
+                              ) : (
+                                <div className="h-10 w-10 rounded-full bg-neutral-100 flex items-center justify-center text-xs text-neutral-400">
+                                  N/A
+                                </div>
+                              )}
+                            </TableCell>
 
-      <TableCell className="text-text-100 whitespace-nowrap">
-        {business.email || '—'}
-      </TableCell>
+                            <TableCell className="text-text-100 whitespace-nowrap">
+                              {business.email || '—'}
+                            </TableCell>
 
-      <TableCell>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100">
-            <MenuKebab1 className="h-5 w-5 text-neutral-600" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent placement="bottom end" className="p-2">
-            <DropdownMenuItem onClick={() => handleEdit(business)}>
-              ✏️ Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDelete(business._id)}>
-              🗑️ Delete
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handlePackages(business._id)}>
-              ➕ Packages
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
-  </TableRoot>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100">
+                                  <MenuKebab1 className="h-5 w-5 text-neutral-600" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent placement="bottom end" className="p-2">
+                                  <DropdownMenuItem onClick={() => handleEdit(business)}>
+                                    ✏️ Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleDelete(business._id)}>
+                                    🗑️ Delete
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handlePackages(business._id)}>
+                                    ➕ Packages
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </TableRoot>
 
-<div className="mt-5">
-  <Pagination
-    currentPage={currentPage}
-    totalPages={totalPages}
-    sideLayout="full"         
-    onPageChange={(page) => fetchBusinesses(page)}
-  />
-</div>
-</div>
+                    <div className="mt-5">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        sideLayout="full"
+                        onPageChange={(page) => fetchBusinesses(page)}
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             )}
