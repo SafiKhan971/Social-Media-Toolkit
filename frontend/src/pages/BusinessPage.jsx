@@ -332,44 +332,8 @@ export default function BusinessPage() {
                         placeholder="contact@business.com"
                       />
                     </div>
-                    <div>
-                      <label className="mb-1 block text-sm font-medium text-neutral-700">
-                        Business Logo
-                      </label>
-
-                      <div className="flex items-center gap-3">
-                        <label
-                          htmlFor="businessLogo"
-                          className="cursor-pointer rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
-                        >
-                          Choose Logo
-                        </label>
-
-                        <span className="max-w-xs truncate text-sm text-neutral-500">
-                          {logo ? logo.name : 'No file selected'}
-                        </span>
-
-                        <input
-                          id="businessLogo"
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={(e) => setLogo(e.target.files?.[0] || null)}
-                        />
-                      </div>
-
-                      {logo && (
-                        <div className="mt-4">
-                          <img
-                            src={URL.createObjectURL(logo)}
-                            alt="Logo Preview"
-                            className="h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm"
-                          />
-                        </div>
-                      )}
-                    </div>
                     {/* ---------- Phone Numbers (multiple) ---------- */}
-                    <div>
+                    <div className="col-span-2">
                       <label className="mb-1 block text-sm font-medium text-neutral-700">Phone Numbers</label>
 
                       <div className="flex gap-2">
@@ -466,6 +430,42 @@ export default function BusinessPage() {
                         </div>
                       )}
                     </div>
+                    <div>
+                      <label className="mb-1 block text-sm font-medium text-neutral-700">
+                        Business Logo
+                      </label>
+
+                      <div className="flex items-center gap-3">
+                        <label
+                          htmlFor="businessLogo"
+                          className="cursor-pointer rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+                        >
+                          Choose Logo
+                        </label>
+
+                        <span className="max-w-xs truncate text-sm text-neutral-500">
+                          {logo ? logo.name : 'No file selected'}
+                        </span>
+
+                        <input
+                          id="businessLogo"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => setLogo(e.target.files?.[0] || null)}
+                        />
+                      </div>
+
+                      {logo && (
+                        <div className="mt-4">
+                          <img
+                            src={URL.createObjectURL(logo)}
+                            alt="Logo Preview"
+                            className="h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm"
+                          />
+                        </div>
+                      )}
+                    </div>  
                   </div>
 
                   <div>
