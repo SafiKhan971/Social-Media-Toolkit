@@ -13,8 +13,6 @@ export default function GeneratePost() {
   const [loading, setLoading] = useState(true)
   const [generatedPosts, setGeneratedPosts] = useState([])
   const [previewMode, setPreviewMode] = useState(false)
-  const [postType, setPostType] = useState('business')
-  const [instantDescription, setInstantDescription] = useState('')
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL
 
@@ -70,11 +68,9 @@ export default function GeneratePost() {
       const { data } = await api.post(
         `${apiUrl}/posts/generate-posts`,
         {
-          postType,
-          businessId: postType === 'business' ? selectedBusiness : null,
+          businessId: selectedBusiness,
           type: selectedType,
           packageIds: selectedType === '2' ? selectedPackages : null,
-          description: postType === 'instant' ? instantDescription : null,
           numberOfPosts,
         }
       )
@@ -104,8 +100,6 @@ export default function GeneratePost() {
     setSelectedType('')
     setSelectedPackages([])
     setNumberOfPosts(1)
-    setPostType('business')
-    setInstantDescription('')
   }
 
   if (previewMode) {
@@ -124,165 +118,117 @@ export default function GeneratePost() {
         Generate Posts
       </h1>
 
-      <div>
-        <label className="mb-3 block text-sm font-bold">
-          Post Type
-        </label>
-
-        <div className="flex gap-6">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="postType"
-              value="business"
-              checked={postType === 'business'}
-              onChange={(e) => setPostType(e.target.value)}
-            />
-            Business Post
-          </label>
-
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="postType"
-              value="instant"
-              checked={postType === 'instant'}
-              onChange={(e) => setPostType(e.target.value)}
-            />
-            Instant Post
-          </label>
-        </div>
-      </div>
-
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-4"
       >
-        {postType === 'business' ? (
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="mb-1 block text-sm font-bold mt-3">
-                Select Business
-              </label>
-
-              <select
-                value={selectedBusiness}
-                onChange={(e) => setSelectedBusiness(e.target.value)}
-                className="w-full rounded-md border px-3 py-2"
-              >
-                <option value="" disabled>
-                  Select Business
-                </option>
-
-                {businesses.map((business) => (
-                  <option
-                    key={business._id}
-                    value={business._id}
-                  >
-                    {business.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-bold mt-3">
-                Select Type
-              </label>
-
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                className="w-full rounded-md border px-3 py-2"
-              >
-                <option value="" disabled>
-                  Select Type
-                </option>
-
-                {types.map((type) => (
-                  <option
-                    key={type._id}
-                    value={type._id}
-                  >
-                    {type.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {selectedType === '2' && (
-              <div className="md:col-span-2">
-                <label className="mb-1 mt-3 block text-sm font-bold">
-                  Select Packages
-                </label>
-
-                {packages.length === 0 ? (
-                  <div className="rounded-md border border-dashed border-gray-300 p-4 text-sm text-gray-500">
-                    No packages found for this business.
-                  </div>
-                ) : (
-                  <>
-                    <select
-                      multiple
-                      value={selectedPackages}
-                      onChange={(e) => {
-                        const values = Array.from(
-                          e.target.selectedOptions,
-                          (option) => option.value
-                        )
-                        setSelectedPackages(values)
-                      }}
-                      className="w-full rounded-md border px-3 py-2"
-                      size={Math.min(6, packages.length)}
-                    >
-                      {packages.map((pkg) => (
-                        <option key={pkg._id} value={pkg._id}>
-                          {pkg.title} — {pkg.price}
-                        </option>
-                      ))}
-                    </select>
-
-                    <p className="mt-2 text-sm text-gray-500">
-                      Hold Ctrl/Cmd to select multiple packages.
-                    </p>
-                  </>
-                )}
-              </div>
-            )}
-
-            <div>
-              <label className="mb-1 block text-sm font-bold mt-3">
-                Number of Posts
-              </label>
-
-              <input
-                type="number"
-                min="1"
-                value={numberOfPosts}
-                onChange={(e) =>
-                  setNumberOfPosts(e.target.value)
-                }
-                className="w-full rounded-md border px-3 py-2"
-              />
-            </div>
-          </div>
-        ) : (
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1 block text-sm font-medium">
-              Post Description
+            <label className="mb-1 block text-sm font-bold mt-3">
+              Select Business
             </label>
 
-            <textarea
-              rows={5}
-              value={instantDescription}
+            <select
+              value={selectedBusiness}
+              onChange={(e) => setSelectedBusiness(e.target.value)}
+              className="w-full rounded-md border px-3 py-2"
+            >
+              <option value="" disabled>
+                Select Business
+              </option>
+
+              {businesses.map((business) => (
+                <option
+                  key={business._id}
+                  value={business._id}
+                >
+                  {business.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-bold mt-3">
+              Select Type
+            </label>
+
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="w-full rounded-md border px-3 py-2"
+            >
+              <option value="" disabled>
+                Select Type
+              </option>
+
+              {types.map((type) => (
+                <option
+                  key={type._id}
+                  value={type._id}
+                >
+                  {type.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {selectedType === '2' && (
+            <div className="md:col-span-2">
+              <label className="mb-1 mt-3 block text-sm font-bold">
+                Select Packages
+              </label>
+
+              {packages.length === 0 ? (
+                <div className="rounded-md border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+                  No packages found for this business.
+                </div>
+              ) : (
+                <>
+                  <select
+                    multiple
+                    value={selectedPackages}
+                    onChange={(e) => {
+                      const values = Array.from(
+                        e.target.selectedOptions,
+                        (option) => option.value
+                      )
+                      setSelectedPackages(values)
+                    }}
+                    className="w-full rounded-md border px-3 py-2"
+                    size={Math.min(6, packages.length)}
+                  >
+                    {packages.map((pkg) => (
+                      <option key={pkg._id} value={pkg._id}>
+                        {pkg.title} — {pkg.price}
+                      </option>
+                    ))}
+                  </select>
+
+                  <p className="mt-2 text-sm text-gray-500">
+                    Hold Ctrl/Cmd to select multiple packages.
+                  </p>
+                </>
+              )}
+            </div>
+          )}
+
+          <div>
+            <label className="mb-1 block text-sm font-bold mt-3">
+              Number of Posts
+            </label>
+
+            <input
+              type="number"
+              min="1"
+              value={numberOfPosts}
               onChange={(e) =>
-                setInstantDescription(e.target.value)
+                setNumberOfPosts(e.target.value)
               }
-              placeholder="Describe what kind of post you want to generate..."
               className="w-full rounded-md border px-3 py-2"
             />
           </div>
-        )}
+        </div>
 
 
 

@@ -48,7 +48,6 @@ export async function getBusinessImages(query, count = 10) {
 export async function generatePosts(req, res) {
   try {
     const {
-      postType = 'business',
       businessId,
       type,
       packageId,
@@ -57,15 +56,9 @@ export async function generatePosts(req, res) {
       numberOfPosts,
     } = req.body
 
-    if (postType === 'business' && !businessId) {
+    if (!businessId) {
       return res.status(400).json({
         message: 'Business is required',
-      })
-    }
-
-    if (postType === 'instant' && !description?.trim()) {
-      return res.status(400).json({
-        message: 'Description is required',
       })
     }
 
@@ -94,8 +87,7 @@ export async function generatePosts(req, res) {
     let imageQuery = ''
     let promptData = {}
 
-    if (postType === 'business') {
-      business = await Business.findById(businessId)
+    business = await Business.findById(businessId)
 
       if (!business) {
         return res.status(404).json({
@@ -123,15 +115,6 @@ export async function generatePosts(req, res) {
         description: business.description,
         services: business.services,
       }
-    } else {
-      imageQuery = description
-
-      promptData = {
-        name: 'Instant Post',
-        category: 'Custom',
-        description,
-      }
-    }
 
     const images = await getBusinessImages(
       imageQuery,
@@ -205,7 +188,6 @@ export async function generatePosts(req, res) {
 
     return res.json({
       message: 'Posts generated successfully',
-      postType,
       type,
       ...(business && {
         business: {

@@ -25,7 +25,7 @@ export async function classicPost({
   ctx.drawImage(bg, 0, 0, width, height)
 
   // Dark overlay
-  ctx.fillStyle = 'rgba(0,0,0,0.45)'
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.60)'
   ctx.fillRect(0, 0, width, height)
 
   // Logo
