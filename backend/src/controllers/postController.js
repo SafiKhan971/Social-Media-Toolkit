@@ -2,7 +2,7 @@ import axios from 'axios'
 import Business from '../models/Business.js'
 import Post from '../models/Post.js'
 import { generatePostImage } from '../utils/generatePostImage.js'
-import { generatePackagePostImage } from '../utils/generatePackagePostImage.js'
+import { classicPost } from '../utils/post-designs/package/classicPost.js'
 import { generateCaption } from '../utils/generateCaption.js'
 import { generateTagline } from '../utils/generateTagline.js'
 import path from 'path'
@@ -52,6 +52,7 @@ export async function generatePosts(req, res) {
       businessId,
       type,
       packageId,
+      packageIds,
       description,
       numberOfPosts,
     } = req.body
@@ -68,9 +69,15 @@ export async function generatePosts(req, res) {
       })
     }
 
-    if (type === '2' && !packageId) {
+    const selectedPackageIds = Array.isArray(packageIds)
+      ? packageIds.filter(Boolean)
+      : packageId
+        ? [packageId]
+        : []
+
+    if (type === '2' && selectedPackageIds.length === 0) {
       return res.status(400).json({
-        message: 'Package is required',
+        message: 'At least one package is required',
       })
     }
 
@@ -83,7 +90,7 @@ export async function generatePosts(req, res) {
     }
 
     let business = null
-    let packageData = null
+    let packageOptions = []
     let imageQuery = ''
     let promptData = {}
 
@@ -97,9 +104,11 @@ export async function generatePosts(req, res) {
       }
 
       if (type === '2') {
-        packageData = await Package.findById(packageId)
+        packageOptions = await Package.find({
+          _id: { $in: selectedPackageIds },
+        })
 
-        if (!packageData) {
+        if (packageOptions.length === 0) {
           return res.status(404).json({
             message: 'Package not found',
           })
@@ -136,6 +145,11 @@ export async function generatePosts(req, res) {
       try {
         let text = ''
 
+        const packageDataForPost =
+          type === '2' && packageOptions.length > 0
+            ? packageOptions[i % packageOptions.length]
+            : null
+
         if (type === '2') {
           text = await generateTagline(promptData)
         } else {
@@ -158,12 +172,18 @@ export async function generatePosts(req, res) {
             )
             : null
 
-        const imagePath = await generatePackagePostImage({
+        const imagePath = await classicPost({
           businessName: business.name,
           tagline: text,
-          packageData,
+          packages: type === '2' ? packageOptions : [packageDataForPost],
+          packageData: packageDataForPost,
           logoUrl: logoPath,
           backgroundUrl,
+          phones: business.phones,
+          website: business.website,
+          email: business.email,
+          officeAddress: business.officeAddress,
+          socialLinks: business.socialLinks,
         })
 
         posts.push({
@@ -193,12 +213,12 @@ export async function generatePosts(req, res) {
           name: business.name,
         },
       }),
-      ...(packageData && {
-        package: {
-          id: packageData._id,
-          title: packageData.title,
-          price: packageData.price,
-        },
+      ...(packageOptions.length > 0 && {
+        packages: packageOptions.map((pkg) => ({
+          id: pkg._id,
+          title: pkg.title,
+          price: pkg.price,
+        })),
       }),
       posts,
       ...(errors.length > 0 && {

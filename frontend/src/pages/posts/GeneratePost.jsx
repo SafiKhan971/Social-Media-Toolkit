@@ -6,7 +6,7 @@ import GeneratedPostsPreview from './GeneratedPostsPreview'
 export default function GeneratePost() {
   const [selectedBusiness, setSelectedBusiness] = useState('')
   const [selectedType, setSelectedType] = useState('')
-  const [selectedPackage, setSelectedPackage] = useState('')
+  const [selectedPackages, setSelectedPackages] = useState([])
   const [numberOfPosts, setNumberOfPosts] = useState(1)
   const [businesses, setBusinesses] = useState([])
   const [packages, setPackages] = useState([])
@@ -38,6 +38,7 @@ export default function GeneratePost() {
     try {
       const data = await api.get(`${apiUrl}/packages/all/${businessId}`)
       setPackages(data.data.packages)
+      setSelectedPackages([])
     } catch (err) {
       console.error(err)
     } finally {
@@ -52,6 +53,9 @@ export default function GeneratePost() {
   useEffect(() => {
     if (selectedType === '2' && selectedBusiness) {
       fetchPackages(selectedBusiness)
+    } else {
+      setPackages([])
+      setSelectedPackages([])
     }
   }, [selectedType, selectedBusiness])
 
@@ -69,7 +73,7 @@ export default function GeneratePost() {
           postType,
           businessId: postType === 'business' ? selectedBusiness : null,
           type: selectedType,
-          packageId: selectedType === '2' ? selectedPackage : null,
+          packageIds: selectedType === '2' ? selectedPackages : null,
           description: postType === 'instant' ? instantDescription : null,
           numberOfPosts,
         }
@@ -97,7 +101,11 @@ export default function GeneratePost() {
     setGeneratedPosts([])
     setPreviewMode(false)
     setSelectedBusiness('')
-    setNumberOfPosts('')
+    setSelectedType('')
+    setSelectedPackages([])
+    setNumberOfPosts(1)
+    setPostType('business')
+    setInstantDescription('')
   }
 
   if (previewMode) {
@@ -203,29 +211,42 @@ export default function GeneratePost() {
             </div>
 
             {selectedType === '2' && (
-              <div>
-                <label className="mb-1 block text-sm font-bold mt-3">
-                  Select Package
+              <div className="md:col-span-2">
+                <label className="mb-1 mt-3 block text-sm font-bold">
+                  Select Packages
                 </label>
 
-                <select
-                  value={selectedPackage}
-                  onChange={(e) => setSelectedPackage(e.target.value)}
-                  className="w-full rounded-md border px-3 py-2"
-                >
-                  <option value="" disabled>
-                    Select Package
-                  </option>
-
-                  {packages.map((pkg) => (
-                    <option
-                      key={pkg._id}
-                      value={pkg._id}
+                {packages.length === 0 ? (
+                  <div className="rounded-md border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+                    No packages found for this business.
+                  </div>
+                ) : (
+                  <>
+                    <select
+                      multiple
+                      value={selectedPackages}
+                      onChange={(e) => {
+                        const values = Array.from(
+                          e.target.selectedOptions,
+                          (option) => option.value
+                        )
+                        setSelectedPackages(values)
+                      }}
+                      className="w-full rounded-md border px-3 py-2"
+                      size={Math.min(6, packages.length)}
                     >
-                      {pkg.title}
-                    </option>
-                  ))}
-                </select>
+                      {packages.map((pkg) => (
+                        <option key={pkg._id} value={pkg._id}>
+                          {pkg.title} — {pkg.price}
+                        </option>
+                      ))}
+                    </select>
+
+                    <p className="mt-2 text-sm text-gray-500">
+                      Hold Ctrl/Cmd to select multiple packages.
+                    </p>
+                  </>
+                )}
               </div>
             )}
 
