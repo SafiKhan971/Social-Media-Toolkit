@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
-import Menu from '../components/Menu'
-import api from '../services/api'
+import Menu from '../../components/Menu'
+import api from '../../services/api'
 import Swal from 'sweetalert2'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '../components/tailgrids/core/dropdown'
-import { Pagination } from '../components/tailgrids/core/pagination'
+} from '../../components/tailgrids/core/dropdown'
+import { Pagination } from '../../components/tailgrids/core/pagination'
 import {
   TableBody,
   TableCell,
@@ -16,9 +16,9 @@ import {
   TableHeader,
   TableRoot,
   TableRow
-} from '../components/tailgrids/core/table'
-import { Badge } from '../components/tailgrids/core/badge'
-import { MenuKebab1 } from '../components/tailgrids/core/icons'
+} from '../../components/tailgrids/core/table'
+import { Badge } from '../../components/tailgrids/core/badge'
+import { MenuKebab1 } from '../../components/tailgrids/core/icons'
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL
 
