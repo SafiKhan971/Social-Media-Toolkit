@@ -137,7 +137,6 @@ export default function PackagesIndex() {
   return (
     <div className="min-h-screen app-gradient">
       <Menu />
-
       <div className="mx-auto max-w-5xl p-4">
         <div className="mx-auto max-w-4xl p-6">
           <div className="flex flex-col items-center gap-6">
@@ -155,96 +154,93 @@ export default function PackagesIndex() {
                 >
                   + Create
                 </button>
-                
-
               </div>
-{loading ? (
-  <p className="text-sm text-neutral-500">Loading...</p>
-) : packages.length === 0 ? (
-  <p className="text-sm text-neutral-500">No packages found.</p>
-) : (
-  <>
-    <TableRoot fullBleed className="mb-1">
-      <TableHeader>
-        <TableRow>
-          <TableHead>Sr No</TableHead>
-          <TableHead>Package</TableHead>
-          <TableHead>Price</TableHead>
-          <TableHead>Duration</TableHead>
-          <TableHead>Services</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Action</TableHead>
-        </TableRow>
-      </TableHeader>
+              {loading ? (
+                <p className="text-sm text-neutral-500">Loading...</p>
+              ) : packages.length === 0 ? (
+                <p className="text-sm text-neutral-500">No packages found.</p>
+              ) : (
+                <>
+                  <TableRoot fullBleed className="mb-1">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Sr No</TableHead>
+                        <TableHead>Package</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>Duration</TableHead>
+                        <TableHead>Services</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
 
-      <TableBody>
-        {packages.map((pkg, index) => (
-          <TableRow key={pkg._id} className="text-sm">
-            <TableCell className="whitespace-nowrap">
-              {(currentPage - 1) * 10 + index + 1}
-            </TableCell>
+                    <TableBody>
+                      {packages.map((pkg, index) => (
+                        <TableRow key={pkg._id} className="text-sm">
+                          <TableCell className="whitespace-nowrap">
+                            {(currentPage - 1) * 10 + index + 1}
+                          </TableCell>
 
-            <TableCell className="font-medium text-title-50 whitespace-nowrap">
-              {pkg.title}
-            </TableCell>
+                          <TableCell className="font-medium text-title-50 whitespace-nowrap">
+                            {pkg.title}
+                          </TableCell>
 
-            <TableCell className="font-semibold text-text-100 whitespace-nowrap">
-              Rs. {pkg.price}
-            </TableCell>
+                          <TableCell className="font-semibold text-text-100 whitespace-nowrap">
+                            Rs. {pkg.price}
+                          </TableCell>
 
-            <TableCell className="whitespace-nowrap">
-              {pkg.duration}
-            </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {pkg.duration}
+                          </TableCell>
 
-            <TableCell className="text-text-100">
-              {truncate(pkg.services.join(', '))}
-            </TableCell>
+                          <TableCell className="text-text-100">
+                            {truncate(pkg.services.join(', '))}
+                          </TableCell>
 
-            <TableCell>
-              <Badge
-                color={pkg.status === 'Active' ? 'success' : 'error'}
-                prefixIcon={
-                  <span
-                    className={`size-1.5 rounded-full ${
-                      pkg.status === 'Active' ? 'bg-success-500' : 'bg-error-500'
-                    }`}
-                  />
-                }
-              >
-                {pkg.status}
-              </Badge>
-            </TableCell>
+                          <TableCell>
+                            <Badge
+                              color={pkg.status === 'Active' ? 'success' : 'error'}
+                              prefixIcon={
+                                <span
+                                  className={`size-1.5 rounded-full ${pkg.status === 'Active' ? 'bg-success-500' : 'bg-error-500'
+                                    }`}
+                                />
+                              }
+                            >
+                              {pkg.status}
+                            </Badge>
+                          </TableCell>
 
-            <TableCell>
-              <DropdownMenu>
-                <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100">
-                  <MenuKebab1 className="h-5 w-5 text-neutral-600" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent placement="bottom end" className="p-2">
-                  <DropdownMenuItem onClick={() => handleEdit(pkg)}>
-                    ✏️ Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleDelete(pkg._id)}>
-                    🗑️ Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </TableRoot>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100">
+                                <MenuKebab1 className="h-5 w-5 text-neutral-600" />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent placement="bottom end" className="p-2">
+                                <DropdownMenuItem onClick={() => handleEdit(pkg)}>
+                                  ✏️ Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDelete(pkg._id)}>
+                                  🗑️ Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </TableRoot>
 
-    <div className="mt-5">
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        sideLayout="full"
-        onPageChange={(page) => fetchPackageList(page)}
-      />
-    </div>
-  </>
-)}
+                  <div className="mt-5">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      sideLayout="full"
+                      onPageChange={(page) => fetchPackageList(page)}
+                    />
+                  </div>
+                </>
+              )}
 
             </div>
           </div>

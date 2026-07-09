@@ -109,12 +109,13 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="rounded-md app-gradient px-4 py-2 text-sm font-medium text-white hover:bg-green-600 focus:outline-none"
+                    className="inline-flex items-center gap-2 whitespace-nowrap rounded-md app-gradient px-3 py-2 text-sm font-medium text-white hover:app-gradient focus:outline-none"
+
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-
+                    <span>Back</span>
                 </button>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
