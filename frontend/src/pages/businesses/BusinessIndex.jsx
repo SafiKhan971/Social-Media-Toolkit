@@ -195,7 +195,11 @@ export default function BusinessIndex() {
                                                         <TableCell>
                                                             {business.logo ? (
                                                                 <LogoHoverPreview
-                                                                    src={`${serverUrl}${business.logo}`}
+                                                                    src={
+                                                                        business.logo.startsWith('http')
+                                                                            ? business.logo
+                                                                            : `${serverUrl}${business.logo}`
+                                                                    }
                                                                     alt={business.name}
                                                                 />
                                                             ) : (
