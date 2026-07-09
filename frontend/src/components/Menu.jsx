@@ -38,6 +38,7 @@ export default function Menu() {
   const links = [
     { to: '/', label: 'Home' },
     { to: '/business', label: 'Business' },
+     { to: '/categories', label: 'Category' }, 
     { to: '/post', label: 'Post' },
 
   ]
