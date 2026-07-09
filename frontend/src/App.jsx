@@ -6,6 +6,7 @@ import PostPage from './pages/posts/PostPage'
 import PackagesIndex from './pages/packages/PackagesIndex'
 import LoginPage from './pages/Auth/LoginPage'
 import RegisterPage from './pages/Auth/RegisterPage'
+import CategoryPage from './pages/categories/CategoryPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { Toaster } from 'sonner'
 
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/business" element={<ProtectedRoute> <BusinessIndex /> </ProtectedRoute>} />
         <Route path="/post" element={<ProtectedRoute><PostPage /></ProtectedRoute>} />
+        <Route path="/category" element={<ProtectedRoute><CategoryPage /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
