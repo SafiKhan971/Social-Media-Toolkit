@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Menu from '../components/Menu'
 import smtLogo from '../assets/smt-logo.svg'
+import logo from '../../public/logo.png'
 
 export default function HomePage() {
   return (
@@ -48,9 +49,9 @@ export default function HomePage() {
           {/* RIGHT DEMO CARD */}
           <div className="rounded-xl bg-white p-6 shadow-xl">
             <img
-              src={smtLogo}
+              src={logo}
               alt="SMT logo"
-              className="mx-auto mb-4 h-20 w-20"
+              className="mx-auto mb-4 h-40 w-40 rounded-2xl"
             />
 
             <h2 className="text-xl font-semibold text-gray-800">
