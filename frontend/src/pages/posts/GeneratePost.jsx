@@ -253,7 +253,7 @@ export default function GeneratePost() {
           </div>
         </div>
 
-        <button type='submit' disabled={loading} className='rounded-md app-gradient px-4 py-2 text-white'>
+        <button type='submit' disabled={loading} className='rounded-md app-gradient cursor-pointer px-4 py-2 text-white'>
           {loading ? 'Generating...' : 'Generate'}
         </button>
       </form>

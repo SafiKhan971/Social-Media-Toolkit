@@ -115,36 +115,36 @@ export default function GeneratedPostsPreview({
 
   return (
     <div className='ml-auto mb-2 ml-auto mb-2'>
-        <div className="mb-2 flex w-full items-center justify-between rounded-md app-gradient px-4 py-2"> 
-          <h1 className="font-medium text-white">
-            Generated Posts Preview
-          </h1>
-          <button
-            onClick={() => window.location.reload()}
-            className="flex items-center gap-2 rounded-md bg-white px-4 py-2 text-white app-gradient"
-          >
-            <FaRedo />
-            Retry
-          </button>
-     </div>
+      <div className="mb-2 flex w-full items-center justify-between rounded-md app-gradient px-4 py-2">
+        <h1 className="font-medium text-white">
+          Generated Posts Preview
+        </h1>
+        <button
+          onClick={() => window.location.reload()}
+          className="flex items-center gap-2 rounded-md bg-white px-4 py-2 text-white app-gradient cursor-pointer "
+        >
+          <FaRedo />
+          Retry
+        </button>
+      </div>
 
       <div className="mt-6 flex items-center justify-between mb-2">
         <button
           onClick={handleSaveAll}
-          className="rounded-md bg-green-700 px-4 py-2 text-white"
+          className="rounded-md bg-green-700 px-4 py-2 text-white cursor-pointer"
         >
           💾 Save All Posts
         </button>
 
         <button
           onClick={handleDownloadAll}
-          className="flex items-center gap-2 rounded-md bg-green-700 px-4 py-2 text-white"
+          className="flex items-center gap-2 rounded-md bg-green-700 px-4 py-2 text-white cursor-pointer"
         >
           📦 Download All (ZIP)
         </button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-3">
         {generatedPosts.map((post, index) => (
           <div
             key={index}
@@ -162,27 +162,41 @@ export default function GeneratedPostsPreview({
               {post.caption}
             </p>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => handleDownloadPost(post, index)}
-                className="rounded-md bg-blue-600 px-3 py-2 text-white"
-              >
-                📥 Download
-              </button>
+            <div className="flex gap-3 flex-row mt-3">
+              <div className="group relative">
+                <button
+                  onClick={() => handleDownloadPost(post, index)}
+                  className="rounded bg-blue-500 px-3 py-1 text-white text-xs cursor-pointer"
+                >
+                  📥 Download
+                </button>
 
-              <button
-                onClick={() => handleCopyCaption(post.caption)}
-                className="rounded-md bg-gray-700 px-3 py-2 text-white"
-              >
-                📋 Copy
-              </button>
-
-              <button
-                onClick={() => handleSaveSingle(post)}
-                className="rounded-md bg-green-600 px-3 py-2 text-white"
-              >
-                💾 Save
-              </button>
+                <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  Download post
+                </span>
+              </div>
+              <div className="group relative">
+                <button
+                  onClick={() => handleCopyCaption(post.caption)}
+                  className="rounded-md bg-gray-500 px-3 py-1 text-white text-xs cursor-pointer"
+                >
+                  📋 Copy
+                </button>
+                <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  Copy caption to clipboard
+                </span>
+              </div>
+              <div className="group relative">
+                <button
+                  onClick={() => handleSaveSingle(post)}
+                  className="rounded-md bg-green-500 px-3 py-1 text-white text-xs cursor-pointer"
+                >
+                  💾 Save
+                </button>
+                <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  Save post
+                </span>
+              </div>
             </div>
           </div>
         ))}
