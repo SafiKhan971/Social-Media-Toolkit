@@ -2,18 +2,14 @@ import { createCanvas, loadImage } from 'canvas'
 import fs from 'fs'
 import path from 'path'
 
-export async function classicPost({
-  businessName,
-  tagline,
-  packageData,
-  packages,
-  logoUrl,
-  backgroundUrl,
-  phones,
-  website,
-  email,
-  officeAddress,
-}) {
+export async function classicPost({ business, tagline, packages, logoUrl, backgroundUrl}) {
+
+  const businessName = business.name
+  const phones = business.phones || []
+  const website = business.website || ''
+  const email = business.email || ''
+  const officeAddress = business.officeAddress || ''
+
   const width = 1080
   const height = 1080
 
@@ -47,11 +43,7 @@ export async function classicPost({
     wrapTextCenter(ctx, tagline, width / 2, 135, 700, 36)
   }
 
-  const packageList = Array.isArray(packages) && packages.length > 0
-    ? packages
-    : packageData
-      ? [packageData]
-      : []
+  const packageList = Array.isArray(packages) && packages.length > 0 ? packages : []
 
   ctx.textAlign = 'center'
   ctx.fillStyle = '#ffffff'
