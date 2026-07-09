@@ -110,40 +110,108 @@ export default function PackageForm({
         <div className="mx-auto max-w-4xl p-6">
           <div className="flex flex-col items-center gap-6">
             <div className="w-full rounded-lg bg-white p-8 shadow-md">
-              <h2 className="mb-4 text-lg font-semibold text-neutral-800">
-                {editId ? 'Edit Package' : 'Create Package'}
-              </h2>
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="mb-4 text-lg font-semibold text-neutral-800">
+                  {editId ? 'Edit Package' : 'Create Package'}
+                </h2>
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  className="inline-flex items-center gap-2 whitespace-nowrap rounded-md app-gradient px-3 py-2 text-sm font-medium text-white hover:app-gradient focus:outline-none"
 
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  <span>Back</span>
+                </button>
+              </div>
               <form
                 onSubmit={handleSubmit}
                 className="flex flex-col gap-4"
               >
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700">
-                    Package Title
-                  </label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      Package Title
+                    </label>
 
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Enter package title"
-                    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
-                  />
+                    <input
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Enter package title"
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      Price
+                    </label>
+
+                    <input
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      placeholder="Enter price"
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      Duration
+                    </label>
 
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700">
-                    Price
-                  </label>
+                    <input
+                      value={duration}
+                      onChange={(e) => setDuration(e.target.value)}
+                      placeholder="Example: 6 Months"
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      Status
+                    </label>
 
-                  <input
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder="Enter price"
-                    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
-                  />
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value)}
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      Start Date
+                    </label>
 
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-neutral-700">
+                      End Date
+                    </label>
+
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-neutral-700">
                     Services
@@ -186,62 +254,6 @@ export default function PackageForm({
                       ))}
                     </div>
                   )}
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700">
-                    Duration
-                  </label>
-
-                  <input
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    placeholder="Example: 6 Months"
-                    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-neutral-700">
-                      Start Date
-                    </label>
-
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-neutral-700">
-                      End Date
-                    </label>
-
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700">
-                    Status
-                  </label>
-
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
                 </div>
 
                 <div className="mt-2 flex gap-3">
