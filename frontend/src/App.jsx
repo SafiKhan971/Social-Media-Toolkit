@@ -8,6 +8,7 @@ import LoginPage from './pages/Auth/LoginPage'
 import RegisterPage from './pages/Auth/RegisterPage'
 import CategoryPage from './pages/categories/CategoryPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import EditorPage from './pages/EditorPage'
 import { Toaster } from 'sonner'
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/category" element={<ProtectedRoute><CategoryPage /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/editor" element={<EditorPage />} />
         <Route
           path="/businesses/:businessId/packages"
           element={<PackagesIndex />}
