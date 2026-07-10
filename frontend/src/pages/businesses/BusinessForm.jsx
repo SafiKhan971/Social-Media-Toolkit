@@ -1,4 +1,3 @@
-// src/pages/Business/BusinessForm.jsx
 import { useState, useEffect } from 'react'
 import api from '../../services/api'
 

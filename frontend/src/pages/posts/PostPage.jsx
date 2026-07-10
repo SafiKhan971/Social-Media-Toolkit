@@ -21,7 +21,7 @@ export default function PostPage() {
           <button
             onClick={() => setActiveTab('generate')}
             className={`flex-1 px-4 py-3 text-sm font-medium ${activeTab === 'generate'
-              ? 'border-b-2 border-green-500 text-green-600'
+              ? 'border-b-2 border-green-500 text-green-600 cursor-pointer'
               : 'text-gray-500'
               }`}
           >
@@ -33,7 +33,7 @@ export default function PostPage() {
               setActiveTab('all')
             }}
             className={`flex-1 px-4 py-3 text-sm font-medium ${activeTab === 'all'
-              ? 'border-b-2 border-green-500 text-green-600'
+              ? 'border-b-2 border-green-500 text-green-600 cursor-pointer'
               : 'text-gray-500'
               }`}
           >
