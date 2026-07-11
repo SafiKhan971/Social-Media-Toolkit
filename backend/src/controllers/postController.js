@@ -1,11 +1,13 @@
 import axios from 'axios'
 import Business from '../models/Business.js'
 import Post from '../models/Post.js'
-import { generatePostImage } from '../utils/post-designs/general/generatePostImage.js'
-import { classicPost } from '../utils/post-designs/package/classicPost.js'
+import { generateQuoteImage } from '../utils/generateQuoteImage.js'
+import { generateOfferImage } from '../utils/generateOfferImage.js'
+import { generateTipImage } from '../utils/generateTipImage.js'
+import { generateAnnouncementImage } from '../utils/generateAnnouncementImage.js'
+import { generateBeforeAfterImage } from '../utils/generateBeforeAfterImage.js'
+import { generateText } from '../utils/generateText.js'
 import { generateCaption } from '../utils/generateCaption.js'
-import { generateTagline } from '../utils/generateTagline.js'
-import { generateQuote } from '../utils/generateQuote.js'
 import path from 'path'
 import Package from '../models/Package.js'
 import postRequest from '../requests/postRequest.js'
@@ -16,20 +18,17 @@ function getFallbackImage() {
 
 export async function getBusinessImages(query, count = 10) {
   try {
-    const response = await axios.get(
-      'https://api.unsplash.com/search/photos',
-      {
-        params: {
-          query,
-          order_by: 'relevant',
-          per_page: count,
-          orientation: 'squarish',
-        },
-        headers: {
-          Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
-        },
-      }
-    )
+    const response = await axios.get('https://api.unsplash.com/search/photos', {
+      params: {
+        query,
+        order_by: 'relevant',
+        per_page: count,
+        orientation: 'squarish',
+      },
+      headers: {
+        Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
+      },
+    })
 
     const images = response.data.results || []
 
@@ -49,7 +48,9 @@ export async function getBusinessImages(query, count = 10) {
 // generate package posts
 export async function generatePosts(req, res) {
   try {
-    const { businessId, type, packageIds, numberOfPosts } = req.body
+    const { businessId, type, packageIds, numberOfPosts, description } = req.body
+    const beforeImage = req.files?.beforeImage?.[0]
+    const afterImage = req.files?.afterImage?.[0]
 
     // Validation
     postRequest({
@@ -57,14 +58,18 @@ export async function generatePosts(req, res) {
       type,
       packageIds,
       numberOfPosts,
+      description,
+      beforeImage: beforeImage ? beforeImage.path : null,
+      afterImage: afterImage ? afterImage.path : null,
     })
+
+    
 
     // Prepare data
     const business = await Business.findById(businessId)
     const imageQuery = `${business.category}`
-    const tagline = await generateTagline(business)
+    const text = await generateText(business, type)
     const caption = await generateCaption(business)
-    const quote = await generateQuote(business)
     const images = await getBusinessImages(imageQuery, Math.max(numberOfPosts, 10))
 
     // Generate posts
@@ -74,31 +79,41 @@ export async function generatePosts(req, res) {
 
     for (let i = 0; i < numberOfPosts; i++) {
       try {
-
         const image = images.length > 0 ? images[i % images.length] : null
         const backgroundUrl = image?.urls?.regular || image?.urls?.small
 
-        const logoPath = business?.logo ? path.join(
-          process.cwd(),
-          business.logo.replace(/^\//, '')
-        )
-          : null
-
-        if (type === '1') {
-           imagePath = await generatePostImage({
+        if (type === 'quote') {
+          imagePath = await generateQuoteImage({
             business: business,
-            description: quote,
-            logoUrl: logoPath,
+            description: text,
+            backgroundUrl,
+          })
+        } else if (type === 'tip') {
+          imagePath = await generateTipImage({
+            business: business,
+            description: text,
+            backgroundUrl,
+          })
+        } else if (type === 'announcement') {
+          imagePath = await generateAnnouncementImage({
+            business: business,
+            description: description,
+            backgroundUrl,
+          })
+        } else if (type === 'before_after') {
+          imagePath = await generateBeforeAfterImage({
+            business: business,
+            beforeImage: beforeImage,
+            afterImage: afterImage,
             backgroundUrl,
           })
         } else {
           const packages = await Package.find({ _id: { $in: packageIds } })
-          imagePath = await classicPost({
+          imagePath = await generateOfferImage({
             business: business,
-            tagline: tagline,
+            tagline: text,
             packages: packages,
-            logoUrl: logoPath,
-            backgroundUrl
+            backgroundUrl,
           })
         }
 
@@ -160,7 +175,7 @@ export async function savePosts(req, res) {
       })
     }
 
-    const records = posts.map((post) => ({
+    const records = posts.map(post => ({
       businessId,
       imageUrl: post.imageUrl,
       caption: post.caption,
@@ -186,11 +201,7 @@ export async function getPosts(req, res) {
 
     const skip = (page - 1) * limit
 
-    const posts = await Post.find()
-      .populate('businessId', 'name')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
+    const posts = await Post.find().populate('businessId', 'name').sort({ createdAt: -1 }).skip(skip).limit(limit)
 
     const total = await Post.countDocuments()
 
@@ -219,5 +230,3 @@ export async function deletePost(req, res) {
     res.status(500).json({ message: err.message })
   }
 }
-
-

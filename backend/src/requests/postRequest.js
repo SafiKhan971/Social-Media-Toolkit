@@ -1,4 +1,4 @@
-export default function postRequest({ businessId, type, packageIds, numberOfPosts }) {
+export default function postRequest({ businessId, type, packageIds, numberOfPosts, description, beforeImage, afterImage }) {
     if (!businessId) {
         throw new Error('Business is required')
     }
@@ -13,7 +13,19 @@ export default function postRequest({ businessId, type, packageIds, numberOfPost
         ...(Array.isArray(packageIds) ? packageIds : []),
     ]
 
-    if (type === '2' && !ids.length) {
-        throw new Error('At least one package is required')
+    if (type === 'offer' && !ids.length) {
+        throw new Error('At least one offer is required')
+    }
+
+    if (type === 'announcement' && !description) {
+        throw new Error('Description is required')
+    }
+
+    if (type === 'before_after' && !beforeImage) {
+        throw new Error('Before image is required')
+    }
+
+    if (type === 'before_after' && !afterImage) {
+        throw new Error('After image is required')
     }
 }
