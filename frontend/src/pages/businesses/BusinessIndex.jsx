@@ -56,7 +56,7 @@ export default function BusinessIndex() {
     async function fetchBusinesses(page = 1) {
         try {
             setLoading(true)
-            const { data } = await api.get(`${apiUrl}/businesses?page=${page}&limit=6`)
+            const { data } = await api.get(`${apiUrl}/businesses?page=${page}&limit=5`)
             setBusinesses(data.businesses)
             setCurrentPage(data.currentPage)
             setTotalPages(data.totalPages)
@@ -185,8 +185,9 @@ export default function BusinessIndex() {
                                             <TableBody>
                                                 {businesses.map((business, index) => (
                                                     <TableRow key={business._id} className="text-sm">
-                                                        <TableCell className="whitespace-nowrap">{index + 1}</TableCell>
-                                                        <TableCell className="font-medium text-title-50 whitespace-nowrap">
+                                                    <TableCell className="whitespace-nowrap">
+                                                         {(currentPage - 1) * 5 + index + 1}
+                                                    </TableCell>                                                        <TableCell className="font-medium text-title-50 whitespace-nowrap">
                                                             {business.name}
                                                         </TableCell>
                                                         <TableCell>

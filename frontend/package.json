@@ -36,5 +36,12 @@
     "globals": "^17.6.0",
     "tailwindcss": "^4.3.1",
     "vite": "^8.0.12"
+  },
+  "overrides": {
+    "polotno": {
+      "react": "^19",
+      "react-dom": "^19",
+      "react-konva": "^19.0.3"
+    }
   }
 }
