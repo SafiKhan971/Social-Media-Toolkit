@@ -2,9 +2,10 @@ import { createCanvas, loadImage } from 'canvas'
 import fs from 'fs'
 import path from 'path'
 
-export async function classicPost({ business, tagline, packages, logoUrl, backgroundUrl}) {
+export async function generateOfferImage({ business, tagline, packages, backgroundUrl}) {
 
   const businessName = business.name
+  const logoUrl = business?.logo ? path.join(process.cwd(), business.logo.replace(/^\//, '')) : null
   const phones = business.phones || []
   const website = business.website || ''
   const email = business.email || ''
@@ -38,7 +39,7 @@ export async function classicPost({ business, tagline, packages, logoUrl, backgr
 
   // Tagline
   if (tagline) {
-    ctx.font = '28px Arial'
+    ctx.font = 'bold italic 28px Times New Roman'
     ctx.fillStyle = '#f5f5f5'
     wrapTextCenter(ctx, tagline, width / 2, 135, 700, 36)
   }

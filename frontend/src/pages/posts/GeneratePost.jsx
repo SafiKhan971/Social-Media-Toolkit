@@ -10,6 +10,9 @@ export default function GeneratePost() {
   const [numberOfPosts, setNumberOfPosts] = useState(1)
   const [businesses, setBusinesses] = useState([])
   const [packages, setPackages] = useState([])
+  const [description, setDescription] = useState('')
+  const [beforeImage, setBeforeImage] = useState(null)
+  const [afterImage, setAfterImage] = useState(null)
   const [loading, setLoading] = useState(true)
   const [generatedPosts, setGeneratedPosts] = useState([])
   const [previewMode, setPreviewMode] = useState(false)
@@ -18,9 +21,15 @@ export default function GeneratePost() {
   const apiUrl = import.meta.env.VITE_API_BASE_URL
 
   const types = [
-    { _id: 1, name: 'General' },
-    { _id: 2, name: 'Package' },
+    { id: 'quote', label: 'Quote' },
+    { id: 'offer', label: 'Offer' },
+    { id: 'tip', label: 'Tip' },
+    { id: 'announcement', label: 'Announcement' },
+    { id: 'before_after', label: 'Before & After' },
+    { id: 'seasonal', label: 'Seasonal' },
   ]
+
+  console.log('selected type', selectedType)
 
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -55,7 +64,7 @@ export default function GeneratePost() {
   }, [])
 
   useEffect(() => {
-    if (selectedType === '2' && selectedBusiness) {
+    if (selectedType === 'offer' && selectedBusiness) {
       fetchPackages(selectedBusiness)
     } else {
       setPackages([])
@@ -85,11 +94,29 @@ export default function GeneratePost() {
     try {
       setLoading(true)
 
-      const { data } = await api.post(`${apiUrl}/posts/generate-posts`, {
-        businessId: selectedBusiness,
-        type: selectedType,
-        packageIds: selectedType === '2' ? selectedPackages : null,
-        numberOfPosts,
+      const formData = new FormData()
+
+      formData.append('businessId', selectedBusiness)
+      formData.append('type', selectedType)
+      formData.append('numberOfPosts', numberOfPosts)
+
+      if (selectedType === 'offer') {
+        selectedPackages.forEach(id => formData.append('packageIds[]', id))
+      }
+
+      if (selectedType === 'announcement') {
+        formData.append('description', description)
+      }
+
+      if (selectedType === 'before_after') {
+        formData.append('beforeImage', beforeImage)
+        formData.append('afterImage', afterImage)
+      }
+
+      const { data } = await api.post(`${apiUrl}/posts/generate-posts`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       })
 
       setGeneratedPosts(data.posts)
@@ -155,24 +182,81 @@ export default function GeneratePost() {
               </option>
 
               {types.map(type => (
-                <option key={type._id} value={type._id}>
-                  {type.name}
+                <option key={type.id} value={type.id}>
+                  {type.label}
                 </option>
               ))}
             </select>
           </div>
 
+          {/* Description */}
+          {selectedType === 'announcement' && (
+            <div>
+              <label className='mb-1 block text-sm font-bold mt-3'>Description</label>
+              <textarea
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                className='w-full rounded-md border px-3 py-2'
+                rows={4}
+              />
+            </div>
+          )}
+
+          {/* Before Image */}
+          {selectedType === 'before_after' && (
+            <div>
+              <label className='mb-1 block text-sm font-bold mt-3'>Before Image</label>
+              <input
+                type='file'
+                accept='image/*'
+                className='w-full rounded-md border px-3 py-2 cursor-pointer'
+                onChange={e => setBeforeImage(e.target.files[0])}
+              />
+
+              {/* Before Image Preview */}
+              <div className='mt-2'>
+                <img
+                  src={beforeImage ? URL.createObjectURL(beforeImage) : ''}
+                  alt='Before'
+                  className='h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm'
+                />
+              </div>
+            </div>
+          )}
+
+          {/* After Image */}
+          {selectedType === 'before_after' && (
+            <div>
+              <label className='mb-1 block text-sm font-bold mt-3'>After Image</label>
+              <input
+                type='file'
+                accept='image/*'
+                className='w-full rounded-md border px-3 py-2 cursor-pointer'
+                onChange={e => setAfterImage(e.target.files[0])}
+              />
+
+              {/* After Image Preview */}
+              <div className='mt-2'>
+                <img
+                  src={afterImage ? URL.createObjectURL(afterImage) : ''}
+                  alt='After'
+                  className='h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm'
+                />
+              </div>
+            </div>
+          )}
+
           {/* Packages */}
-          {selectedType === '2' && (
+          {selectedType === 'offer' && (
             <div ref={dropdownRef}>
-              <label className='mb-1 block text-sm font-bold mt-3'> Select Packages </label>
+              <label className='mb-1 block text-sm font-bold mt-3'> Select Offers </label>
               <div
                 role='button'
                 onClick={() => setIsOpen(!isOpen)}
                 className='flex w-full items-center justify-between rounded-md border px-3 py-2 bg-white'>
                 <div className='flex flex-1 flex-wrap gap-2'>
                   {selectedPackages.length === 0 ? (
-                    <span className='text-gray-500'>Select packages</span>
+                    <span className='text-gray-500'>Select Offers</span>
                   ) : (
                     selectedPackages.map(id => {
                       const pkg = packages.find(p => p._id === id)
@@ -204,7 +288,7 @@ export default function GeneratePost() {
                   <div className='p-2 border-b'>
                     <input
                       type='text'
-                      placeholder='Search package...'
+                      placeholder='Search offer...'
                       value={search}
                       onChange={e => setSearch(e.target.value)}
                       className='w-full rounded border px-3 py-2 outline-none'

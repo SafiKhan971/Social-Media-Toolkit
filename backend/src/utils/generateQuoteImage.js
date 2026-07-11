@@ -2,18 +2,18 @@ import { createCanvas, loadImage } from 'canvas'
 import fs from 'fs'
 import path from 'path'
 
-export async function generatePostImage({
+export async function generateQuoteImage({
   business,
   description,
-  logoUrl,
   backgroundUrl,
 }) {
-
   const businessName = business.name
+  const logoUrl = business?.logo ? path.join(process.cwd(), business.logo.replace(/^\//, '')) : null
   const phones = business.phones || []
   const website = business.website || ''
   const email = business.email || ''
   const officeAddress = business.officeAddress || ''
+  
 
   const width = 1080
   const height = 1080
