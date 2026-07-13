@@ -41,10 +41,11 @@ export async function generateBeforeAfterImage({ business, description, backgrou
   ctx.textAlign = 'center'
   ctx.fillText(businessName, width / 2, 90)
 
-  // Heading
-  ctx.fillStyle = '#FFC107'
-  ctx.font = 'bold 34px Arial'
-  ctx.fillText('Before & After', width / 2, 350)
+    // Description
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 36px Arial'
+
+  ctx.fillText('See the Amazing Transformation!', width / 2, 150)
 
   // Divider
   ctx.strokeStyle = '#ffffff'
@@ -75,12 +76,12 @@ export async function generateBeforeAfterImage({ business, description, backgrou
   // Label "BEFORE"
   ctx.fillStyle = '#ffffff'
   ctx.font = 'bold 38px Arial'
-  ctx.fillText('BEFORE', 290, 220)
+  ctx.fillText('BEFORE', 290, 230)
 
   // Label "AFTER"
   ctx.fillStyle = '#ffffff'
   ctx.font = 'bold 38px Arial'
-  ctx.fillText('AFTER', 790, 220)
+  ctx.fillText('AFTER', 790, 230)
 
 
   // Draw the before and after images with rounded corners
@@ -121,12 +122,6 @@ export async function generateBeforeAfterImage({ business, description, backgrou
     const img = await loadImage(afterImageUrl)
     drawCoverImage(ctx, img, afterX, afterY, imageWidth, imageHeight)
   }
-
-  // Description
-  ctx.fillStyle = '#ffffff'
-  ctx.font = 'bold 36px Arial'
-
-  ctx.fillText('See the Amazing Transformation!', width / 2, 930)
 
   // Bottom Call To Action
   ctx.textAlign = 'center'

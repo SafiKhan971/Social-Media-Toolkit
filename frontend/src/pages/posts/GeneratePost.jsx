@@ -159,7 +159,7 @@ export default function GeneratePost() {
             <select
               value={selectedBusiness}
               onChange={e => setSelectedBusiness(e.target.value)}
-              className='w-full rounded-md border px-3 py-2'>
+              className='w-full rounded-md border px-3 py-2 cursor-pointer'>
               <option value='' disabled>
                 Select Business
               </option>
@@ -176,7 +176,7 @@ export default function GeneratePost() {
           <div>
             <label className='mb-1 block text-sm font-bold mt-3'>Select Type</label>
 
-            <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className='w-full rounded-md border px-3 py-2'>
+            <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className='w-full rounded-md border px-3 py-2 cursor-pointer'>
               <option value='' disabled>
                 Select Type
               </option>
@@ -253,7 +253,7 @@ export default function GeneratePost() {
               <div
                 role='button'
                 onClick={() => setIsOpen(!isOpen)}
-                className='flex w-full items-center justify-between rounded-md border px-3 py-2 bg-white'>
+                className='flex w-full items-center justify-between rounded-md border px-3 py-2 bg-white cursor-pointer'>
                 <div className='flex flex-1 flex-wrap gap-2'>
                   {selectedPackages.length === 0 ? (
                     <span className='text-gray-500'>Select Offers</span>
