@@ -13,6 +13,7 @@ export default function GeneratePost() {
   const [description, setDescription] = useState('')
   const [beforeImage, setBeforeImage] = useState(null)
   const [afterImage, setAfterImage] = useState(null)
+  const [selectedSeasonalType, setSelectedSeasonalType] = useState('')
   const [loading, setLoading] = useState(true)
   const [generatedPosts, setGeneratedPosts] = useState([])
   const [previewMode, setPreviewMode] = useState(false)
@@ -29,7 +30,12 @@ export default function GeneratePost() {
     { id: 'seasonal', label: 'Seasonal' },
   ]
 
-  console.log('selected type', selectedType)
+  const seasonalTypes = [
+    { id: 'new_year', label: 'New Year' },
+    { id: 'eid_mubarak', label: "Eid Mubarak" },
+    { id: 'independence_day', label: "Independence Day" },
+    { id: 'christmas', label: "Christmas" },
+  ]
 
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -113,6 +119,10 @@ export default function GeneratePost() {
         formData.append('afterImage', afterImage)
       }
 
+      if (selectedType === 'seasonal') {
+        formData.append('seasonalType', selectedSeasonalType)
+      }
+
       const { data } = await api.post(`${apiUrl}/posts/generate-posts`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -159,7 +169,7 @@ export default function GeneratePost() {
             <select
               value={selectedBusiness}
               onChange={e => setSelectedBusiness(e.target.value)}
-              className='w-full rounded-md border px-3 py-2'>
+              className='w-full rounded-md border px-3 py-2 cursor-pointer'>
               <option value='' disabled>
                 Select Business
               </option>
@@ -176,7 +186,7 @@ export default function GeneratePost() {
           <div>
             <label className='mb-1 block text-sm font-bold mt-3'>Select Type</label>
 
-            <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className='w-full rounded-md border px-3 py-2'>
+            <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className='w-full rounded-md border px-3 py-2 cursor-pointer'>
               <option value='' disabled>
                 Select Type
               </option>
@@ -188,6 +198,25 @@ export default function GeneratePost() {
               ))}
             </select>
           </div>
+
+          {/* Seasonal Type */}
+          {selectedType === 'seasonal' && (
+            <div>
+              <label className='mb-1 block text-sm font-bold mt-3'>Select Seasonal Type</label>
+
+            <select value={selectedSeasonalType} onChange={e => setSelectedSeasonalType(e.target.value)} className='w-full rounded-md border px-3 py-2 cursor-pointer'>
+              <option value='' disabled>
+                Select Seasonal Type
+              </option>
+
+              {seasonalTypes.map(type => (
+                <option key={type.id} value={type.id}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          )}
 
           {/* Description */}
           {selectedType === 'announcement' && (
@@ -253,7 +282,7 @@ export default function GeneratePost() {
               <div
                 role='button'
                 onClick={() => setIsOpen(!isOpen)}
-                className='flex w-full items-center justify-between rounded-md border px-3 py-2 bg-white'>
+                className='flex w-full items-center justify-between rounded-md border px-3 py-2 bg-white cursor-pointer'>
                 <div className='flex flex-1 flex-wrap gap-2'>
                   {selectedPackages.length === 0 ? (
                     <span className='text-gray-500'>Select Offers</span>

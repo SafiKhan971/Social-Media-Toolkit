@@ -1,6 +1,6 @@
 import { groqClient } from './groqClient.js'
 
-export async function generateText(business, type) {
+export async function generateText(business, type, seasonalType) {
   if(type === 'announcement' || type === 'before_after') {
     return `${type} type does not require text generation.`
   }
@@ -29,6 +29,9 @@ export async function generateText(business, type) {
         - Do NOT advertise, sell, or mention offers.
         - Do NOT use hashtags, emojis, or quotation marks.
         - Return only the tip.`
+    } else if (type === 'seasonal') {
+      prompt = `You are a social media copywriter. Write ONE short, engaging tagline for a seasonal post (maximum 12 words) related to the seasonal type.
+        Seasonal Type: ${seasonalType}`
     }
 
     const completion = await groqClient.chat.completions.create({
