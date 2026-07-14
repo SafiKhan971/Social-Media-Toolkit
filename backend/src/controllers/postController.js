@@ -6,6 +6,7 @@ import { generateOfferImage } from '../utils/generateOfferImage.js'
 import { generateTipImage } from '../utils/generateTipImage.js'
 import { generateAnnouncementImage } from '../utils/generateAnnouncementImage.js'
 import { generateBeforeAfterImage } from '../utils/generateBeforeAfterImage.js'
+import { generateSeasonalImage } from '../utils/generateSeasonalImage.js'
 import { generateText } from '../utils/generateText.js'
 import { generateCaption } from '../utils/generateCaption.js'
 import path from 'path'
@@ -48,7 +49,7 @@ export async function getBusinessImages(query, count = 10) {
 // generate package posts
 export async function generatePosts(req, res) {
   try {
-    const { businessId, type, packageIds, numberOfPosts, description } = req.body
+    const { businessId, type, packageIds, numberOfPosts, description, seasonalType } = req.body
     const beforeImage = req.files?.beforeImage?.[0]
     const afterImage = req.files?.afterImage?.[0]
 
@@ -59,16 +60,15 @@ export async function generatePosts(req, res) {
       packageIds,
       numberOfPosts,
       description,
+      seasonalType,
       beforeImage: beforeImage ? beforeImage.path : null,
       afterImage: afterImage ? afterImage.path : null,
     })
 
-    
-
     // Prepare data
     const business = await Business.findById(businessId)
     const imageQuery = `${business.category}`
-    const text = await generateText(business, type)
+    const text = await generateText(business, type, seasonalType)
     const caption = await generateCaption(business)
     const images = await getBusinessImages(imageQuery, Math.max(numberOfPosts, 10))
 
@@ -107,7 +107,15 @@ export async function generatePosts(req, res) {
             afterImage: afterImage,
             backgroundUrl,
           })
-        } else {
+        } else if (type === 'seasonal') {
+          imagePath = await generateSeasonalImage({
+            business: business,
+            tagline: text,
+            seasonalType: seasonalType,
+            backgroundUrl,
+          })
+        }
+         else {
           const packages = await Package.find({ _id: { $in: packageIds } })
           imagePath = await generateOfferImage({
             business: business,

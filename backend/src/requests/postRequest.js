@@ -1,4 +1,4 @@
-export default function postRequest({ businessId, type, packageIds, numberOfPosts, description, beforeImage, afterImage }) {
+export default function postRequest({ businessId, type, packageIds, numberOfPosts, description, seasonalType, beforeImage, afterImage }) {
     if (!businessId) {
         throw new Error('Business is required')
     }
@@ -27,5 +27,9 @@ export default function postRequest({ businessId, type, packageIds, numberOfPost
 
     if (type === 'before_after' && !afterImage) {
         throw new Error('After image is required')
+    }
+
+    if (type === 'seasonal' && !seasonalType) {
+        throw new Error('Seasonal type is required')
     }
 }
