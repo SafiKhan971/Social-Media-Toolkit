@@ -46,7 +46,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, sideLayout =
         type="button"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
-        className="flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
       >
         <ArrowLeft className="h-4 w-4" />
         Previous
@@ -64,7 +64,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, sideLayout =
                 key={item.key}
                 type="button"
                 onClick={() => onPageChange(item.value)}
-                className={`h-8 w-8 rounded-md text-sm font-medium transition ${
+                className={`h-8 w-8 rounded-md text-sm font-medium transition cursor-pointer ${
                   item.value === currentPage
                     ? "bg-neutral-100 text-neutral-900"
                     : "text-neutral-600 hover:bg-neutral-100"
@@ -78,7 +78,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, sideLayout =
       )}
 
       {sideLayout !== "full" && (
-        <span className="text-sm text-neutral-600">
+        <span className="text-sm text-neutral-600 cursor-pointer">
           Page {currentPage} of {totalPages}
         </span>
       )}
@@ -87,7 +87,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, sideLayout =
         type="button"
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
-        className="flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex items-center gap-1.5 rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
       >
         Next
         <ArrowRight className="h-4 w-4" />

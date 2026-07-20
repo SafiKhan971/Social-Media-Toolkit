@@ -158,7 +158,7 @@ export default function BusinessIndex() {
                                     <h2 className="text-lg font-semibold text-neutral-800">Businesses</h2>
                                     <button
                                         onClick={handleCreateClick}
-                                        className="rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-500 hover:shadow-md"
+                                        className="rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-500 hover:shadow-md cursor-pointer"
                                     >
                                         + Create
                                     </button>
@@ -214,10 +214,10 @@ export default function BusinessIndex() {
                                                         </TableCell>
                                                         <TableCell>
                                                             <DropdownMenu>
-                                                                <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100">
+                                                                <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100 cursor-pointer">
                                                                     <MenuKebab1 className="h-5 w-5 text-neutral-600" />
                                                                 </DropdownMenuTrigger>
-                                                                <DropdownMenuContent placement="bottom end" className="p-2">
+                                                                <DropdownMenuContent placement="bottom end" className="p-2 cursor-pointer">
                                                                     <DropdownMenuItem onClick={() => handleEdit(business)}>
                                                                         ✏️ Edit
                                                                     </DropdownMenuItem>
@@ -235,7 +235,7 @@ export default function BusinessIndex() {
                                             </TableBody>
                                         </TableRoot>
 
-                                        <div className="mt-5">
+                                        <div className="mt-5 cursor-pointer">
                                             <Pagination
                                                 currentPage={currentPage}
                                                 totalPages={totalPages}

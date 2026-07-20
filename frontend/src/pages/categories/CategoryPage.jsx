@@ -187,7 +187,7 @@ export default function CategoryPage() {
                       type="text"
                       value={categoryName}
                       onChange={(e) => setCategoryName(e.target.value)}
-                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
                       placeholder="Enter category name"
                     />
                   </div>
@@ -203,14 +203,14 @@ export default function CategoryPage() {
                             type="text"
                             value={tag}
                             onChange={(e) => handleTagChange(index, e.target.value)}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
                             placeholder="e.g. trending, new, featured"
                           />
                           {tags.length > 1 && (
                             <button
                               type="button"
                               onClick={() => removeTag(index)}
-                              className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50"
+                              className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
                             >
                               ✕
                             </button>
@@ -220,7 +220,7 @@ export default function CategoryPage() {
                       <button
                         type="button"
                         onClick={addTag}
-                        className="mt-1 w-fit rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-100"
+                        className="mt-1 w-fit rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-100 cursor-pointer"
                       >
                         + Add Tag
                       </button>
@@ -231,13 +231,13 @@ export default function CategoryPage() {
                     <button
                       type="button"
                       onClick={resetForm}
-                      className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                      className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 cursor-pointer"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 rounded-md app-gradient px-4 py-2 text-sm font-medium text-white"
+                      className="flex-1 rounded-md app-gradient px-4 py-2 text-sm font-medium text-white cursor-pointer"
                     >
                       {editId ? 'Update' : 'Create'}
                     </button>
@@ -252,7 +252,7 @@ export default function CategoryPage() {
                   </h2>
                   <button
                     onClick={() => setForm(true)}
-                    className="rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:shadow-md"
+                    className="rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:shadow-md cursor-pointer"
                   >
                     + Create
                   </button>
@@ -301,7 +301,7 @@ export default function CategoryPage() {
 
                             <TableCell>
                               <DropdownMenu>
-                                <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100">
+                                <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100 cursor-pointer">
                                   <MenuKebab1 className="h-5 w-5 text-neutral-600" />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent placement="bottom end" className="p-2">
