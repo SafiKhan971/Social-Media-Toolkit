@@ -2,7 +2,7 @@ import { createCanvas, loadImage } from 'canvas'
 import fs from 'fs'
 import path from 'path'
 
-export async function generateOfferImage({ business, tagline, packages, backgroundUrl}) {
+export async function generateOfferImage({ business, description, packages, backgroundUrl}) {
 
   const businessName = business.name
   const logoUrl = business?.logo ? path.join(process.cwd(), business.logo.replace(/^\//, '')) : null
@@ -37,11 +37,11 @@ export async function generateOfferImage({ business, tagline, packages, backgrou
   ctx.textAlign = 'center'
   ctx.fillText(businessName, width / 2, 90)
 
-  // Tagline
-  if (tagline) {
+  // description
+  if (description) {
     ctx.font = 'bold italic 28px Times New Roman'
     ctx.fillStyle = '#f5f5f5'
-    wrapTextCenter(ctx, tagline, width / 2, 135, 700, 36)
+    wrapTextCenter(ctx, description, width / 2, 135, 700, 36)
   }
 
   const packageList = Array.isArray(packages) && packages.length > 0 ? packages : []

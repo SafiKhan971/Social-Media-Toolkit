@@ -4,7 +4,7 @@ import path from 'path'
 
 export async function generateSeasonalImage({
   business,
-  tagline,
+  description,
   backgroundUrl,
   seasonalType
 }) {
@@ -72,7 +72,7 @@ export async function generateSeasonalImage({
   // Description (multi-line)
   ctx.font = 'bold italic 40px Times New Roman'
   ctx.textAlign = 'center'
-  wrapText(ctx, tagline, width / 2, 520, 900, 40)
+  wrapText(ctx, description, width / 2, 520, 900, 40)
 
   // Bottom Call To Action
   ctx.textAlign = 'center'
