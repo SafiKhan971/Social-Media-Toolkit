@@ -12,7 +12,11 @@ const businessSchema = new mongoose.Schema(
       required: [true, 'Business description is required'],
       trim: true,
     },
-  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+    category: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Category', 
+      required: true 
+    },
     services: [
       {
         type: String,
@@ -23,29 +27,31 @@ const businessSchema = new mongoose.Schema(
       type: String, // image URL or uploaded file path
       default: '',
     },
-    phones: [{
-      type:String,
-      trim: true
-    }],
+    phones: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
     website: {
-      type: String
+      type: String,
     },
     email: {
       type: String,
-      
     },
     officeAddress: {
-      type: String
+      type: String,
     },
     socialLinks: [
       {
         platform: { type: String },
-        url: { type: String }
-      }
-    ]
+        url: { type: String },
+      },
+    ],
   },
   {
-    timestamps: true
-  })
+    timestamps: true,
+  }
+)
 
 export default mongoose.model('Business', businessSchema)
