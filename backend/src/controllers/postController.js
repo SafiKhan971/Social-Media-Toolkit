@@ -17,7 +17,7 @@ function getFallbackImage() {
   return 'https://picsum.photos/600/400'
 }
 
-export async function getBusinessImages(query, count = 10) {
+export async function getBusinessImages(query, count = 30) {
   try {
     const response = await axios.get('https://api.unsplash.com/search/photos', {
       params: {
@@ -38,7 +38,11 @@ export async function getBusinessImages(query, count = 10) {
       return [getFallbackImage()]
     }
 
-    return images
+    const shuffledImages = images.sort(() => Math.random() - 0.5)
+
+    return shuffledImages
+
+    // return images
   } catch (err) {
     console.error(err.message)
     console.log('Using fallback image.')
@@ -66,11 +70,11 @@ export async function generatePosts(req, res) {
     })
 
     // Prepare data
-    const business = await Business.findById(businessId)
-    const imageQuery = `${business.category}`
+    const business = await Business.findById(businessId).populate('category')
+    const imageQuery = `${business.category.name}, ${business.category.tags.join(', ')}`
     const text = type === 'announcement' ? description : await generateText(business, type, seasonalType)
     const caption = await generateCaption(business)
-    const images = await getBusinessImages(imageQuery, Math.max(numberOfPosts, 10))
+    const images = await getBusinessImages(imageQuery, 30)
 
     // Generate posts
     const posts = []

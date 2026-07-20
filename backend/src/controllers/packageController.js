@@ -71,12 +71,13 @@ export const getPackage = async (req, res) => {
 
 export const updatePackage = async (req, res) => {
   try {
-    const packageData = await Package.findOneAndUpdate(
-      {
-        _id: req.params.id,
-        // createdBy: req.user.id,
-      },
-      req.body,
+    const updateData = {
+      ...req.body,
+    }
+
+    const packageData = await Package.findByIdAndUpdate(
+        req.params.id,
+        updateData,
       {
         new: true,
       }
