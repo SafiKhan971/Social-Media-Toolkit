@@ -6,6 +6,8 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
     const [businessName, setBusinessName] = useState('')
     const [businessDescription, setBusinessDescription] = useState('')
     const [businessCategory, setBusinessCategory] = useState('')
+      const [categories, setCategories] = useState([])          // 👈 add this
+    const [categoriesLoading, setCategoriesLoading] = useState(true)
     const [businessServices, setBusinessServices] = useState('')
     const [logo, setLogo] = useState(null)
     const [website, setWebsite] = useState('')
@@ -18,6 +20,21 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
     const [socialUrl, setSocialUrl] = useState('')
 
     const editId = business?._id || null
+
+    useEffect(() => {
+        async function fetchCategories() {
+            try {
+                setCategoriesLoading(true)
+                const { data } = await api.get('/categories?limit=100') // saari categories ek sath la lein
+                setCategories(data.categories)
+            } catch (err) {
+                console.error('Categories load nahi hui:', err)
+            } finally {
+                setCategoriesLoading(false)
+            }
+        }
+        fetchCategories()
+    }, [])
 
     // Edit mode hoga to fields fill ho jayengi
     useEffect(() => {
@@ -138,26 +155,22 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                         <label htmlFor="businessCategory" className="mb-1 block text-sm font-medium text-neutral-700">
                             Business Category
                         </label>
-                        <select
-                            id="businessCategory"
-                            type="text"
-                            value={businessCategory}
-                            onChange={(e) => setBusinessCategory(e.target.value)}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
-                            placeholder="Enter business category"
-                        >
-                            <option value="">Select a category</option>
-                            <option value="Retail">Retail</option>
-                            <option value="Restaurant">Restaurant</option>
-                            <option value="Healthcare">Healthcare</option>
-                            <option value="Real Estate">Real Estate</option>
-                            <option value="Education">Education</option>
-                            <option value="Technology">Technology</option>
-                            <option value="Automotive">Automotive</option>
-                            <option value="Beauty & Wellness">Beauty & Wellness</option>
-                            <option value="Professional Services">Professional Services</option>
-                            <option value="Other">Other</option>
-                        </select>
+                      <select
+    id="businessCategory"
+    value={businessCategory}
+    onChange={(e) => setBusinessCategory(e.target.value)}
+    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+    disabled={categoriesLoading}
+>
+    <option value="">
+        {categoriesLoading ? 'Loading categories...' : 'Select a category'}
+    </option>
+    {categories.map((cat) => (
+        <option key={cat._id} value={cat._id}>
+            {cat.name}
+        </option>
+    ))}
+</select>
                     </div>
 
                     <div>
