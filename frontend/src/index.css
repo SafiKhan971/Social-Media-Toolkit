@@ -1,6 +1,7 @@
 @import "tailwindcss";
-@utility app-gradient{
-    @apply bg-gradient-to-br from-green-500 to-green-700;
+
+@utility app-gradient {
+  @apply bg-gradient-to-br from-green-500 to-green-700;
 }
 
 
@@ -11,4 +12,227 @@ div[style*="background-color: red"][style*="color: white"] {
 
 div:has(> a[href*="polotno.com/contact"]) {
   display: none !important;
+}
+
+/* ==========================================================================
+   THEME STYLES (Combo 1, 2, 3)
+   ========================================================================== */
+
+/* Theme Variables mapping */
+html[data-theme="combo1"] {
+  --theme-bg: #B8F7E4;
+  --theme-card: #25272C;
+  --theme-bg-text: #111827;
+  /* Dark charcoal text for light background */
+  --theme-card-text: #ffffff;
+  /* White text for dark cards */
+  --theme-card-text-muted: rgba(255, 255, 255, 0.65);
+  --theme-border: #3c3f47;
+  --theme-bg-rgb: 184, 247, 228;
+  --theme-card-rgb: 37, 39, 44;
+  --table-header-text: #000000;
+  /* Table headings black text */
+}
+
+html[data-theme="combo2"] {
+  --theme-bg: #FFF4D6;
+  --theme-card: #FC6C26;
+  --theme-bg-text: #171717;
+  /* White text for orange background */
+  --theme-card-text: #ffffff;
+  /* Black text for light peach cards */
+  --theme-card-text-muted: rgba(23, 23, 23, 0.65);
+  --theme-border: #ebdcb5;
+  --theme-bg-rgb: 255, 244, 214;
+  --theme-card-rgb: 252, 108, 38;
+  --table-header-text: #000000;
+  /* Table headings black text */
+}
+
+html[data-theme="combo3"] {
+  --theme-bg: #F4F6E8;
+  --theme-card: #5F8651;
+  --theme-bg-text: #171717;
+  /* Black text for off-white background */
+  --theme-card-text: #ffffff;
+  /* White text for dark green cards */
+  --theme-card-text-muted: rgba(255, 255, 255, 0.65);
+  --theme-border: #4d6d42;
+  --theme-bg-rgb: 244, 246, 232;
+  --table-header-text: #000000;
+  /* Table headings black text */
+  --theme-card-rgb: 95, 134, 81;
+}
+
+/* Global / Body background overrides */
+html[data-theme] body {
+  background-color: var(--theme-bg) !important;
+}
+
+/* Background overrides for app-gradient */
+html[data-theme] .app-gradient,
+html[data-theme] .min-h-screen.app-gradient {
+  background: var(--theme-bg) !important;
+  background-image: none !important;
+  color: var(--theme-bg-text) !important;
+}
+
+/* Card and Navigation Container overrides */
+html[data-theme] .bg-white,
+html[data-theme] nav.bg-white,
+html[data-theme] div[class*="bg-white"] {
+  background-color: var(--theme-card) !important;
+  color: var(--theme-card-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+/* Glassmorphism backgrounds (HomePage/Editor) */
+html[data-theme] .bg-white\/10 {
+  background-color: rgba(var(--theme-card-rgb), 0.15) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(var(--theme-card-rgb), 0.2) !important;
+}
+
+/* Neutral components inside cards (like lists, badges) */
+html[data-theme] .bg-neutral-100,
+html[data-theme] div.bg-neutral-100 {
+  background-color: rgba(var(--theme-bg-rgb), 0.12) !important;
+  color: var(--theme-card-text) !important;
+}
+
+html[data-theme] .hover\:bg-neutral-100:hover,
+html[data-theme] .hover\:bg-gray-100:hover {
+  background-color: rgba(var(--theme-bg-rgb), 0.2) !important;
+}
+
+/* Inactive links in navbar */
+html[data-theme] nav a:not(.app-gradient) {
+  color: var(--theme-card-text-muted) !important;
+}
+
+html[data-theme] nav a:not(.app-gradient):hover {
+  background-color: rgba(var(--theme-bg-rgb), 0.15) !important;
+  color: var(--theme-card-text) !important;
+}
+
+/* Text color overrides inside theme backgrounds (outside cards) */
+html[data-theme] .app-gradient .text-white,
+html[data-theme] .app-gradient h1.text-white,
+html[data-theme] .app-gradient p.text-white,
+html[data-theme] .app-gradient p[class*="text-white"],
+html[data-theme] .app-gradient div.text-white {
+  color: var(--theme-bg-text) !important;
+}
+
+html[data-theme] .app-gradient .text-white\/90 {
+  color: var(--theme-bg-text) !important;
+  opacity: 0.9;
+}
+
+html[data-theme] .app-gradient .text-white\/80 {
+  color: var(--theme-bg-text) !important;
+  opacity: 0.8;
+}
+
+/* Standard elements inside cards inherit theme text color */
+html[data-theme] .bg-white p,
+html[data-theme] .bg-white span,
+html[data-theme] .bg-white h1,
+html[data-theme] .bg-white h2,
+html[data-theme] .bg-white h3,
+html[data-theme] .bg-white h4,
+html[data-theme] .bg-white h5,
+html[data-theme] .bg-white h6,
+html[data-theme] .bg-white li,
+html[data-theme] .bg-white td,
+html[data-theme] .bg-white th,
+html[data-theme] .bg-white label,
+html[data-theme] .bg-white input {
+  color: var(--theme-card-text) !important;
+}
+
+/* Strong text colors specifically inside cards */
+html[data-theme] .bg-white .text-neutral-800,
+html[data-theme] .bg-white .text-gray-800,
+html[data-theme] .bg-white .text-neutral-900,
+html[data-theme] .bg-white .text-title-50,
+html[data-theme] .bg-white .font-semibold {
+  color: var(--theme-card-text) !important;
+}
+
+/* Muted text colors specifically inside cards */
+html[data-theme] .bg-white .text-neutral-500,
+html[data-theme] .bg-white .text-neutral-600,
+html[data-theme] .bg-white .text-neutral-700,
+html[data-theme] .bg-white .text-gray-500,
+html[data-theme] .bg-white .text-gray-600,
+html[data-theme] .bg-white .text-gray-700,
+html[data-theme] .bg-white .text-text-100 {
+  color: var(--theme-card-text-muted) !important;
+}
+
+/* Form input, select, textarea styling */
+html[data-theme] input,
+html[data-theme] select,
+html[data-theme] textarea {
+  background-color: rgba(var(--theme-card-rgb), 0.25) !important;
+  color: var(--theme-card-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+html[data-theme] input::placeholder,
+html[data-theme] textarea::placeholder {
+  color: var(--theme-card-text-muted) !important;
+  opacity: 0.8;
+}
+
+html[data-theme] select option {
+  background-color: var(--theme-card) !important;
+  color: var(--theme-card-text) !important;
+}
+
+/* Border overrides */
+html[data-theme] .border-neutral-300,
+html[data-theme] .border-neutral-200,
+html[data-theme] .border,
+html[data-theme] .border-b {
+  border-color: var(--theme-border) !important;
+}
+
+/* Buttons directly on background (like Try Generator on HomePage) */
+html[data-theme] .app-gradient a.bg-white,
+html[data-theme] .app-gradient button.bg-white {
+  background-color: var(--theme-card) !important;
+  color: var(--theme-card-text) !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+html[data-theme] .app-gradient a.border-white,
+html[data-theme] .app-gradient button.border-white {
+  border-color: var(--theme-bg-text) !important;
+  color: var(--theme-bg-text) !important;
+}
+
+/* Specific theme request overrides */
+
+/* Badges background color to Orange (#FC6C26) for combo2 */
+html[data-theme="combo2"] .bg-green-100,
+html[data-theme="combo2"] .bg-yellow-100,
+html[data-theme="combo2"] .bg-red-100,
+html[data-theme="combo2"] .bg-blue-100,
+html[data-theme="combo2"] .bg-neutral-100 {
+  background-color: #FC6C26 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="combo2"] .text-green-700,
+html[data-theme="combo2"] .text-yellow-700,
+html[data-theme="combo2"] .text-red-700,
+html[data-theme="combo2"] .text-blue-700,
+html[data-theme="combo2"] .text-neutral-700 {
+  color: #ffffff !important;
+}
+
+.black-text {
+  color: #000000 !important;
 }
