@@ -62,7 +62,7 @@ export function DropdownMenuItem({ children, onClick, className = "" }) {
         onClick?.()
         setOpen(false)
       }}
-      className={`block w-full rounded-md px-3 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-100 ${className}`}
+      className={`block w-full rounded-md px-3 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-100 cursor-pointer ${className}`}
     >
       {children}
     </button>

@@ -40,8 +40,8 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
     useEffect(() => {
         if (business) {
             setBusinessName(business.name)
-            setBusinessCategory(business.category)
-            setBusinessServices((business.services || []).join(', '))
+ setBusinessCategory(business.category?._id || business.category || '')
+             setBusinessServices((business.services || []).join(', '))
             setWebsite(business.website || '')
             setBusinessEmail(business.email || '')
             setOfficeAddress(business.officeAddress || '')
@@ -126,13 +126,13 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="inline-flex items-center gap-2 whitespace-nowrap rounded-md app-gradient px-3 py-2 text-sm font-medium text-white hover:app-gradient focus:outline-none"
+                    className="inline-flex items-center gap-2 whitespace-nowrap rounded-md app-gradient px-3 py-2 text-sm font-medium text-white hover:app-gradient focus:outline-none cursor-pointer"
 
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    <span>Back</span>
+                    <span >Back</span>
                 </button>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -146,7 +146,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                             type="text"
                             value={businessName}
                             onChange={(e) => setBusinessName(e.target.value)}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
                             placeholder="Enter business name"
                         />
                     </div>
@@ -159,7 +159,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
     id="businessCategory"
     value={businessCategory}
     onChange={(e) => setBusinessCategory(e.target.value)}
-    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
     disabled={categoriesLoading}
 >
     <option value="">
@@ -182,7 +182,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                             type="url"
                             value={website}
                             onChange={(e) => setWebsite(e.target.value)}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
                             placeholder="https://example.com"
                         />
                     </div>
@@ -196,7 +196,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                             type="email"
                             value={businessEmail}
                             onChange={(e) => setBusinessEmail(e.target.value)}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
                             placeholder="contact@business.com"
                         />
                     </div>
@@ -209,9 +209,9 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                                 value={phoneInput}
                                 onChange={(e) => setPhoneInput(e.target.value)}
                                 placeholder="+92 300 1234567"
-                                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none cursor-pointer"
                             />
-                            <button type="button" onClick={addPhone} className="rounded-md app-gradient px-4 text-white">
+                            <button type="button" onClick={addPhone} className="rounded-md app-gradient px-4 text-white cursor-pointer">
                                 Add
                             </button>
                         </div>
@@ -221,7 +221,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                                 {phones.map((phone, index) => (
                                     <div key={index} className="flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm">
                                         <span>{phone}</span>
-                                        <button type="button" onClick={() => removePhone(index)} className="text-red-500">×</button>
+                                        <button type="button" onClick={() => removePhone(index)} className="text-red-500 cursor-pointer">×</button>
                                     </div>
                                 ))}
                             </div>
@@ -234,7 +234,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                             <select
                                 value={socialPlatform}
                                 onChange={(e) => setSocialPlatform(e.target.value)}
-                                className="rounded-md border border-neutral-300 px-2 py-2 text-sm focus:border-green-500 focus:outline-none"
+                                className="rounded-md border border-neutral-300 px-2 py-2 text-sm focus:border-green-500 focus:outline-none cursor-pointer"
                             >
                                 <option value="">Platform</option>
                                 <option value="facebook">Facebook</option>
@@ -251,10 +251,10 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                                 value={socialUrl}
                                 onChange={(e) => setSocialUrl(e.target.value)}
                                 placeholder="https://facebook.com/yourpage"
-                                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none"
+                                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none cursor-pointer"
                             />
 
-                            <button type="button" onClick={addSocialLink} className="rounded-md app-gradient px-4 text-white">
+                            <button type="button" onClick={addSocialLink} className="rounded-md app-gradient px-4 text-white cursor-pointer">
                                 Add
                             </button>
                         </div>
@@ -264,7 +264,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                                 {socialLinks.map((social, index) => (
                                     <div key={index} className="flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm">
                                         <span>{social.platform}: {social.url}</span>
-                                        <button type="button" onClick={() => removeSocialLink(index)} className="text-red-500">×</button>
+                                        <button type="button" onClick={() => removeSocialLink(index)} className="text-red-500 cursor-pointer">×</button>
                                     </div>
                                 ))}
                             </div>
@@ -284,7 +284,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                                 id="businessLogo"
                                 type="file"
                                 accept="image/*"
-                                className="hidden"
+                                className="hidden cursor-pointer"
                                 onChange={(e) => setLogo(e.target.files?.[0] || null)}
                             />
                         </div>
@@ -307,7 +307,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                         value={officeAddress}
                         onChange={(e) => setOfficeAddress(e.target.value)}
                         rows={3}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
                         placeholder="Office address, city, area"
                     />
                 </div>
@@ -318,7 +318,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                         value={businessServices}
                         onChange={(e) => setBusinessServices(e.target.value)}
                         rows={3}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
                         placeholder="Web Development, SEO, Digital Marketing"
                     />
                 </div>
@@ -332,7 +332,7 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                         value={businessDescription}
                         onChange={(e) => setBusinessDescription(e.target.value)}
                         rows={4}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none"
+                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
                         placeholder="Describe the business"
                     />
                 </div>
@@ -341,14 +341,14 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                        className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 cursor-pointer"
                     >
                         Cancel
                     </button>
 
                     <button
                         type="submit"
-                        className="flex-1 rounded-md app-gradient px-4 py-2 text-sm font-medium text-white"
+                        className="flex-1 rounded-md app-gradient px-4 py-2 text-sm font-medium text-white cursor-pointer"
                     >
                         {editId ? 'Update' : 'Create'}
                     </button>
