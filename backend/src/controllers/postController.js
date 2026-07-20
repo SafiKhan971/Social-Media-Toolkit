@@ -68,7 +68,7 @@ export async function generatePosts(req, res) {
     // Prepare data
     const business = await Business.findById(businessId)
     const imageQuery = `${business.category}`
-    const text = await generateText(business, type, seasonalType)
+    const text = type === 'announcement' ? description : await generateText(business, type, seasonalType)
     const caption = await generateCaption(business)
     const images = await getBusinessImages(imageQuery, Math.max(numberOfPosts, 10))
 
@@ -82,47 +82,60 @@ export async function generatePosts(req, res) {
         const image = images.length > 0 ? images[i % images.length] : null
         const backgroundUrl = image?.urls?.regular || image?.urls?.small
 
-        if (type === 'quote') {
-          imagePath = await generateQuoteImage({
-            business: business,
-            description: text,
-            backgroundUrl,
-          })
-        } else if (type === 'tip') {
-          imagePath = await generateTipImage({
-            business: business,
-            description: text,
-            backgroundUrl,
-          })
-        } else if (type === 'announcement') {
-          imagePath = await generateAnnouncementImage({
-            business: business,
-            description: description,
-            backgroundUrl,
-          })
-        } else if (type === 'before_after') {
-          imagePath = await generateBeforeAfterImage({
-            business: business,
-            beforeImage: beforeImage,
-            afterImage: afterImage,
-            backgroundUrl,
-          })
-        } else if (type === 'seasonal') {
-          imagePath = await generateSeasonalImage({
-            business: business,
-            tagline: text,
-            seasonalType: seasonalType,
-            backgroundUrl,
-          })
+        const commonParams = {
+          business,
+          backgroundUrl,
+          description: text,
         }
-         else {
-          const packages = await Package.find({ _id: { $in: packageIds } })
-          imagePath = await generateOfferImage({
-            business: business,
-            tagline: text,
-            packages: packages,
-            backgroundUrl,
-          })
+
+        switch (type) {
+          case 'quote':
+            imagePath = await generateQuoteImage({
+              ...commonParams,
+            })
+            break
+
+          case 'tip':
+            imagePath = await generateTipImage({
+              ...commonParams,
+            })
+            break
+
+          case 'announcement':
+            imagePath = await generateAnnouncementImage({
+              ...commonParams,
+            })
+            break
+
+          case 'before_after':
+            imagePath = await generateBeforeAfterImage({
+              ...commonParams,
+              beforeImage,
+              afterImage,
+            })
+            break
+
+          case 'seasonal':
+            imagePath = await generateSeasonalImage({
+              ...commonParams,
+              seasonalType,
+            })
+            break
+
+          case 'offer': {
+            const packages = await Package.find({
+              _id: { $in: packageIds },
+            })
+
+            imagePath = await generateOfferImage({
+              ...commonParams,
+              packages,
+            })
+            break
+          }
+
+          default:
+            throw new Error(`Unsupported post type: ${type}`)
         }
 
         posts.push({
