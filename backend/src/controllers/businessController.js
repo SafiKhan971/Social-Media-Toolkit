@@ -9,6 +9,7 @@ export async function getBusinesses(req, res) {
     const skip = (page - 1) * limit
 
     const businesses = await Business.find()
+     .populate('category', 'name')
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })

@@ -12,11 +12,7 @@ const businessSchema = new mongoose.Schema(
       required: [true, 'Business description is required'],
       trim: true,
     },
-    category: {
-      type: String,
-      required: [true, 'Business category is required'],
-      trim: true,
-    },
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
     services: [
       {
         type: String,
