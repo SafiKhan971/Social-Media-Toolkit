@@ -191,7 +191,7 @@ export default function BusinessIndex() {
                                                             {business.name}
                                                         </TableCell>
                                                         <TableCell>
-                                                            <Badge color="info">{business.category}</Badge>
+                                                            <Badge color="info">{business.category?.name || '—'}</Badge>
                                                         </TableCell>
                                                         <TableCell>
                                                             {business.logo ? (
