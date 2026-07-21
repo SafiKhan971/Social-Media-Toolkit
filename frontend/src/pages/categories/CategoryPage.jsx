@@ -169,25 +169,26 @@ export default function CategoryPage() {
         </div>
       )}
 
-      <div className="mx-auto max-w-5xl p-4">
-        <div className="mx-auto max-w-4xl p-6">
-          <div className="flex flex-col items-center gap-6">
-            {form ? (
-              <div className="w-full rounded-lg bg-white p-8 shadow-md">
-                <h2 className="mb-4 text-lg font-semibold text-neutral-800">
-                  {editId ? 'Edit Category' : 'Create Category'}
-                </h2>
+      <div className="page-container">
+          {form ? (
+              <div className="page-card">
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="section-heading">
+                    {editId ? 'Edit Category' : 'Create Category'}
+                  </h2>
+                  <button type="button" onClick={resetForm} className="btn-secondary">
+                    ← Cancel
+                  </button>
+                </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-neutral-700">
-                      Category Name
-                    </label>
+                    <label className="form-label">Category Name</label>
                     <input
                       type="text"
                       value={categoryName}
                       onChange={(e) => setCategoryName(e.target.value)}
-                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
+                      className="form-input"
                       placeholder="Enter category name"
                     />
                   </div>
@@ -227,32 +228,30 @@ export default function CategoryPage() {
     </div>
 </div>
 
-                  <div className="mt-2 flex gap-3">
+                  <div className="mt-2 flex gap-3 border-t border-neutral-100 pt-4">
                     <button
                       type="button"
                       onClick={resetForm}
-                      className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 cursor-pointer"
+                      className="btn-secondary flex-1"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 rounded-md app-gradient px-4 py-2 text-sm font-medium text-white cursor-pointer"
+                      className="btn-primary flex-1"
                     >
-                      {editId ? 'Update' : 'Create'}
+                      {editId ? '✔ Update' : '✔ Create'}
                     </button>
                   </div>
                 </form>
               </div>
             ) : (
-              <div className="w-full rounded-lg bg-white p-8 shadow-md">
+              <div className="page-card">
                 <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-neutral-800">
-                    Categories
-                  </h2>
+                  <h2 className="section-heading">Categories</h2>
                   <button
                     onClick={() => setForm(true)}
-                    className="rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:shadow-md cursor-pointer"
+                    className="btn-primary"
                   >
                     + Create
                   </button>
@@ -331,9 +330,7 @@ export default function CategoryPage() {
                 )}
               </div>
             )}
-          </div>
         </div>
-      </div>
     </div>
   )
 }

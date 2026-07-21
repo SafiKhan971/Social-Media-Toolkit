@@ -117,101 +117,87 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
     }
 
     return (
-        <div className="w-full rounded-lg bg-white p-8 shadow-md">
-            <div className="mb-4 flex items-center justify-between">
-                <h2 className="mb-4 text-lg font-semibold text-neutral-800">
+        <div className="page-card">
+            <div className="mb-6 flex items-center justify-between">
+                <h2 className="section-heading">
                     {editId ? 'Edit Business' : 'Create Business'}
                 </h2>
-
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="inline-flex items-center gap-2 whitespace-nowrap rounded-md app-gradient px-3 py-2 text-sm font-medium text-white hover:app-gradient focus:outline-none cursor-pointer"
-
+                    className="btn-secondary"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    <span >Back</span>
+                    Back
                 </button>
             </div>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <div className='grid grid-cols-2 gap-4'>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                        <label htmlFor="businessName" className="mb-1 block text-sm font-medium text-neutral-700">
-                            Business Name
-                        </label>
+                        <label htmlFor="businessName" className="form-label">Business Name</label>
                         <input
                             id="businessName"
                             type="text"
                             value={businessName}
                             onChange={(e) => setBusinessName(e.target.value)}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
+                            className="form-input"
                             placeholder="Enter business name"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="businessCategory" className="mb-1 block text-sm font-medium text-neutral-700">
-                            Business Category
-                        </label>
-                      <select
-    id="businessCategory"
-    value={businessCategory}
-    onChange={(e) => setBusinessCategory(e.target.value)}
-    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
-    disabled={categoriesLoading}
->
-    <option value="">
-        {categoriesLoading ? 'Loading categories...' : 'Select a category'}
-    </option>
-    {categories.map((cat) => (
-        <option key={cat._id} value={cat._id}>
-            {cat.name}
-        </option>
-    ))}
-</select>
+                        <label htmlFor="businessCategory" className="form-label">Business Category</label>
+                        <select
+                            id="businessCategory"
+                            value={businessCategory}
+                            onChange={(e) => setBusinessCategory(e.target.value)}
+                            className="form-input"
+                            disabled={categoriesLoading}
+                        >
+                            <option value="">{categoriesLoading ? 'Loading categories...' : 'Select a category'}</option>
+                            {categories.map((cat) => (
+                                <option key={cat._id} value={cat._id}>{cat.name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <div>
-                        <label htmlFor="website" className="mb-1 block text-sm font-medium text-neutral-700">
-                            Website
-                        </label>
+                        <label htmlFor="website" className="form-label">Website</label>
                         <input
                             id="website"
                             type="url"
                             value={website}
                             onChange={(e) => setWebsite(e.target.value)}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
+                            className="form-input"
                             placeholder="https://example.com"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="businessEmail" className="mb-1 block text-sm font-medium text-neutral-700">
-                            Business Email
-                        </label>
+                        <label htmlFor="businessEmail" className="form-label">Business Email</label>
                         <input
                             id="businessEmail"
                             type="email"
                             value={businessEmail}
                             onChange={(e) => setBusinessEmail(e.target.value)}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
+                            className="form-input"
                             placeholder="contact@business.com"
                         />
                     </div>
 
-                    <div className="col-span-2">
-                        <label className="mb-1 block text-sm font-medium text-neutral-700">Phone Numbers</label>
+                    <div className="sm:col-span-2">
+                        <label className="form-label">Phone Numbers</label>
                         <div className="flex gap-2">
                             <input
                                 type="tel"
                                 value={phoneInput}
                                 onChange={(e) => setPhoneInput(e.target.value)}
                                 placeholder="+92 300 1234567"
-                                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none cursor-pointer"
+                                className="form-input flex-1"
                             />
-                            <button type="button" onClick={addPhone} className="rounded-md app-gradient px-4 text-white cursor-pointer">
+                            <button type="button" onClick={addPhone} className="btn-primary px-4">
                                 Add
                             </button>
                         </div>
@@ -228,13 +214,13 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                         )}
                     </div>
 
-                    <div className="col-span-2">
-                        <label className="mb-1 block text-sm font-medium text-neutral-700">Social Media Links</label>
+                    <div className="sm:col-span-2">
+                        <label className="form-label">Social Media Links</label>
                         <div className="flex gap-2">
                             <select
                                 value={socialPlatform}
                                 onChange={(e) => setSocialPlatform(e.target.value)}
-                                className="rounded-md border border-neutral-300 px-2 py-2 text-sm focus:border-green-500 focus:outline-none cursor-pointer"
+                                className="form-input w-auto"
                             >
                                 <option value="">Platform</option>
                                 <option value="facebook">Facebook</option>
@@ -251,10 +237,10 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                                 value={socialUrl}
                                 onChange={(e) => setSocialUrl(e.target.value)}
                                 placeholder="https://facebook.com/yourpage"
-                                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none cursor-pointer"
+                                className="form-input flex-1"
                             />
 
-                            <button type="button" onClick={addSocialLink} className="rounded-md app-gradient px-4 text-white cursor-pointer">
+                            <button type="button" onClick={addSocialLink} className="btn-primary px-4">
                                 Add
                             </button>
                         </div>
@@ -272,10 +258,10 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                     </div>
 
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-neutral-700">Business Logo</label>
+                        <label className="form-label">Business Logo</label>
                         <div className="flex items-center gap-3">
-                            <label htmlFor="businessLogo" className="cursor-pointer rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100">
-                                Choose Logo
+                            <label htmlFor="businessLogo" className="btn-secondary cursor-pointer">
+                                📁 Choose Logo
                             </label>
                             <span className="max-w-xs truncate text-sm text-neutral-500">
                                 {logo ? logo.name : 'No file selected'}
@@ -302,55 +288,52 @@ export default function BusinessForm({ business, onCancel, onSuccess }) {
                 </div>
 
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-neutral-700">Office Address</label>
+                    <label className="form-label">Office Address</label>
                     <textarea
                         value={officeAddress}
                         onChange={(e) => setOfficeAddress(e.target.value)}
                         rows={3}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
+                        className="form-input resize-none"
                         placeholder="Office address, city, area"
                     />
                 </div>
 
                 <div>
-                    <label className="mb-1 block text-sm font-medium text-neutral-700">Services</label>
+                    <label className="form-label">Services</label>
                     <textarea
                         value={businessServices}
                         onChange={(e) => setBusinessServices(e.target.value)}
                         rows={3}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
+                        className="form-input resize-none"
                         placeholder="Web Development, SEO, Digital Marketing"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="businessDescription" className="mb-1 block text-sm font-medium text-neutral-700">
-                        Business Description
-                    </label>
+                    <label htmlFor="businessDescription" className="form-label">Business Description</label>
                     <textarea
                         id="businessDescription"
                         value={businessDescription}
                         onChange={(e) => setBusinessDescription(e.target.value)}
                         rows={4}
-                        className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
+                        className="form-input resize-none"
                         placeholder="Describe the business"
                     />
                 </div>
 
-                <div className="mt-2 flex gap-3">
+                <div className="mt-2 flex gap-3 border-t border-neutral-100 pt-4">
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 cursor-pointer"
+                        className="btn-secondary flex-1"
                     >
                         Cancel
                     </button>
-
                     <button
                         type="submit"
-                        className="flex-1 rounded-md app-gradient px-4 py-2 text-sm font-medium text-white cursor-pointer"
+                        className="btn-primary flex-1"
                     >
-                        {editId ? 'Update' : 'Create'}
+                        {editId ? '✔ Update' : '✔ Create'}
                     </button>
                 </div>
             </form>

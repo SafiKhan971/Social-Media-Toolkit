@@ -143,26 +143,24 @@ export default function BusinessIndex() {
                     )}
                 </div>
             )}
-            <div className="mx-auto max-w-5xl p-4">
-                <div className="mx-auto max-w-4xl p-6">
-                    <div className="flex flex-col items-center gap-6">
-                        {form ? (
-                            <BusinessForm
-                                business={editingBusiness}
-                                onCancel={handleCancel}
-                                onSuccess={handleFormSuccess}
-                            />
-                        ) : (
-                            <div className="w-full rounded-lg bg-white p-8 shadow-md">
-                                <div className='mb-6 flex items-center justify-between'>
-                                    <h2 className="text-lg font-semibold text-neutral-800">Businesses</h2>
-                                    <button
-                                        onClick={handleCreateClick}
-                                        className="rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-green-500 hover:shadow-md cursor-pointer"
-                                    >
-                                        + Create
-                                    </button>
-                                </div>
+            <div className="page-container">
+                    {form ? (
+                        <BusinessForm
+                            business={editingBusiness}
+                            onCancel={handleCancel}
+                            onSuccess={handleFormSuccess}
+                        />
+                    ) : (
+                        <div className="page-card">
+                            <div className="mb-6 flex items-center justify-between">
+                                <h2 className="section-heading">Businesses</h2>
+                                <button
+                                    onClick={handleCreateClick}
+                                    className="btn-primary"
+                                >
+                                    + Create
+                                </button>
+                            </div>
 
                                 {loading ? (
                                     <p className="text-sm text-neutral-500">Loading...</p>
@@ -246,9 +244,7 @@ export default function BusinessIndex() {
                                     </div>
                                 )}
                             </div>
-                        )}
-                    </div>
-                </div>
+                    )}
             </div>
         </div>
     )
