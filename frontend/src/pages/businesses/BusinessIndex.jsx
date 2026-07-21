@@ -233,7 +233,7 @@ export default function BusinessIndex() {
                                             </TableBody>
                                         </TableRoot>
 
-                                        <div className="mt-5 cursor-pointer">
+                                        <div className="mt-5 ">
                                             <Pagination
                                                 currentPage={currentPage}
                                                 totalPages={totalPages}

@@ -192,39 +192,41 @@ export default function CategoryPage() {
                       placeholder="Enter category name"
                     />
                   </div>
-
-                  <div>
-                    <label className="form-label">Tags</label>
-                    <div className="flex flex-col gap-2">
-                      {tags.map((tag, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={tag}
-                            onChange={(e) => handleTagChange(index, e.target.value)}
-                            className="form-input"
-                            placeholder="e.g. trending, new, featured"
-                          />
-                          {tags.length > 1 && (
-                            <button
-                              type="button"
-                              onClick={() => removeTag(index)}
-                              className="btn-danger btn-sm px-2"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                      <button
+<div>
+    <label className="mb-1 block text-sm font-medium text-neutral-700">
+        Tags
+    </label>
+    <div className="flex flex-col gap-2">
+        {tags.map((tag, index) => (
+            <div key={index} className="flex gap-2">
+                <input
+                    type="text"
+                    value={tag}
+                    onChange={(e) => handleTagChange(index, e.target.value)}
+                    className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none cursor-pointer"
+                    placeholder="e.g. trending, new, featured"
+                />
+                {tags.length > 1 ? (
+                    <button
+                        type="button"
+                        onClick={() => removeTag(index)}
+                        className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+                    >
+                        ✕
+                    </button>
+                ) : (
+                    <button
                         type="button"
                         onClick={addTag}
-                        className="btn-secondary btn-sm w-fit"
-                      >
-                        + Add Tag
-                      </button>
-                    </div>
-                  </div>
+                        className="rounded-md app-gradient px-4 text-white cursor-pointer"
+                    >
+                        Add
+                    </button>
+                )}
+            </div>
+        ))}
+    </div>
+</div>
 
                   <div className="mt-2 flex gap-3 border-t border-neutral-100 pt-4">
                     <button
