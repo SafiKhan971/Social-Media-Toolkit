@@ -125,12 +125,17 @@ export default function PackagesIndex() {
 
   if (showForm) {
     return (
-      <PackageForm
-        editId={editId}
-        businessId={businessId}
-        onSuccess={handleSuccess}
-        onCancel={handleCancel}
-      />
+      <div className="min-h-screen app-gradient">
+        <Menu />
+        <div className="page-container">
+          <PackageForm
+            editId={editId}
+            businessId={businessId}
+            onSuccess={handleSuccess}
+            onCancel={handleCancel}
+          />
+        </div>
+      </div>
     )
   }
 

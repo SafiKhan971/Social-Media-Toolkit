@@ -5,7 +5,7 @@ import logo from '../../public/logo.png'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen app-gradient">
+    <div className="min-h-screen bg-success">
       <Menu />
 
       <div className="mx-auto max-w-6xl px-4 pb-20 pt-12">
@@ -71,36 +71,6 @@ export default function HomePage() {
               </li>
             </ul>
           </div>
-        </div>
-
-        {/* FEATURES SECTION */}
-        <div className="mt-20 grid gap-5 sm:grid-cols-3">
-          {[
-            { icon: '⚡', title: 'Instant Generation', desc: 'Create multiple posts in seconds with AI.' },
-            { icon: '📱', title: 'Instagram Ready', desc: 'Auto 1080×1080 images optimized for social media.' },
-            { icon: '📦', title: 'Bulk Export', desc: 'Download all posts as ZIP with one click.' },
-          ].map(({ icon, title, desc }) => (
-            <div
-              key={title}
-              className="rounded-xl border border-white/20 bg-white/10 p-6 text-white backdrop-blur-sm transition hover:bg-white/15"
-            >
-              <div className="mb-2 text-2xl">{icon}</div>
-              <h3 className="font-semibold">{title}</h3>
-              <p className="mt-2 text-sm text-white/80">{desc}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* FINAL CTA */}
-        <div className="mt-20 text-center text-white">
-          <h2 className="text-3xl font-bold">Start creating content in seconds</h2>
-          <p className="mt-2 text-white/80">Stop wasting time designing posts manually.</p>
-          <Link
-            to="/post"
-            className="mt-8 inline-block rounded-lg bg-white px-8 py-3 font-semibold text-green-700 shadow-md transition hover:bg-neutral-50 hover:shadow-lg active:scale-95"
-          >
-            🚀 Go to Generator
-          </Link>
         </div>
       </div>
     </div>

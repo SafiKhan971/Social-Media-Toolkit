@@ -42,8 +42,8 @@ export default function Menu() {
     { to: '/editor', label: 'Editor' },
   ]
 
-  const activeLinkClass = 'app-gradient text-white rounded-md px-4 py-2 text-sm font-medium'
-  const inactiveLinkClass = 'text-neutral-600 hover:bg-neutral-100 rounded-md px-4 py-2 text-sm font-medium transition-colors'
+  const activeLinkClass = 'bg-success text-white rounded-md px-4 py-2 text-sm font-medium'
+  const inactiveLinkClass = 'hover:bg-success hover:text-white rounded-md px-4 py-2 text-sm font-medium transition-colors'
 
   return (
     <div className="flex justify-center py-5 px-4">
