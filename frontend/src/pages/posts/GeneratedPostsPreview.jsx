@@ -135,10 +135,10 @@ export default function GeneratedPostsPreview({ businessId, generatedPosts, onPo
                     </button>
 
                     <button
-                      onClick={() => handleDelete(post._id)}
+                      onClick={() => handleSaveSingle(post)}
                       className='btn-secondary flex h-10 w-10 items-center justify-center text-xl'
-                      title='Delete'>
-                      🗑️
+                      title='Save'>
+                      💾
                     </button>
               </div>
             </div>
