@@ -4,11 +4,7 @@ import { saveAs } from 'file-saver'
 import { toast } from 'sonner'
 import api from '../../services/api'
 
-export default function GeneratedPostsPreview({
-  businessId,
-  generatedPosts,
-  onPostsSaved,
-}) {
+export default function GeneratedPostsPreview({ businessId, generatedPosts, onPostsSaved }) {
   const apiUrl = import.meta.env.VITE_API_BASE_URL
 
   const handleCopyCaption = (caption) => {
@@ -19,40 +15,20 @@ export default function GeneratedPostsPreview({
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.src = imageUrl
-
-    await new Promise((resolve) => {
-      img.onload = resolve
-    })
-
+    await new Promise(resolve => { img.onload = resolve })
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-
     canvas.width = 1080
     canvas.height = 1080
-
     const size = Math.min(img.width, img.height)
-
     const sx = (img.width - size) / 2
     const sy = (img.height - size) / 2
-
-    ctx.drawImage(
-      img,
-      sx,
-      sy,
-      size,
-      size,
-      0,
-      0,
-      1080,
-      1080
-    )
-
+    ctx.drawImage(img, sx, sy, size, size, 0, 0, 1080, 1080)
     return canvas.toDataURL('image/jpeg', 0.9)
   }
 
   const handleDownloadPost = async (post, index) => {
     const dataUrl = await toInstagramSize(post.imageUrl)
-
     const link = document.createElement('a')
     link.href = dataUrl
     link.download = `post-${index}-1080x1080.jpg`
@@ -61,31 +37,20 @@ export default function GeneratedPostsPreview({
 
   const handleDownloadAll = async () => {
     const zip = new JSZip()
-
     for (let i = 0; i < generatedPosts.length; i++) {
       const post = generatedPosts[i]
-
       const dataUrl = await toInstagramSize(post.imageUrl)
-
       const base64 = dataUrl.split(',')[1]
-
       zip.file(`post-${i + 1}.jpg`, base64, { base64: true })
     }
-
     const content = await zip.generateAsync({ type: 'blob' })
-
     saveAs(content, 'instagram-posts.zip')
   }
 
   const handleSaveSingle = async (post) => {
     const toastId = toast.loading('Saving post...')
-
     try {
-      await api.post(`${apiUrl}/posts/save-posts`, {
-        businessId,
-        posts: [post],
-      })
-
+      await api.post(`${apiUrl}/posts/save-posts`, { businessId, posts: [post] })
       toast.dismiss(toastId)
       toast.success('Post saved')
     } catch (err) {
@@ -96,16 +61,10 @@ export default function GeneratedPostsPreview({
 
   const handleSaveAll = async () => {
     const toastId = toast.loading('Saving all posts...')
-
     try {
-      await api.post(`${apiUrl}/posts/save-posts`, {
-        businessId,
-        posts: generatedPosts,
-      })
-
+      await api.post(`${apiUrl}/posts/save-posts`, { businessId, posts: generatedPosts })
       toast.dismiss(toastId)
       toast.success('All posts saved successfully')
-
       onPostsSaved()
     } catch (err) {
       toast.dismiss(toastId)
@@ -114,88 +73,71 @@ export default function GeneratedPostsPreview({
   }
 
   return (
-    <div className='ml-auto mb-2 ml-auto mb-2'>
-      <div className="mb-2 flex w-full items-center justify-between rounded-md app-gradient px-4 py-2">
-        <h1 className="font-medium text-white">
-          Generated Posts Preview
-        </h1>
+    <div className="page-card">
+      {/* Header bar */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg app-gradient shadow-sm">
+            <span className="text-lg">🖼️</span>
+          </div>
+          <h1 className="text-xl font-bold text-neutral-800">Generated Posts Preview</h1>
+        </div>
         <button
           onClick={() => window.location.reload()}
-          className="flex items-center gap-2 rounded-md bg-white px-4 py-2 text-white app-gradient cursor-pointer "
+          className="btn-secondary"
         >
-          <FaRedo />
+          <FaRedo className="h-3.5 w-3.5" />
           Retry
         </button>
       </div>
 
-      <div className="mt-6 flex items-center justify-between mb-2">
-        <button
-          onClick={handleSaveAll}
-          className="rounded-md bg-green-700 px-4 py-2 text-white cursor-pointer"
-        >
+      {/* Bulk actions */}
+      <div className="mb-6 flex flex-wrap gap-3 border-b border-neutral-100 pb-6">
+        <button onClick={handleSaveAll} className="btn-primary">
           💾 Save All Posts
         </button>
-
-        <button
-          onClick={handleDownloadAll}
-          className="flex items-center gap-2 rounded-md bg-green-700 px-4 py-2 text-white cursor-pointer"
-        >
+        <button onClick={handleDownloadAll} className="btn-secondary">
           📦 Download All (ZIP)
         </button>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-3">
+      {/* Post grid */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {generatedPosts.map((post, index) => (
           <div
             key={index}
             id={`post-${index}`}
-            className="rounded-lg bg-white p-4 shadow"
+            className="flex flex-col overflow-hidden rounded-xl border border-neutral-100 bg-white shadow-sm transition hover:shadow-md"
           >
             <img
               id={`post-image-${index}`}
               src={post.imageUrl}
               alt="Post"
-              className="mb-4 h-64 w-full rounded object-cover"
+              className="h-52 w-full object-cover"
             />
-
-            <p className="mb-3 text-sm text-gray-700">
-              {post.caption}
-            </p>
-
-            <div className="flex gap-3 flex-row mt-3">
-              <div className="group relative">
+            <div className="flex flex-1 flex-col p-4">
+              <p className="flex-grow text-sm text-neutral-700 leading-relaxed line-clamp-3">
+                {post.caption}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   onClick={() => handleDownloadPost(post, index)}
-                  className="rounded bg-blue-500 px-3 py-1 text-white text-xs cursor-pointer"
+                  className="btn-primary btn-sm"
                 >
                   📥 Download
                 </button>
-
-                <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                  Download post
-                </span>
-              </div>
-              <div className="group relative">
                 <button
                   onClick={() => handleCopyCaption(post.caption)}
-                  className="rounded-md bg-gray-500 px-3 py-1 text-white text-xs cursor-pointer"
+                  className="btn-secondary btn-sm"
                 >
                   📋 Copy
                 </button>
-                <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                  Copy caption to clipboard
-                </span>
-              </div>
-              <div className="group relative">
                 <button
                   onClick={() => handleSaveSingle(post)}
-                  className="rounded-md bg-green-500 px-3 py-1 text-white text-xs cursor-pointer"
+                  className="btn-primary btn-sm"
                 >
                   💾 Save
                 </button>
-                <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                  Save post
-                </span>
               </div>
             </div>
           </div>

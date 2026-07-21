@@ -17,6 +17,8 @@ export default function GeneratePost() {
   const [loading, setLoading] = useState(true)
   const [generatedPosts, setGeneratedPosts] = useState([])
   const [previewMode, setPreviewMode] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [search, setSearch] = useState('')
   const dropdownRef = useRef(null)
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL
@@ -32,15 +34,14 @@ export default function GeneratePost() {
 
   const seasonalTypes = [
     { id: 'new_year', label: 'New Year' },
-    { id: 'eid_mubarak', label: "Eid Mubarak" },
-    { id: 'independence_day', label: "Independence Day" },
-    { id: 'christmas', label: "Christmas" },
+    { id: 'eid_mubarak', label: 'Eid Mubarak' },
+    { id: 'independence_day', label: 'Independence Day' },
+    { id: 'christmas', label: 'Christmas' },
   ]
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [search, setSearch] = useState('')
-
-  const filteredPackages = packages.filter(pkg => pkg.title.toLowerCase().includes(search.toLowerCase()))
+  const filteredPackages = packages.filter(pkg =>
+    pkg.title.toLowerCase().includes(search.toLowerCase())
+  )
 
   const fetchBusinesses = async () => {
     try {
@@ -65,9 +66,7 @@ export default function GeneratePost() {
     }
   }
 
-  useEffect(() => {
-    fetchBusinesses()
-  }, [])
+  useEffect(() => { fetchBusinesses() }, [])
 
   useEffect(() => {
     if (selectedType === 'offer' && selectedBusiness) {
@@ -84,59 +83,41 @@ export default function GeneratePost() {
         setIsOpen(false)
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside)
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   const handleSubmit = async e => {
     e.preventDefault()
-
     const toastId = toast.loading('Generating posts...')
-
     try {
       setLoading(true)
-
       const formData = new FormData()
-
       formData.append('businessId', selectedBusiness)
       formData.append('type', selectedType)
       formData.append('numberOfPosts', numberOfPosts)
-
       if (selectedType === 'offer') {
         selectedPackages.forEach(id => formData.append('packageIds[]', id))
       }
-
       if (selectedType === 'announcement') {
         formData.append('description', description)
       }
-
       if (selectedType === 'before_after') {
         formData.append('beforeImage', beforeImage)
         formData.append('afterImage', afterImage)
       }
-
       if (selectedType === 'seasonal') {
         formData.append('seasonalType', selectedSeasonalType)
       }
-
       const { data } = await api.post(`${apiUrl}/posts/generate-posts`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       })
-
       setGeneratedPosts(data.posts)
       setPreviewMode(true)
-
       toast.dismiss(toastId)
       toast.success(data.message || 'Posts generated successfully')
     } catch (err) {
       toast.dismiss(toastId)
-
       toast.error(err.response?.data?.message || err.message || 'Something went wrong')
     } finally {
       setLoading(false)
@@ -153,48 +134,53 @@ export default function GeneratePost() {
   }
 
   if (previewMode) {
-    return <GeneratedPostsPreview businessId={selectedBusiness} generatedPosts={generatedPosts} onPostsSaved={resetGenerateForm} />
+    return (
+      <GeneratedPostsPreview
+        businessId={selectedBusiness}
+        generatedPosts={generatedPosts}
+        onPostsSaved={resetGenerateForm}
+      />
+    )
   }
 
   return (
-    <div className='rounded-lg bg-white p-8 shadow-md'>
-      <h1 className='mb-6 text-2xl font-semibold'>Generate Posts</h1>
+    <div className="page-card">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg app-gradient shadow-sm">
+          <span className="text-lg">✨</span>
+        </div>
+        <h1 className="text-2xl font-bold text-neutral-800">Generate Posts</h1>
+      </div>
 
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        <div className='grid grid-cols-2 gap-4'>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
           {/* Business */}
           <div>
-            <label className='mb-1 block text-sm font-bold mt-3'>Select Business</label>
-
+            <label className="form-label">Select Business</label>
             <select
               value={selectedBusiness}
               onChange={e => setSelectedBusiness(e.target.value)}
-              className='w-full rounded-md border px-3 py-2 cursor-pointer'>
-              <option value='' disabled>
-                Select Business
-              </option>
-
+              className="form-input"
+            >
+              <option value="" disabled>Select Business</option>
               {businesses.map(business => (
-                <option key={business._id} value={business._id}>
-                  {business.name}
-                </option>
+                <option key={business._id} value={business._id}>{business.name}</option>
               ))}
             </select>
           </div>
 
           {/* Type */}
           <div>
-            <label className='mb-1 block text-sm font-bold mt-3'>Select Type</label>
-
-            <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className='w-full rounded-md border px-3 py-2 cursor-pointer'>
-              <option value='' disabled>
-                Select Type
-              </option>
-
+            <label className="form-label">Select Type</label>
+            <select
+              value={selectedType}
+              onChange={e => setSelectedType(e.target.value)}
+              className="form-input"
+            >
+              <option value="" disabled>Select Type</option>
               {types.map(type => (
-                <option key={type.id} value={type.id}>
-                  {type.label}
-                </option>
+                <option key={type.id} value={type.id}>{type.label}</option>
               ))}
             </select>
           </div>
@@ -202,31 +188,30 @@ export default function GeneratePost() {
           {/* Seasonal Type */}
           {selectedType === 'seasonal' && (
             <div>
-              <label className='mb-1 block text-sm font-bold mt-3'>Select Seasonal Type</label>
-
-            <select value={selectedSeasonalType} onChange={e => setSelectedSeasonalType(e.target.value)} className='w-full rounded-md border px-3 py-2 cursor-pointer'>
-              <option value='' disabled>
-                Select Seasonal Type
-              </option>
-
-              {seasonalTypes.map(type => (
-                <option key={type.id} value={type.id}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
+              <label className="form-label">Select Seasonal Type</label>
+              <select
+                value={selectedSeasonalType}
+                onChange={e => setSelectedSeasonalType(e.target.value)}
+                className="form-input"
+              >
+                <option value="" disabled>Select Seasonal Type</option>
+                {seasonalTypes.map(type => (
+                  <option key={type.id} value={type.id}>{type.label}</option>
+                ))}
+              </select>
+            </div>
           )}
 
-          {/* Description */}
+          {/* Announcement Description */}
           {selectedType === 'announcement' && (
-            <div>
-              <label className='mb-1 block text-sm font-bold mt-3'>Description</label>
+            <div className="sm:col-span-2">
+              <label className="form-label">Description</label>
               <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                className='w-full rounded-md border px-3 py-2'
+                className="form-input resize-none"
                 rows={4}
+                placeholder="Enter announcement details..."
               />
             </div>
           )}
@@ -234,73 +219,72 @@ export default function GeneratePost() {
           {/* Before Image */}
           {selectedType === 'before_after' && (
             <div>
-              <label className='mb-1 block text-sm font-bold mt-3'>Before Image</label>
+              <label className="form-label">Before Image</label>
               <input
-                type='file'
-                accept='image/*'
-                className='w-full rounded-md border px-3 py-2 cursor-pointer'
+                type="file"
+                accept="image/*"
+                className="form-input"
                 onChange={e => setBeforeImage(e.target.files[0])}
               />
-
-              {/* Before Image Preview */}
-              <div className='mt-2'>
+              {beforeImage && (
                 <img
-                  src={beforeImage ? URL.createObjectURL(beforeImage) : ''}
-                  alt='Before'
-                  className='h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm'
+                  src={URL.createObjectURL(beforeImage)}
+                  alt="Before"
+                  className="mt-2 h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm"
                 />
-              </div>
+              )}
             </div>
           )}
 
           {/* After Image */}
           {selectedType === 'before_after' && (
             <div>
-              <label className='mb-1 block text-sm font-bold mt-3'>After Image</label>
+              <label className="form-label">After Image</label>
               <input
-                type='file'
-                accept='image/*'
-                className='w-full rounded-md border px-3 py-2 cursor-pointer'
+                type="file"
+                accept="image/*"
+                className="form-input"
                 onChange={e => setAfterImage(e.target.files[0])}
               />
-
-              {/* After Image Preview */}
-              <div className='mt-2'>
+              {afterImage && (
                 <img
-                  src={afterImage ? URL.createObjectURL(afterImage) : ''}
-                  alt='After'
-                  className='h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm'
+                  src={URL.createObjectURL(afterImage)}
+                  alt="After"
+                  className="mt-2 h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm"
                 />
-              </div>
+              )}
             </div>
           )}
 
-          {/* Packages */}
+          {/* Packages multi-select */}
           {selectedType === 'offer' && (
-            <div ref={dropdownRef}>
-              <label className='mb-1 block text-sm font-bold mt-3'> Select Offers </label>
+            <div ref={dropdownRef} className="sm:col-span-2">
+              <label className="form-label">Select Offers</label>
               <div
-                role='button'
+                role="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className='flex w-full items-center justify-between rounded-md border px-3 py-2 bg-white cursor-pointer'>
-                <div className='flex flex-1 flex-wrap gap-2'>
+                className="form-input flex min-h-[40px] cursor-pointer items-center justify-between"
+              >
+                <div className="flex flex-1 flex-wrap gap-1.5">
                   {selectedPackages.length === 0 ? (
-                    <span className='text-gray-500'>Select Offers</span>
+                    <span className="text-neutral-400">Select offers...</span>
                   ) : (
                     selectedPackages.map(id => {
                       const pkg = packages.find(p => p._id === id)
-
                       return (
-                        <span key={id} className='flex items-center gap-1 rounded-full bg-green-200 px-2 py-1 text-sm text-green-700'>
+                        <span
+                          key={id}
+                          className="flex items-center gap-1 rounded-full app-gradient px-2.5 py-0.5 text-xs text-white"
+                        >
                           {pkg?.title}
-
                           <button
-                            type='button'
+                            type="button"
                             onClick={e => {
-                              e.stopPropagation() // Prevent dropdown from opening
+                              e.stopPropagation()
                               setSelectedPackages(selectedPackages.filter(pkgId => pkgId !== id))
                             }}
-                            className='ml-1 rounded-full hover:bg-blue-200 px-1 leading-none'>
+                            className="ml-0.5 rounded-full hover:bg-white/20 px-0.5"
+                          >
                             ✕
                           </button>
                         </span>
@@ -308,28 +292,29 @@ export default function GeneratePost() {
                     })
                   )}
                 </div>
-
-                <span>{isOpen ? '▲' : '▼'}</span>
+                <span className="ml-2 text-neutral-400 text-xs">{isOpen ? '▲' : '▼'}</span>
               </div>
 
               {isOpen && (
-                <div className='w-full z-50 mt-1 rounded-md border bg-white shadow-lg'>
-                  <div className='p-2 border-b'>
+                <div className="mt-1 w-full rounded-lg border border-neutral-200 bg-white shadow-lg z-50">
+                  <div className="p-2 border-b border-neutral-100">
                     <input
-                      type='text'
-                      placeholder='Search offer...'
+                      type="text"
+                      placeholder="Search offers..."
                       value={search}
                       onChange={e => setSearch(e.target.value)}
-                      className='w-full rounded border px-3 py-2 outline-none'
+                      className="form-input"
                     />
                   </div>
-
-                  <div className='max-h-60 overflow-y-auto'>
+                  <div className="max-h-52 overflow-y-auto">
                     {filteredPackages.length ? (
                       filteredPackages.map(pkg => (
-                        <label key={pkg._id} className='flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-gray-100'>
+                        <label
+                          key={pkg._id}
+                          className="flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-neutral-50 text-sm"
+                        >
                           <input
-                            type='checkbox'
+                            type="checkbox"
                             checked={selectedPackages.includes(pkg._id)}
                             onChange={e => {
                               if (e.target.checked) {
@@ -339,12 +324,11 @@ export default function GeneratePost() {
                               }
                             }}
                           />
-
-                          <span>{pkg.title}</span>
+                          <span className="text-neutral-700">{pkg.title}</span>
                         </label>
                       ))
                     ) : (
-                      <div className='px-3 py-2 text-sm text-gray-500'>No packages found</div>
+                      <div className="px-3 py-3 text-sm text-neutral-400">No packages found</div>
                     )}
                   </div>
                 </div>
@@ -354,21 +338,26 @@ export default function GeneratePost() {
 
           {/* Number of Posts */}
           <div>
-            <label className='mb-1 block text-sm font-bold mt-3'>Number of Posts</label>
-
+            <label className="form-label">Number of Posts</label>
             <input
-              type='number'
-              min='1'
+              type="number"
+              min="1"
               value={numberOfPosts}
               onChange={e => setNumberOfPosts(e.target.value)}
-              className='w-full rounded-md border px-3 py-2'
+              className="form-input"
             />
           </div>
         </div>
 
-        <button type='submit' disabled={loading} className='rounded-md app-gradient cursor-pointer px-4 py-2 text-white'>
-          {loading ? 'Generating...' : 'Generate'}
-        </button>
+        <div className="border-t border-neutral-100 pt-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary"
+          >
+            {loading ? 'Generating...' : '✨ Generate Posts'}
+          </button>
+        </div>
       </form>
     </div>
   )

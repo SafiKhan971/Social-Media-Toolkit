@@ -10,13 +10,11 @@ import CategoryPage from './pages/categories/CategoryPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import EditorPage from './pages/EditorPage'
 import { Toaster } from 'sonner'
-import ThemeSelector from './components/ThemeSelector'
 
 export default function App() {
   return (
     <>
       <Toaster richColors position="top-right" />
-      <ThemeSelector />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/business" element={<ProtectedRoute> <BusinessIndex /> </ProtectedRoute>} />
