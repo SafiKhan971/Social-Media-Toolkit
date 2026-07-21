@@ -118,44 +118,44 @@ export default function AllPosts() {
                 <p className="mt-1 text-sm flex-grow">
                   {post.caption}
                 </p>
+<div className="mt-3 flex  flex-row justify-center gap-5">
+  <div className="group relative">
+    <button
+      onClick={() => handleDownload(post)}
+      className="rounded-lg bg-blue-500 px-2.5 py-1.5 text-white text-2xl cursor-pointer hover:bg-blue-600 transition"
+    >
+      📥
+    </button>
+    <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-1 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+      Download post
+    </span>
+  </div>
 
-                <div className="mt-3 flex gap-3 flex-row">
-                  <div className="group relative">
-                    <button
-                      onClick={() => handleDownload(post)}
-                      className="rounded bg-blue-500 px-3 py-1 text-white text-xs cursor-pointer"
-                    >
-                      📥 Download
-                    </button>
-                    <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      Download post
-                    </span>
-                  </div>
+  <div className="group relative">
+    <button
+      onClick={() => handleCopyCaption(post.caption)}
+      className="rounded-lg bg-gray-500 px-2.5 py-1.5 text-white text-2xl cursor-pointer hover:bg-gray-600 transition"
+    >
+      📋
+    </button>
+    <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+      Copy caption to clipboard
+    </span>
+  </div>
 
-                  <div className="group relative">
-                    <button
-                      onClick={() => handleCopyCaption(post.caption)}
-                      className="rounded bg-gray-500 px-3 py-1 text-white text-xs cursor-pointer"
-                    >
-                      📋 Copy Caption
-                    </button>
-                    <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      Copy caption to clipboard
-                    </span>
-                  </div>
-
-                  <div className="group relative">
-                    <button
-                      onClick={() => handleDelete(post._id)}
-                      className="rounded bg-red-500 px-3 py-1 text-white text-xs cursor-pointer"
-                    >
-                      🗑 Delete
-                    </button>
-                    <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      Delete this post
-                    </span>
-                  </div>
-                </div>
+  <div className="group relative">
+    <button
+      onClick={() => handleDelete(post._id)}
+      className="rounded-lg bg-red-500 px-2.5 py-1.5 text-white text-2xl cursor-pointer hover:bg-red-600 transition"
+    >
+      🗑
+    </button>
+    <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+      Delete this post
+    </span>
+  </div>
+</div>
+               
               </div>
             ))}
           </div>
