@@ -24,9 +24,9 @@ export default function PostPage() {
             <button
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 px-4 py-2.5 text-sm font-medium transition-all duration-200 cursor-pointer ${
                 activeTab === key
-                  ? 'app-gradient text-white shadow-sm'
+                  ? 'bg-success text-white shadow-sm'
                   : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
               }`}
             >

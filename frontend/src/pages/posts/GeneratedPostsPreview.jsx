@@ -119,25 +119,27 @@ export default function GeneratedPostsPreview({ businessId, generatedPosts, onPo
               <p className="flex-grow text-sm text-neutral-700 leading-relaxed line-clamp-3">
                 {post.caption}
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  onClick={() => handleDownloadPost(post, index)}
-                  className="btn-primary btn-sm"
-                >
-                  📥 Download
-                </button>
-                <button
-                  onClick={() => handleCopyCaption(post.caption)}
-                  className="btn-secondary btn-sm"
-                >
-                  📋 Copy
-                </button>
-                <button
-                  onClick={() => handleSaveSingle(post)}
-                  className="btn-primary btn-sm"
-                >
-                  💾 Save
-                </button>
+              <div className='mt-4 flex items-center gap-3 mx-auto'>
+                    <button
+                      onClick={() => handleDownload(post)}
+                      className='btn-secondary flex h-10 w-10 items-center justify-center text-xl'
+                      title='Download'>
+                      📥
+                    </button>
+
+                    <button
+                      onClick={() => handleCopyCaption(post.caption)}
+                      className='btn-secondary flex h-10 w-10 items-center justify-center text-xl'
+                      title='Copy Caption'>
+                      📋
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(post._id)}
+                      className='btn-secondary flex h-10 w-10 items-center justify-center text-xl'
+                      title='Delete'>
+                      🗑️
+                    </button>
               </div>
             </div>
           </div>

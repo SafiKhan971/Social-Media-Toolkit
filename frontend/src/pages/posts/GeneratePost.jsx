@@ -146,7 +146,7 @@ export default function GeneratePost() {
   return (
     <div className="page-card">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg app-gradient shadow-sm">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success shadow-sm">
           <span className="text-lg">✨</span>
         </div>
         <h1 className="text-2xl font-bold text-neutral-800">Generate Posts</h1>
@@ -274,7 +274,7 @@ export default function GeneratePost() {
                       return (
                         <span
                           key={id}
-                          className="flex items-center gap-1 rounded-full app-gradient px-2.5 py-0.5 text-xs text-white"
+                          className="flex items-center gap-1 rounded-full bg-success px-2.5 py-0.5 text-xs text-white"
                         >
                           {pkg?.title}
                           <button

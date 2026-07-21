@@ -1,7 +1,47 @@
 @import "tailwindcss";
 
 @utility app-gradient {
-  @apply bg-gradient-to-br from-green-500 to-green-700;
+  @apply bg-gray-100;
+}
+
+@utility bg-primary {
+  @apply bg-blue-600;
+}
+
+@utility bg-success {
+  @apply bg-emerald-500;
+}
+
+@utility bg-danger {
+  @apply bg-red-500;
+}
+
+@utility bg-warning {
+  @apply bg-amber-500;
+}
+
+@utility bg-info {
+  @apply bg-sky-500;
+}
+
+@utility bg-secondary {
+  @apply bg-slate-500;
+}
+
+@utility bg-purple {
+  @apply bg-violet-600;
+}
+
+@utility bg-pink {
+  @apply bg-fuchsia-500;
+}
+
+@utility bg-teal {
+  @apply bg-teal-500;
+}
+
+@utility bg-dark {
+  @apply bg-neutral-800;
 }
 
 /* ==========================================================================
@@ -10,7 +50,7 @@
 
 /* Primary action button — uses theme gradient */
 @utility btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-success px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed;
 }
 
 /* Secondary / cancel button */

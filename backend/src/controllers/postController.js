@@ -72,8 +72,6 @@ export async function generatePosts(req, res) {
     // Prepare data
     const business = await Business.findById(businessId).populate('category')
     const imageQuery = `${business.category.name}, ${business.category.tags.join(', ')}`
-    const text = type === 'announcement' ? description : await generateText(business, type, seasonalType)
-    const caption = await generateCaption(business)
     const images = await getBusinessImages(imageQuery, 30)
 
     // Generate posts
@@ -83,6 +81,8 @@ export async function generatePosts(req, res) {
 
     for (let i = 0; i < numberOfPosts; i++) {
       try {
+        const text = type === 'announcement' ? description : await generateText(business, type, seasonalType)
+        const caption = await generateCaption(business)
         const image = images.length > 0 ? images[i % images.length] : null
         const backgroundUrl = image?.urls?.regular || image?.urls?.small
 
