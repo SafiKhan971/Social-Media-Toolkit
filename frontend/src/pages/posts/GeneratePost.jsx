@@ -263,7 +263,7 @@ export default function GeneratePost() {
               <div
                 role="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className="form-input flex min-h-[40px] cursor-pointer items-center justify-between"
+                className="form-input flex min-h-10 cursor-pointer items-center justify-between"
               >
                 <div className="flex flex-1 flex-wrap gap-1.5">
                   {selectedPackages.length === 0 ? (

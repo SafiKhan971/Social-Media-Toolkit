@@ -95,7 +95,7 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
   return (
     <div className='page-card'>
       <div className='mb-6 flex items-center justify-between'>
-        <h2 className='section-heading'>{editId ? 'Edit Package' : 'Create Package'}</h2>
+        <h2 className='section-heading'>{editId ? 'Edit Offer' : 'Create Offer'}</h2>
         <button
           type='button'
           onClick={onCancel}
@@ -109,7 +109,7 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
       <form onSubmit={handleSubmit} className='flex flex-col gap-5'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
           <div>
-            <label className='form-label'>Package Title</label>
+            <label className='form-label'>Offer Title</label>
             <input
               value={title}
               onChange={e => setTitle(e.target.value)}

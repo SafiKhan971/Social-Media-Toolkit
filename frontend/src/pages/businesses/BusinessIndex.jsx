@@ -188,7 +188,7 @@ export default function BusinessIndex() {
                             <DropdownMenuContent placement='bottom end' className='p-2 cursor-pointer'>
                               <DropdownMenuItem onClick={() => handleEdit(business)}>✏️ Edit</DropdownMenuItem>
                               <DropdownMenuItem onClick={() => handleDelete(business._id)}>🗑️ Delete</DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handlePackages(business._id)}>➕ Packages</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handlePackages(business._id)}>➕ Offers</DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
