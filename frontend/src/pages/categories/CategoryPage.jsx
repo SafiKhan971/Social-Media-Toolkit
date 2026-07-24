@@ -2,21 +2,9 @@ import { useState, useEffect } from 'react'
 import Menu from '../../components/Menu'
 import api from '../../services/api'
 import Swal from 'sweetalert2'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '../../components/tailgrids/core/dropdown'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/tailgrids/core/dropdown'
 import { Pagination } from '../../components/tailgrids/core/pagination'
-import {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRoot,
-  TableRow
-} from '../../components/tailgrids/core/table'
+import { TableBody, TableCell, TableHead, TableHeader, TableRoot, TableRow } from '../../components/tailgrids/core/table'
 import { Badge } from '../../components/tailgrids/core/badge'
 import { MenuKebab1 } from '../../components/tailgrids/core/icons'
 
@@ -24,7 +12,8 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL
 
 export default function CategoryPage() {
   const [categoryName, setCategoryName] = useState('')
-  const [tags, setTags] = useState([''])
+  const [tags, setTags] = useState([])
+  const [tagInput, setTagInput] = useState('')
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState(false)
@@ -50,26 +39,26 @@ export default function CategoryPage() {
 
   function resetForm() {
     setCategoryName('')
-    setTags([''])
+    setTags([])
+    setTagInput('')
     setEditId(null)
     setForm(false)
   }
 
   function handleEdit(category) {
     setCategoryName(category.name)
-    setTags(category.tags && category.tags.length > 0 ? category.tags : [''])
+    setTags(category.tags && category.tags.length > 0 ? category.tags : [])
+    setTagInput('')
     setEditId(category._id)
     setForm(true)
   }
 
-  function handleTagChange(index, value) {
-    const updatedTags = [...tags]
-    updatedTags[index] = value
-    setTags(updatedTags)
-  }
-
   function addTag() {
-    setTags([...tags, ''])
+    const trimmed = tagInput.trim()
+    if (!trimmed) return
+
+    setTags([...tags, trimmed])
+    setTagInput('')
   }
 
   function removeTag(index) {
@@ -79,7 +68,7 @@ export default function CategoryPage() {
   async function fetchCategories(page = 1) {
     try {
       setLoading(true)
-      const { data } = await api.get(`${apiUrl}/categories?page=${page}&limit=6`)
+      const { data } = await api.get(`${apiUrl}/categories?page=${page}&limit=5`)
 
       setCategories(data.categories)
       setCurrentPage(data.currentPage)
@@ -106,7 +95,7 @@ export default function CategoryPage() {
 
     try {
       await api.delete(`/categories/${id}`)
-      setCategories((prev) => prev.filter((c) => c._id !== id))
+      setCategories(prev => prev.filter(c => c._id !== id))
 
       Swal.fire({
         title: 'Deleted!',
@@ -124,215 +113,181 @@ export default function CategoryPage() {
     }
   }
 
- async function handleSubmit(e) {
-  e.preventDefault()
+  async function handleSubmit(e) {
+    e.preventDefault()
 
-  try {
-    const isEditing = Boolean(editId)
-    const url = isEditing ? `/categories/${editId}` : `/categories`
-    const method = isEditing ? 'put' : 'post'
+    try {
+      const isEditing = Boolean(editId)
+      const url = isEditing ? `/categories/${editId}` : `/categories`
+      const method = isEditing ? 'put' : 'post'
 
-    const payload = {
-      name: categoryName,
-      tags: tags.map((t) => t.trim()).filter(Boolean),
+      const payload = {
+        name: categoryName,
+        tags: tags.map(t => t.trim()).filter(Boolean),
+      }
+
+      await api({ url, method, data: payload })
+
+      resetForm()
+      await fetchCategories()
+
+      showSuccess(isEditing ? 'Category updated successfully!' : 'Category created successfully!')
+    } catch (err) {
+      showError(err.response?.data?.message || err.message)
     }
-
-    await api({ url, method, data: payload })
-
-    resetForm()
-    await fetchCategories()
-
-    showSuccess(
-      isEditing ? 'Category updated successfully!' : 'Category created successfully!'
-    )
-  } catch (err) {
-    showError(err.response?.data?.message || err.message)
   }
-}
 
   return (
-    <div className="min-h-screen app-gradient">
+    <div className='min-h-screen app-gradient'>
       <Menu />
 
       {(error || success) && (
-        <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+        <div className='fixed top-4 right-4 z-50 flex flex-col gap-2'>
           {error && (
-            <div className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-3 text-sm font-bold text-white shadow-lg">
-              {error}
-            </div>
+            <div className='flex items-center gap-2 rounded-lg bg-red-500 px-4 py-3 text-sm font-bold text-white shadow-lg'>{error}</div>
           )}
           {success && (
-            <div className="flex items-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-sm font-bold text-white shadow-lg">
+            <div className='flex items-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-sm font-bold text-white shadow-lg'>
               {success}
             </div>
           )}
         </div>
       )}
 
-      <div className="mx-auto max-w-5xl p-4">
-        <div className="mx-auto max-w-4xl p-6">
-          <div className="flex flex-col items-center gap-6">
-            {form ? (
-              <div className="w-full rounded-lg bg-white p-8 shadow-md">
-                <h2 className="mb-4 text-lg font-semibold text-neutral-800">
-                  {editId ? 'Edit Category' : 'Create Category'}
-                </h2>
-
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-neutral-700">
-                      Category Name
-                    </label>
-                    <input
-                      type="text"
-                      value={categoryName}
-                      onChange={(e) => setCategoryName(e.target.value)}
-                      className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm text-neutral-800 focus:border-green-500 focus:outline-none cursor-pointer"
-                      placeholder="Enter category name"
-                    />
-                  </div>
-<div>
-    <label className="mb-1 block text-sm font-medium text-neutral-700">
-        Tags
-    </label>
-    <div className="flex flex-col gap-2">
-        {tags.map((tag, index) => (
-            <div key={index} className="flex gap-2">
-                <input
-                    type="text"
-                    value={tag}
-                    onChange={(e) => handleTagChange(index, e.target.value)}
-                    className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none cursor-pointer"
-                    placeholder="e.g. trending, new, featured"
-                />
-                {tags.length > 1 ? (
-                    <button
-                        type="button"
-                        onClick={() => removeTag(index)}
-                        className="rounded-md border border-neutral-300 px-2 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
-                    >
-                        ✕
-                    </button>
-                ) : (
-                    <button
-                        type="button"
-                        onClick={addTag}
-                        className="rounded-md app-gradient px-4 text-white cursor-pointer"
-                    >
-                        Add
-                    </button>
-                )}
+      <div className='page-container'>
+        {form ? (
+          <div className='page-card'>
+            <div className='mb-6 flex items-center justify-between'>
+              <h2 className='section-heading'>{editId ? 'Edit Category' : 'Create Category'}</h2>
+              <button type='button' onClick={resetForm} className='btn-secondary'>
+                ← Cancel
+              </button>
             </div>
-        ))}
-    </div>
-</div>
 
-                  <div className="mt-2 flex gap-3">
-                    <button
-                      type="button"
-                      onClick={resetForm}
-                      className="flex-1 rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex-1 rounded-md app-gradient px-4 py-2 text-sm font-medium text-white cursor-pointer"
-                    >
-                      {editId ? 'Update' : 'Create'}
-                    </button>
-                  </div>
-                </form>
+            <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+              <div>
+                <label className='form-label'>Category Name</label>
+                <input
+                  type='text'
+                  value={categoryName}
+                  onChange={e => setCategoryName(e.target.value)}
+                  className='form-input'
+                  placeholder='Enter category name'
+                />
               </div>
-            ) : (
-              <div className="w-full rounded-lg bg-white p-8 shadow-md">
-                <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-neutral-800">
-                    Categories
-                  </h2>
-                  <button
-                    onClick={() => setForm(true)}
-                    className="rounded-lg app-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:shadow-md cursor-pointer"
-                  >
-                    + Create
+              <div>
+                <label className='form-label'>Tags</label>
+                <div className='flex gap-2'>
+                  <input
+                    type='text'
+                    value={tagInput}
+                    onChange={e => setTagInput(e.target.value)}
+                    className='form-input flex-1'
+                    placeholder='e.g. trending, new, featured'
+                  />
+                  <button type='button' onClick={addTag} className='btn-primary px-4'>
+                    Add
                   </button>
                 </div>
 
-                {loading ? (
-                  <p className="text-sm text-neutral-500">Loading...</p>
-                ) : categories.length === 0 ? (
-                  <p className="text-sm text-neutral-500">No categories yet.</p>
-                ) : (
-                  <>
-                    <TableRoot fullBleed className="mb-1">
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Sr No</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Tags</TableHead>
-                          <TableHead>Action</TableHead>
-                        </TableRow>
-                      </TableHeader>
-
-                      <TableBody>
-                        {categories.map((category, index) => (
-                          <TableRow key={category._id} className="text-sm">
-                            <TableCell className="whitespace-nowrap">
-                              {(currentPage - 1) * 6 + index + 1}
-                            </TableCell>
-
-                            <TableCell className="font-medium text-title-50 whitespace-nowrap">
-                              {category.name}
-                            </TableCell>
-
-                            <TableCell>
-                              <div className="flex flex-wrap gap-1.5">
-                                {category.tags && category.tags.length > 0 ? (
-                                  category.tags.map((tag, i) => (
-                                    <Badge key={i} color="info">
-                                      {tag}
-                                    </Badge>
-                                  ))
-                                ) : (
-                                  <span className="text-neutral-400">—</span>
-                                )}
-                              </div>
-                            </TableCell>
-
-                            <TableCell>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger className="p-2 rounded-full hover:bg-neutral-100 cursor-pointer">
-                                  <MenuKebab1 className="h-5 w-5 text-neutral-600" />
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent placement="bottom end" className="p-2">
-                                  <DropdownMenuItem onClick={() => handleEdit(category)}>
-                                    ✏️ Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => handleDelete(category._id)}>
-                                    🗑️ Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </TableRoot>
-
-                    <div className="mt-5">
-                      <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        sideLayout="full"
-                        onPageChange={(page) => fetchCategories(page)}
-                      />
-                    </div>
-                  </>
+                {tags.length > 0 && (
+                  <div className='mt-3 flex flex-wrap gap-2'>
+                    {tags.map((tag, index) => (
+                      <div key={index} className='flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-1 text-sm'>
+                        <span>{tag}</span>
+                        <button type='button' onClick={() => removeTag(index)} className='text-red-500 cursor-pointer'>
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
+
+              <div className='mt-2 flex gap-3 border-t border-neutral-100 pt-4'>
+                <button type='button' onClick={resetForm} className='btn-secondary flex-1'>
+                  Cancel
+                </button>
+                <button type='submit' className='btn-primary flex-1'>
+                  {editId ? '✔ Update' : '✔ Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          <div className='page-card'>
+            <div className='mb-6 flex items-center justify-between'>
+              <h2 className='section-heading'>Categories</h2>
+              <button onClick={() => setForm(true)} className='btn-primary'>
+                + Create
+              </button>
+            </div>
+
+            {loading ? (
+              <p className='text-sm text-neutral-500'>Loading...</p>
+            ) : categories.length === 0 ? (
+              <p className='text-sm text-neutral-500'>No categories yet.</p>
+            ) : (
+              <>
+                <TableRoot fullBleed className='mb-1'>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Sr No</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Tags</TableHead>
+                      <TableHead>Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+
+                  <TableBody>
+                    {categories.map((category, index) => (
+                      <TableRow key={category._id} className='text-sm'>
+                        <TableCell className='whitespace-nowrap'>{(currentPage - 1) * 5 + index + 1}</TableCell>
+
+                        <TableCell className='font-medium text-title-50 whitespace-nowrap'>{category.name}</TableCell>
+
+                        <TableCell>
+                          <div className='flex flex-wrap gap-1.5'>
+                            {category.tags && category.tags.length > 0 ? (
+                              category.tags.map((tag, i) => (
+                                <Badge key={i} color='info'>
+                                  {tag}
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className='text-neutral-400'>—</span>
+                            )}
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger className='p-2 rounded-full hover:bg-neutral-100 cursor-pointer'>
+                              <MenuKebab1 className='h-5 w-5 text-neutral-600' />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent placement='bottom end' className='p-2'>
+                              <DropdownMenuItem onClick={() => handleEdit(category)}>✏️ Edit</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDelete(category._id)}>🗑️ Delete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </TableRoot>
+
+                <div className='mt-5'>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    sideLayout='full'
+                    onPageChange={page => fetchCategories(page)}
+                  />
+                </div>
+              </>
             )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

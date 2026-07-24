@@ -1,6 +1,96 @@
 @import "tailwindcss";
-@utility app-gradient{
-    @apply bg-gradient-to-br from-green-500 to-green-700;
+
+@utility app-gradient {
+  @apply bg-gray-100;
+}
+
+@utility bg-primary {
+  @apply bg-blue-600;
+}
+
+@utility bg-success {
+  @apply bg-emerald-500;
+}
+
+@utility bg-danger {
+  @apply bg-red-500;
+}
+
+@utility bg-warning {
+  @apply bg-amber-500;
+}
+
+@utility bg-info {
+  @apply bg-sky-500;
+}
+
+@utility bg-secondary {
+  @apply bg-slate-500;
+}
+
+@utility bg-purple {
+  @apply bg-violet-600;
+}
+
+@utility bg-pink {
+  @apply bg-fuchsia-500;
+}
+
+@utility bg-teal {
+  @apply bg-teal-500;
+}
+
+@utility bg-dark {
+  @apply bg-neutral-800;
+}
+
+/* ==========================================================================
+   SHARED DESIGN SYSTEM UTILITIES
+   ========================================================================== */
+
+/* Primary action button — uses theme gradient */
+@utility btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-success px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+/* Secondary / cancel button */
+@utility btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-all duration-200 hover:bg-neutral-50 active:scale-95 cursor-pointer;
+}
+
+/* Danger / delete button */
+@utility btn-danger {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-red-600 active:scale-95 cursor-pointer;
+}
+
+/* Small-size button modifier */
+@utility btn-sm {
+  @apply px-3 py-1.5 text-xs;
+}
+
+/* Standard form input */
+@utility form-input {
+  @apply w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-800 placeholder-neutral-400 transition focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-100;
+}
+
+/* Standard form label */
+@utility form-label {
+  @apply mb-1 block text-sm font-medium text-neutral-700;
+}
+
+/* White content card sitting on the gradient background */
+@utility page-card {
+  @apply w-full rounded-xl bg-white p-6 shadow-md md:p-8;
+}
+
+/* Responsive max-width page content container */
+@utility page-container {
+  @apply mx-auto max-w-5xl px-4 py-8;
+}
+
+/* Consistent section/card heading */
+@utility section-heading {
+  @apply text-lg font-semibold text-neutral-800;
 }
 
 

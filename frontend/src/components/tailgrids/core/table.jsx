@@ -12,7 +12,7 @@ export function TableRoot({ children, fullBleed = false, className = "" }) {
 
 export function TableHeader({ children, className = "" }) {
   return (
-    <thead className={`app-gradient text-white ${className}`}>
+    <thead className={`bg-success text-white ${className}`}>
       {children}
     </thead>
   )

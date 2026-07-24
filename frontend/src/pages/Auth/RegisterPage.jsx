@@ -11,7 +11,6 @@ export default function RegisterPage() {
 
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,49 +19,29 @@ export default function RegisterPage() {
   })
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     if (formData.password !== formData.confirmPassword) {
       return toast.error('Passwords do not match')
     }
-
     const toastId = toast.loading('Creating account...')
-
     try {
-      const { data } = await api.post(
-        `${apiUrl}/auth/register`,
-        {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }
-      )
-
+      const { data } = await api.post(`${apiUrl}/auth/register`, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      })
       localStorage.setItem('token', data.token)
-      localStorage.setItem(
-        'user',
-        JSON.stringify(data.user)
-      )
-
+      localStorage.setItem('user', JSON.stringify(data.user))
       toast.dismiss(toastId)
       toast.success('Registration successful')
-
       navigate('/')
     } catch (err) {
       toast.dismiss(toastId)
-
-      toast.error(
-        err.response?.data?.message ||
-        err.message ||
-        'Registration failed'
-      )
+      toast.error(err.response?.data?.message || err.message || 'Registration failed')
     }
   }
 
@@ -70,68 +49,60 @@ export default function RegisterPage() {
     <div className="min-h-screen app-gradient">
       <Menu />
 
-      <div className="flex justify-center px-4 py-12">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-          <h1 className="mb-6 text-center text-2xl font-semibold">
-            Register
-          </h1>
+      <div className="flex items-center justify-center px-4 py-10">
+        <div className="page-card max-w-md">
+          {/* Header */}
+          <div className="mb-8 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full app-gradient shadow-lg">
+              <span className="text-2xl">✨</span>
+            </div>
+            <h1 className="text-2xl font-bold text-neutral-800">Create an account</h1>
+            <p className="mt-1 text-sm text-neutral-500">Sign up to get started</p>
+          </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4"
-          >
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium">
-                Full Name
-              </label>
-
+              <label className="form-label">Full Name</label>
               <input
                 type="text"
-                placeholder='Enter Full Name'
+                placeholder="Enter your full name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full rounded-md border px-3 py-2"
+                className="form-input"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">
-                Email
-              </label>
-
+              <label className="form-label">Email</label>
               <input
                 type="email"
-                placeholder='Enter Email'
+                placeholder="Enter your email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full rounded-md border px-3 py-2"
+                className="form-input"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">
-                Password
-              </label>
-
+              <label className="form-label">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder='Enter Password'
+                  placeholder="Create a password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-md border px-3 py-2"
+                  className="form-input pr-10"
                 />
-
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
                 >
                   {showPassword ? '🙈' : '👁️'}
                 </button>
@@ -139,25 +110,21 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium">
-                Confirm Password
-              </label>
-
+              <label className="form-label">Confirm Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder='Enter Confirm Password'
+                  placeholder="Confirm your password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-md border px-3 py-2"
+                  className="form-input pr-10"
                 />
-
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
                 >
                   {showPassword ? '🙈' : '👁️'}
                 </button>
@@ -167,21 +134,16 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+              className="btn-primary w-full mt-2"
             >
-              {loading
-                ? 'Creating Account...'
-                : 'Register'}
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 
-          <p className="mt-4 text-center text-sm">
+          <p className="mt-6 text-center text-sm text-neutral-500">
             Already have an account?{' '}
-            <Link
-              to="/login"
-              className="font-medium text-green-600"
-            >
-              Login
+            <Link to="/login" className="font-semibold text-green-600 hover:text-green-700">
+              Sign in
             </Link>
           </p>
         </div>
