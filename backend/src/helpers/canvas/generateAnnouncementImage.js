@@ -1,4 +1,9 @@
 import { createCanvas, loadImage } from 'canvas'
+import { drawHeader } from './components/header.js'
+import { drawBackground } from './components/background.js'
+import { drawCTA } from './components/cta.js'
+import { drawFooter } from './components/footer.js'
+import { wrapText } from './utils/wrapText.js'
 import fs from 'fs'
 import path from 'path'
 
@@ -17,24 +22,10 @@ export async function generateAnnouncementImage({ business, description, backgro
   const ctx = canvas.getContext('2d')
 
   // Background
-  const bg = await loadImage(backgroundUrl)
-  ctx.drawImage(bg, 0, 0, width, height)
+  await drawBackground(ctx, backgroundUrl, width, height)
 
-  // Dark overlay
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.60)'
-  ctx.fillRect(0, 0, width, height)
-
-  // Logo
-  if (logoUrl) {
-    const logo = await loadImage(logoUrl)
-    ctx.drawImage(logo, 40, 40, 110, 110)
-  }
-
-  // Business name
-  ctx.fillStyle = '#ffffff'
-  ctx.font = 'bold 52px Arial'
-  ctx.textAlign = 'center'
-  ctx.fillText(businessName, width / 2, 90)
+  // Header
+  await drawHeader(ctx, businessName, logoUrl, width)
 
   // Accouncement Icon
   ctx.font = '70px Arial'
@@ -59,46 +50,13 @@ export async function generateAnnouncementImage({ business, description, backgro
   ctx.font = 'bold 44px Georgia'
   ctx.textAlign = 'center'
 
-  wrapText(ctx, description, width / 2, 450, 760, 56)
+  await wrapText(ctx, description, width / 2, 450, 760, 56)
 
-  // Bottom Call To Action
-  ctx.textAlign = 'center'
-  ctx.fillStyle = '#ffffff'
-  ctx.font = 'bold 36px Arial'
+  // CTA
+  drawCTA(ctx, 'Book Now', width)
 
-  ctx.fillText('Book Now', width / 2, 900)
-
-  // Footer with contact information
-  const footerY = 950
-  const contactInfo = []
-
-  if (phones && phones.length > 0) {
-    contactInfo.push(`📞 ${phones.join(', ')}`)
-  }
-
-  if (website) {
-    contactInfo.push(`🌐 ${website}`)
-  }
-
-  if (email) {
-    contactInfo.push(`✉️ ${email}`)
-  }
-
-  if (officeAddress) {
-    contactInfo.push(`📍 ${officeAddress}`)
-  }
-
-  if (contactInfo.length > 0) {
-    ctx.textAlign = 'center'
-    ctx.fillStyle = '#ffffff'
-    ctx.font = '18px Arial'
-    let currentY = footerY
-
-    contactInfo.forEach(info => {
-      wrapTextCenter(ctx, info, width / 2, currentY, 1000, 20)
-      currentY += 25
-    })
-  }
+  // Footer
+  drawFooter(ctx, business)
 
   // Save Image
   const buffer = canvas.toBuffer('image/png')
@@ -128,44 +86,4 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
   ctx.quadraticCurveTo(x, y, x + radius, y)
 
   ctx.closePath()
-}
-
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ')
-  let line = ''
-
-  for (let i = 0; i < words.length; i++) {
-    const testLine = line + words[i] + ' '
-    const width = ctx.measureText(testLine).width
-
-    if (width > maxWidth && i > 0) {
-      ctx.fillText(line, x, y)
-      line = words[i] + ' '
-      y += lineHeight
-    } else {
-      line = testLine
-    }
-  }
-
-  ctx.fillText(line, x, y)
-}
-
-function wrapTextCenter(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ')
-  let line = ''
-
-  for (let i = 0; i < words.length; i++) {
-    const testLine = line + words[i] + ' '
-    const width = ctx.measureText(testLine).width
-
-    if (width > maxWidth && i > 0) {
-      ctx.fillText(line, x, y)
-      line = words[i] + ' '
-      y += lineHeight
-    } else {
-      line = testLine
-    }
-  }
-
-  ctx.fillText(line, x, y)
 }

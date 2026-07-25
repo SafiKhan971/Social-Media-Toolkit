@@ -16,7 +16,7 @@ export function drawFooter(ctx, business) {
     info.push(`📍 ${business.officeAddress}`)
 
   ctx.fillStyle = "#fff"
-  ctx.font = "18px Arial"
+  ctx.font = "22px Arial"
   ctx.textAlign = "center"
 
   let y = 950
