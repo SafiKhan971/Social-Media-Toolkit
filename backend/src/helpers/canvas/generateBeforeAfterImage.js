@@ -35,7 +35,7 @@ export async function generateBeforeAfterImage({ business, description, backgrou
   ctx.fillStyle = '#ffffff'
   ctx.font = 'bold 36px Arial'
 
-  ctx.fillText('See the Amazing Transformation!', width / 2, 150)
+  ctx.fillText(description || 'See the Amazing Transformation!', width / 2, 150)
 
   // Divider
   ctx.strokeStyle = '#ffffff'

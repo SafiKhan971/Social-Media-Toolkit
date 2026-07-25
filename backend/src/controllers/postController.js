@@ -65,8 +65,8 @@ export async function generatePosts(req, res) {
       numberOfPosts,
       description,
       seasonalType,
-      beforeImage: beforeImage ? beforeImage.path : null,
-      afterImage: afterImage ? afterImage.path : null,
+      beforeImage: beforeImage ? beforeImage : null,
+      afterImage: afterImage ? afterImage : null,
     })
 
     // Prepare data
@@ -81,7 +81,7 @@ export async function generatePosts(req, res) {
 
     for (let i = 0; i < numberOfPosts; i++) {
       try {
-        const text = type === 'announcement' ? description : await generateText(business, type, seasonalType)
+        const text = description ? description : await generateText(business, type, seasonalType)
         const caption = await generateCaption(business)
         const image = images.length > 0 ? images[i % images.length] : null
         const backgroundUrl = image?.urls?.regular || image?.urls?.small

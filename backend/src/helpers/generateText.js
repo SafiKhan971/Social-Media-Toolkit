@@ -1,8 +1,8 @@
 import { groqClient } from '../helpers/groqClient.js'
 
 export async function generateText(business, type, seasonalType) {
-  if(type === 'announcement' || type === 'before_after') {
-    return `${type} type does not require text generation.`
+  if(type === 'before_after') {
+    return 'See the Amazing Transformation!'
   }
 
   try {
