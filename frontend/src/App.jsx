@@ -20,9 +20,9 @@ export default function App() {
         <Route path="/business" element={<ProtectedRoute> <BusinessIndex /> </ProtectedRoute>} />
         <Route path="/post" element={<ProtectedRoute><PostPage /></ProtectedRoute>} />
         <Route path="/category" element={<ProtectedRoute><CategoryPage /></ProtectedRoute>} />
+        <Route path="/editor" element={<ProtectedRoute><EditorPage /></ProtectedRoute>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/editor" element={<EditorPage />} />
         <Route
           path="/businesses/:businessId/packages"
           element={<PackagesIndex />}

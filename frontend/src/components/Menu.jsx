@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import smtLogo from '../assets/smt-logo.svg'
+import newLogo from '../../public/logo-1.png'
 import { toast } from 'sonner'
 import Swal from 'sweetalert2'
 
@@ -48,7 +49,8 @@ export default function Menu() {
   return (
     <div className="flex justify-center py-5 px-4">
       <nav className="flex items-center gap-2 rounded-xl bg-white px-3 py-2 shadow-md border border-neutral-100">
-        <img src={smtLogo} alt="SMT logo" className="h-6 w-6 shrink-0" />
+        <img src={newLogo} alt="SMT logo" className="h-12 w-12 shrink-0 rounded-full" />
+        <span className='font-bold mr-9'>Quick Post</span>
 
         {/* Nav links — hidden on very small screens, shown from sm up */}
         <div className="hidden sm:flex items-center gap-1">

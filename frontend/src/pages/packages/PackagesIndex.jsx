@@ -89,7 +89,7 @@ export default function PackagesIndex() {
 
       Swal.fire({
         title: 'Deleted!',
-        text: 'Package has been deleted.',
+        text: 'Offer has been deleted.',
         icon: 'success',
         timer: 1500,
         showConfirmButton: false,
@@ -145,7 +145,7 @@ export default function PackagesIndex() {
       <div className="page-container">
           <div className="page-card">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="section-heading">Packages</h2>
+              <h2 className="section-heading">Offers</h2>
               <button
                 onClick={handleCreate}
                 className="btn-primary"
@@ -163,7 +163,7 @@ export default function PackagesIndex() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Sr No</TableHead>
-                        <TableHead>Package</TableHead>
+                        <TableHead>Offer</TableHead>
                         <TableHead>Price</TableHead>
                         <TableHead>Duration</TableHead>
                         <TableHead>Services</TableHead>

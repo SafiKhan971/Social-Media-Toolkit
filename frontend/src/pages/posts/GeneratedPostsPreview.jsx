@@ -116,12 +116,12 @@ export default function GeneratedPostsPreview({ businessId, generatedPosts, onPo
               className="h-52 w-full object-cover"
             />
             <div className="flex flex-1 flex-col p-4">
-              <p className="flex-grow text-sm text-neutral-700 leading-relaxed line-clamp-3">
+              <p className="grow text-sm text-neutral-700 leading-relaxed line-clamp-3">
                 {post.caption}
               </p>
               <div className='mt-4 flex items-center gap-3 mx-auto'>
                     <button
-                      onClick={() => handleDownload(post)}
+                      onClick={() => handleDownloadPost(post)}
                       className='btn-secondary flex h-10 w-10 items-center justify-center text-xl'
                       title='Download'>
                       📥
