@@ -1,4 +1,4 @@
-import { groqClient } from './groqClient.js'
+import { groqClient } from '../helpers/groqClient.js'
 
 export async function generateText(business, type, seasonalType) {
   if(type === 'announcement' || type === 'before_after') {

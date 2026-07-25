@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
-import { googleClient } from '../utils/googleClient.js'
+import { googleClient } from '../helpers/googleClient.js'
 
 export async function googleLogin(req, res) {
   try {

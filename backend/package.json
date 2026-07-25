@@ -7,9 +7,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "seed:businesses": "node src/seeders/businessSeeder.js",
-    "seed:packages": "node src/seeders/packageSeeder.js",
-    "seed:categories": "node src/seeders/categorySeeder.js"
+    "seed:businesses": "node src/seeders/seedBusinessesAndPackages.js"
   },
   "keywords": [],
   "author": "",
