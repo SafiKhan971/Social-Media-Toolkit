@@ -1,7 +1,7 @@
 import { groqClient } from '../helpers/groqClient.js'
 
 export async function generateText(business, type, seasonalType) {
-  if(type === 'before_after') {
+  if(type === 'before_after' || type === 'external') {
     return 'See the Amazing Transformation!'
   }
 

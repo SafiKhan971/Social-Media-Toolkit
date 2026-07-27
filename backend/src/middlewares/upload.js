@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
 
     if (file.fieldname === 'logo') {
       uploadDir = 'uploads/logos'
-    } else if (file.fieldname === 'beforeImage' || file.fieldname === 'afterImage') {
+    } else if (file.fieldname === 'beforeImage' || file.fieldname === 'afterImage' || file.fieldname === 'backgroundImage') {
       uploadDir = 'uploads/posts'
     }
 

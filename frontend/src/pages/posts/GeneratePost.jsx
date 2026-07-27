@@ -12,8 +12,10 @@ export default function GeneratePost() {
   const [packages, setPackages] = useState([])
   const [description, setDescription] = useState('')
   const [customDescription, setCustomDescription] = useState(false)
+  const [customBackground, setCustomBackground] = useState(false)
   const [beforeImage, setBeforeImage] = useState(null)
   const [afterImage, setAfterImage] = useState(null)
+  const [backgroundImage, setBackgroundImage] = useState(null)
   const [selectedSeasonalType, setSelectedSeasonalType] = useState('')
   const [loading, setLoading] = useState(true)
   const [generatedPosts, setGeneratedPosts] = useState([])
@@ -31,6 +33,7 @@ export default function GeneratePost() {
     { id: 'announcement', label: 'Announcement' },
     { id: 'before_after', label: 'Before & After' },
     { id: 'seasonal', label: 'Seasonal' },
+    { id: 'external', label: 'External' },
   ]
 
   const seasonalTypes = [
@@ -97,6 +100,9 @@ export default function GeneratePost() {
       formData.append('businessId', selectedBusiness)
       formData.append('type', selectedType)
       formData.append('description', description)
+      formData.append('backgroundImage', backgroundImage)
+      formData.append('customDescription', customDescription)
+      formData.append('customBackground', customBackground)
       formData.append('numberOfPosts', numberOfPosts)
       if (selectedType === 'offer') {
         selectedPackages.forEach(id => formData.append('packageIds[]', id))
@@ -177,6 +183,82 @@ export default function GeneratePost() {
             </select>
           </div>
 
+          {/* Description */}
+          {selectedType !== 'external' && (
+            <div>
+            <label className='form-label mb-2 block'>Description</label>
+
+            <div className='flex items-center gap-2 mb-3'>
+              <span className='text-sm'>AI-generated</span>
+
+              <button
+                type='button'
+                onClick={() => setCustomDescription(prev => !prev)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                  customDescription ? 'bg-success' : 'bg-gray-300'
+                }`}>
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    customDescription ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+
+              <span className='text-sm'>Custom</span>
+            </div>
+
+            {(selectedType === 'announcement' || customDescription) && (
+              <input
+                type='text'
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                className='form-input'
+                placeholder='Enter description...'
+              />
+            )}
+          </div>
+          )}
+          
+
+          <div>
+            <label className='form-label mb-2 block'>{selectedType === 'external' ? 'Upload Image' : 'Background Image'}</label>
+
+            {selectedType !== 'external' && (
+              <div className='flex items-center gap-2 mb-3'>
+                <span className='text-sm'>AI-generated</span>
+
+                <button
+                  type='button'
+                  onClick={() => setCustomBackground(prev => !prev)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                    customBackground ? 'bg-success' : 'bg-gray-300'
+                  }`}>
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      customBackground ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+
+                <span className='text-sm'>Custom</span>
+              </div>
+            )}
+
+            {(selectedType === 'external' || customBackground) && (
+              <>
+                <input type='file' accept='image/*' className='form-input' onChange={e => setBackgroundImage(e.target.files[0])} />
+
+                {backgroundImage && (
+                  <img
+                    src={URL.createObjectURL(backgroundImage)}
+                    alt={selectedType === 'external' ? 'Uploaded' : 'Background'}
+                    className='mt-2 h-24 w-24 rounded-lg border border-neutral-200 object-cover shadow-sm'
+                  />
+                )}
+              </>
+            )}
+          </div>
+
           {/* Seasonal Type */}
           {selectedType === 'seasonal' && (
             <div>
@@ -191,45 +273,6 @@ export default function GeneratePost() {
                   </option>
                 ))}
               </select>
-            </div>
-          )}
-
-          {/* Toggle only shown when type is NOT announcement */}
-          {selectedType !== 'announcement' && (
-            <div className='sm:col-span-2 flex items-center gap-2'>
-              <div className='sm:col-span-2 flex items-center gap-2'>
-                <span className='text-sm'>AI-generated description</span>
-                <button
-                  type='button'
-                  onClick={() => setCustomDescription(prev => !prev)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    customDescription ? 'bg-success' : 'bg-gray-300'
-                  }`}>
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      customDescription ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-                <span className='text-sm'>Custom description</span>
-              </div>
-            </div>
-          )}
-
-          {/* Description */}
-          {(selectedType === 'announcement' || customDescription) && (
-            <div className='sm:col-span-2'>
-              <label className='form-label'>
-                Description
-                {selectedType !== 'announcement' && <span className='text-xs text-gray-400 ml-1'>(custom)</span>}
-              </label>
-              <textarea
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                className='form-input resize-none'
-                rows={4}
-                placeholder='Enter Description...'
-              />
             </div>
           )}
 

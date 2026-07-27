@@ -1,4 +1,4 @@
-export default function postRequest({ businessId, type, packageIds, numberOfPosts, description, seasonalType, beforeImage, afterImage }) {
+export default function postRequest({ businessId, type, packageIds, numberOfPosts, description, seasonalType, beforeImage, afterImage, backgroundImage, customDescription, customBackground }) {
   if (!businessId) {
     throw new Error('Business is required')
   }
@@ -19,6 +19,10 @@ export default function postRequest({ businessId, type, packageIds, numberOfPost
     throw new Error('Description is required')
   }
 
+  if (customDescription == true && !description) {
+    throw new Error('Description is required')
+  }
+
   if (type === 'before_after' && !beforeImage) {
     throw new Error('Before image is required')
   }
@@ -27,14 +31,22 @@ export default function postRequest({ businessId, type, packageIds, numberOfPost
     throw new Error('After image is required')
   }
 
+  if (customBackground == true && !backgroundImage) {
+    throw new Error('Background image is required')
+  }
+
   const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
-  if (!ALLOWED_MIME_TYPES.includes(beforeImage.mimetype)) {
+  if (beforeImage && !ALLOWED_MIME_TYPES.includes(beforeImage.mimetype)) {
     throw new Error(`Before image must be a JPEG, PNG, or WEBP image`)
   }
 
-  if (!ALLOWED_MIME_TYPES.includes(afterImage.mimetype)) {
+  if (afterImage && !ALLOWED_MIME_TYPES.includes(afterImage.mimetype)) {
     throw new Error(`After image must be a JPEG, PNG, or WEBP image`)
+  }
+
+  if (backgroundImage && !ALLOWED_MIME_TYPES.includes(backgroundImage.mimetype)) {
+    throw new Error(`Background image must be a JPEG, PNG, or WEBP image`)
   }
 
   if (type === 'seasonal' && !seasonalType) {
