@@ -7,6 +7,7 @@ import { generateTipImage } from '../helpers/canvas/generateTipImage.js'
 import { generateAnnouncementImage } from '../helpers/canvas/generateAnnouncementImage.js'
 import { generateBeforeAfterImage } from '../helpers/canvas/generateBeforeAfterImage.js'
 import { generateSeasonalImage } from '../helpers/canvas/generateSeasonalImage.js'
+import { generateExternalImage } from '../helpers/canvas/generateExternalImage.js'
 import { generateText } from '../helpers/generateText.js'
 import { generateCaption } from '../helpers/generateCaption.js'
 import path from 'path'
@@ -53,9 +54,10 @@ export async function getBusinessImages(query, count = 30) {
 // generate package posts
 export async function generatePosts(req, res) {
   try {
-    const { businessId, type, packageIds, numberOfPosts, description, seasonalType } = req.body
+    const { businessId, type, packageIds, numberOfPosts, description, seasonalType, customDescription, customBackground } = req.body
     const beforeImage = req.files?.beforeImage?.[0]
     const afterImage = req.files?.afterImage?.[0]
+    const backgroundImage = req.files?.backgroundImage?.[0]
 
     // Validation
     postRequest({
@@ -65,14 +67,24 @@ export async function generatePosts(req, res) {
       numberOfPosts,
       description,
       seasonalType,
-      beforeImage: beforeImage ? beforeImage.path : null,
-      afterImage: afterImage ? afterImage.path : null,
+      customDescription,
+      customBackground,
+      beforeImage: beforeImage ? beforeImage : null,
+      afterImage: afterImage ? afterImage : null,
+      backgroundImage: backgroundImage ? backgroundImage : null,
     })
 
     // Prepare data
     const business = await Business.findById(businessId).populate('category')
     const imageQuery = `${business.category.name}, ${business.category.tags.join(', ')}`
-    const images = await getBusinessImages(imageQuery, 30)
+    let backgroundUrl = null
+    let images = []
+
+    if (backgroundImage) {
+      backgroundUrl = backgroundImage.path // or build a public URL
+    } else {
+      images = await getBusinessImages(imageQuery, 30)
+    }
 
     // Generate posts
     const posts = []
@@ -81,14 +93,18 @@ export async function generatePosts(req, res) {
 
     for (let i = 0; i < numberOfPosts; i++) {
       try {
-        const text = type === 'announcement' ? description : await generateText(business, type, seasonalType)
+        const text = description ? description : await generateText(business, type, seasonalType)
         const caption = await generateCaption(business)
-        const image = images.length > 0 ? images[i % images.length] : null
-        const backgroundUrl = image?.urls?.regular || image?.urls?.small
+        let currentBackground = backgroundUrl
+
+        if (!backgroundImage) {
+          const image = images[i % images.length]
+          currentBackground = image?.urls?.regular || image?.urls?.small
+        }
 
         const commonParams = {
           business,
-          backgroundUrl,
+          backgroundUrl: currentBackground,
           description: text,
         }
 
@@ -123,6 +139,12 @@ export async function generatePosts(req, res) {
             imagePath = await generateSeasonalImage({
               ...commonParams,
               seasonalType,
+            })
+            break
+
+          case 'external':
+            imagePath = await generateExternalImage({
+              ...commonParams,
             })
             break
 

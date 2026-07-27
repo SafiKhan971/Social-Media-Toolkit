@@ -11,6 +11,7 @@ router.post(
   upload.fields([
     { name: 'beforeImage', maxCount: 1 },
     { name: 'afterImage', maxCount: 1 },
+    { name: 'backgroundImage', maxCount: 1 },
   ]),
   generatePosts
 )
