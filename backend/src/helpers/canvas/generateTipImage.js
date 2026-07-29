@@ -66,7 +66,7 @@ export async function generateTipImage({ business, description, backgroundUrl })
   await wrapText(ctx, description, width / 2, 420, 900, 40)
 
   // CTA
-  drawCTA(ctx, 'Book Now', width)
+  drawCTA(ctx, 'Contact Us', width)
 
   // Footer
   drawFooter(ctx, business)

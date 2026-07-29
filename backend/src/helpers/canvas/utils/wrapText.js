@@ -1,20 +1,23 @@
 export function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   const words = text.split(' ')
   let line = ''
+  let lines = 0
 
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' '
-    const metrics = ctx.measureText(testLine)
-    const testWidth = metrics.width
+  for (let i = 0; i < words.length; i++) {
+    const testLine = line + words[i] + ' '
 
-    if (testWidth > maxWidth && n > 0) {
+    if (ctx.measureText(testLine).width > maxWidth && i > 0) {
       ctx.fillText(line, x, y)
-      line = words[n] + ' '
+      line = words[i] + ' '
       y += lineHeight
+      lines++
     } else {
       line = testLine
     }
   }
 
   ctx.fillText(line, x, y)
+  lines++
+
+  return lines
 }
