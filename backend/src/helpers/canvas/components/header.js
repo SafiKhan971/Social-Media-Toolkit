@@ -1,6 +1,16 @@
 import { createCanvas, loadImage } from 'canvas'
+import { getTextColor } from '../utils/getTextColor.js'
+
 
 export async function drawHeader(ctx, businessName, logoUrl, width) {
+
+  const ctaWidth = 300
+  const ctaHeight = 70
+  const ctaX = width / 2 - ctaWidth / 2
+  const ctaY = 760
+  
+  const textColor = getTextColor(ctx, ctaX, ctaY, ctaWidth, ctaHeight)
+
   // Logo (top-left corner)
   if (logoUrl) {
     const logo = await loadImage(logoUrl)
@@ -9,7 +19,7 @@ export async function drawHeader(ctx, businessName, logoUrl, width) {
   }
 
   // Business Name
-  ctx.fillStyle = '#ffffff'
+  ctx.fillStyle = textColor
   ctx.font = 'bold 52px Arial'
   ctx.textAlign = 'center'
   ctx.fillText(businessName, width / 2, 90)

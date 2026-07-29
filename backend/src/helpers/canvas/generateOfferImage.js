@@ -3,11 +3,11 @@ import { drawHeader } from './components/header.js'
 import { drawBackground } from './components/background.js'
 import { drawCTA } from './components/cta.js'
 import { drawFooter } from './components/footer.js'
+import { drawRoundedRect } from './utils/drawRoundedRect.js'
 import fs from 'fs'
 import path from 'path'
 
-export async function generateOfferImage({ business, description, packages, backgroundUrl}) {
-
+export async function generateOfferImage({ business, description, packages, backgroundUrl }) {
   const businessName = business.name
   const logoUrl = business?.logo ? path.join(process.cwd(), business.logo.replace(/^\//, '')) : null
   const phones = business.phones || []
@@ -43,101 +43,128 @@ export async function generateOfferImage({ business, description, packages, back
 
   if (packageList.length > 0) {
     const isTableFormat = packageList.length > 2
-    
+
     if (isTableFormat) {
-      // Table format for > 2 packages
-      const tableX = 100
-      const tableY = 330
-      const tableWidth = 880
-      const colWidth = tableWidth / 3
-      const rowHeight = 50
-      const headerHeight = 50
-      
-      // Draw table header
-      ctx.fillStyle = 'rgba(255,255,255,0.1)'
-      ctx.fillRect(tableX, tableY, tableWidth, headerHeight)
-      
-      ctx.strokeStyle = 'rgba(255,255,255,0.5)'
-      ctx.lineWidth = 1
-      ctx.strokeRect(tableX, tableY, tableWidth, headerHeight)
-      
-      // Draw header text
-      ctx.textAlign = 'center'
-      ctx.fillStyle = '#ffffff'
-      ctx.font = 'bold 24px Arial'
-      ctx.fillText('Package Title', tableX + colWidth / 2, tableY + 35)
-      ctx.fillText('Price', tableX + colWidth + colWidth / 2, tableY + 35)
-      ctx.fillText('Services', tableX + colWidth * 2 + colWidth / 2, tableY + 35)
-      
-      // Draw table rows
-      packageList.forEach((pkg, index) => {
+      const tableX = 80
+      const tableY = 320
+      const tableWidth = 920
+
+      const titleWidth = 250
+      const priceWidth = 140
+      const servicesWidth = tableWidth - titleWidth - priceWidth
+
+      const headerHeight = 55
+
+      // Calculate row heights
+      const rowHeights = packageList.map(pkg => {
         const services = pkg.services || []
-        const estimatedRowsNeeded = Math.ceil(services.length / 2)
-        const dynamicRowHeight = Math.max(50, 30 + estimatedRowsNeeded * 18)
-        const rowY = tableY + headerHeight + index * (dynamicRowHeight + 1)
-        
-        // Draw row border
-        ctx.strokeStyle = 'rgba(255,255,255,0.3)'
-        ctx.lineWidth = 1
-        ctx.strokeRect(tableX, rowY, tableWidth, dynamicRowHeight)
-        
-        // Draw column dividers
-        ctx.beginPath()
-        ctx.moveTo(tableX + colWidth, rowY)
-        ctx.lineTo(tableX + colWidth, rowY + dynamicRowHeight)
-        ctx.stroke()
-        
-        ctx.beginPath()
-        ctx.moveTo(tableX + colWidth * 2, rowY)
-        ctx.lineTo(tableX + colWidth * 2, rowY + dynamicRowHeight)
-        ctx.stroke()
-        
-        // Draw row data
-        ctx.textAlign = 'center'
-        ctx.fillStyle = '#ffffff'
-        ctx.font = '18px Arial'
-        
-        // Package title
-        ctx.fillText(pkg.title || 'Package', tableX + colWidth / 2, rowY + 32)
-        
-        // Price
-        ctx.font = 'bold 20px Arial'
-        ctx.fillText(`$${pkg.price || '0'}`, tableX + colWidth + colWidth / 2, rowY + 32)
-        
-        // Services (all services with wrapping)
-        ctx.font = '14px Arial'
-        ctx.textAlign = 'left'
-        let serviceY = rowY + 18
-        let currentLine = ''
-        const servicesCellX = tableX + colWidth * 2 + 12
-        const servicesCellWidth = colWidth - 24
-        
-        services.forEach((service, sIndex) => {
-          const testLine = currentLine ? currentLine + ', ' + service : service
-          const testWidth = ctx.measureText(testLine).width
-          
-          if (testWidth > servicesCellWidth && currentLine) {
-            ctx.fillText(currentLine, servicesCellX, serviceY)
-            currentLine = service
-            serviceY += 18
-          } else {
-            currentLine = testLine
-          }
-          
-          if (sIndex === services.length - 1 && currentLine) {
-            ctx.fillText(currentLine, servicesCellX, serviceY)
-          }
-        })
+        return Math.max(90, 28 + services.length * 22)
       })
-      
+
+      const tableHeight = headerHeight + rowHeights.reduce((a, b) => a + b, 0)
+
+      // ============================
+      // Glass Card
+      // ============================
+
+      drawRoundedRect(ctx, tableX, tableY, tableWidth, tableHeight, 18)
+
+      ctx.fillStyle = 'rgba(0,0,0,0.60)'
+      ctx.fill()
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.25)'
+      ctx.lineWidth = 2
+      ctx.stroke()
+
+      // ============================
+      // Header
+      // ============================
+
+      ctx.fillStyle = 'rgba(255,255,255,0.12)'
+      ctx.fillRect(tableX, tableY, tableWidth, headerHeight)
+
+      ctx.fillStyle = '#FFFFFF'
+      ctx.font = 'bold 24px Arial'
+      ctx.textAlign = 'center'
+
+      ctx.fillText('Package', tableX + titleWidth / 2, tableY + 36)
+
+      ctx.fillText('Price', tableX + titleWidth + priceWidth / 2, tableY + 36)
+
+      ctx.fillText('Services', tableX + titleWidth + priceWidth + servicesWidth / 2, tableY + 36)
+
+      // ============================
+      // Rows
+      // ============================
+
+      let currentY = tableY + headerHeight
+
+      packageList.forEach((pkg, index) => {
+        const rowHeight = rowHeights[index]
+        const services = pkg.services || []
+
+        // Alternate background
+        ctx.fillStyle = index % 2 === 0 ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.08)'
+
+        ctx.fillRect(tableX, currentY, tableWidth, rowHeight)
+
+        // Separator
+        if (index !== 0) {
+          ctx.beginPath()
+          ctx.moveTo(tableX + 20, currentY)
+          ctx.lineTo(tableX + tableWidth - 20, currentY)
+          ctx.strokeStyle = 'rgba(255,255,255,0.15)'
+          ctx.lineWidth = 1
+          ctx.stroke()
+        }
+
+        const centerY = currentY + rowHeight / 2 + 8
+
+        // -------------------
+        // Package Title
+        // -------------------
+
+        ctx.fillStyle = '#FFFFFF'
+        ctx.font = 'bold 22px Arial'
+        ctx.textAlign = 'center'
+
+        ctx.fillText(pkg.title || 'Package', tableX + titleWidth / 2, centerY)
+
+        // -------------------
+        // Price
+        // -------------------
+
+        ctx.fillStyle = '#FFD166'
+        ctx.font = 'bold 24px Arial'
+
+        ctx.fillText(`$${pkg.price || 0}`, tableX + titleWidth + priceWidth / 2, centerY)
+
+        // -------------------
+        // Services
+        // -------------------
+
+        ctx.textAlign = 'left'
+        ctx.fillStyle = 'rgba(255,255,255,0.95)'
+        ctx.font = 'bold italic 18px Arial'
+
+        let serviceY = currentY + 28
+
+        services.forEach(service => {
+          ctx.fillText(`• ${service}`, tableX + titleWidth + priceWidth + 20, serviceY)
+
+          serviceY += 22
+        })
+
+        currentY += rowHeight
+      })
     } else {
       // Card format for 1-2 packages
       let packageFontSize = 30
       if (packageList.length === 2) packageFontSize = 27
-      
+
       const cardWidth = packageList.length === 1 ? 700 : 480
       const gap = 20
-      
+
       // Calculate centered startX
       const totalWidth = cardWidth * packageList.length + gap * (packageList.length - 1)
       const startX = (width - totalWidth) / 2
@@ -146,7 +173,7 @@ export async function generateOfferImage({ business, description, packages, back
       const serviceItemHeight = 36
 
       packageList.forEach((pkg, index) => {
-        const services = (pkg.services || [])
+        const services = pkg.services || []
         const cardHeight = baseCardHeight + services.length * serviceItemHeight
 
         const x = startX + index * (cardWidth + gap)
@@ -171,7 +198,7 @@ export async function generateOfferImage({ business, description, packages, back
         ctx.font = `${packageFontSize}px Arial`
 
         let serviceY = y + 90
-        services.forEach((service) => {
+        services.forEach(service => {
           const dotSize = Math.round(packageFontSize * 0.15)
           ctx.fillStyle = '#ffffff'
           ctx.beginPath()
@@ -184,10 +211,8 @@ export async function generateOfferImage({ business, description, packages, back
     }
   }
 
-  
-
   // CTA
-  drawCTA(ctx, 'Book Now', width)
+  drawCTA(ctx, 'Contact Us', width)
 
   // Footer
   drawFooter(ctx, business)
@@ -201,30 +226,6 @@ export async function generateOfferImage({ business, description, packages, back
   fs.writeFileSync(filePath, buffer)
 
   return `/uploads/${fileName}`
-}
-
-function drawRoundedRect(ctx, x, y, width, height, radius) {
-  ctx.beginPath()
-
-  ctx.moveTo(x + radius, y)
-  ctx.lineTo(x + width - radius, y)
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
-
-  ctx.lineTo(x + width, y + height - radius)
-  ctx.quadraticCurveTo(
-    x + width,
-    y + height,
-    x + width - radius,
-    y + height
-  )
-
-  ctx.lineTo(x + radius, y + height)
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
-
-  ctx.lineTo(x, y + radius)
-  ctx.quadraticCurveTo(x, y, x + radius, y)
-
-  ctx.closePath()
 }
 
 function wrapText(ctx, text, x, y, maxWidth, lineHeight) {

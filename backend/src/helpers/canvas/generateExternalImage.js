@@ -23,51 +23,13 @@ export async function generateExternalImage({ business, description, backgroundU
   ctx.drawImage(bg, 0, 0, width, height)
 
   // Header
-  // Logo (top-left corner)
-  if (logoUrl) {
-    const logo = await loadImage(logoUrl)
-    console.log('logo dimensions:', logo.width, logo.height)
-    ctx.drawImage(logo, 40, 40, 120, 120)
-  }
-
-  // Business Name
-  ctx.fillStyle = '#000'
-  ctx.font = 'bold 52px Arial'
-  ctx.textAlign = 'center'
-  ctx.fillText(businessName, width / 2, 90)
+  await drawHeader(ctx, businessName, logoUrl, width)
 
   // CTA
-  ctx.textAlign = "center"
-  ctx.fillStyle = "#000"
-  ctx.font = "bold 36px Arial"
-
-  ctx.fillText("Contact Us", width / 2, 900)
+  drawCTA(ctx, 'Contact Us', width)
 
   // Footer
-  const info = []
-  
-    if (business.phones?.length)
-      info.push(`📞 ${business.phones.join(", ")}`)
-  
-    if (business.website)
-      info.push(`🌐 ${business.website}`)
-  
-    if (business.email)
-      info.push(`✉️ ${business.email}`)
-  
-    if (business.officeAddress)
-      info.push(`📍 ${business.officeAddress}`)
-  
-    ctx.fillStyle = "#000"
-    ctx.font = "bold 22px Arial"
-    ctx.textAlign = "center"
-  
-    let y = 950
-  
-    info.forEach((item) => {
-      wrapTextCenter(ctx, item, 540, y, 1000, 20)
-      y += 25
-    })
+  drawFooter(ctx, business, width)
 
   // Convert to buffer
   const buffer = canvas.toBuffer('image/png')
@@ -80,4 +42,3 @@ export async function generateExternalImage({ business, description, backgroundU
 
   return `/uploads/${fileName}`
 }
-

@@ -74,7 +74,7 @@ export async function generateUrduPostImage({
   // CTA
   ctx.textAlign = 'center'
   ctx.font = 'bold 36px Arial'
-  ctx.fillText('Book Now', width / 2, 900)
+  ctx.fillText('Contact Us', width / 2, 900)
 
   // Footer
   ctx.font = '18px Arial'

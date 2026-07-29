@@ -114,7 +114,7 @@ export async function generateBeforeAfterImage({ business, description, backgrou
   }
 
   // CTA
-  drawCTA(ctx, 'Book Now', width)
+  drawCTA(ctx, 'Contact Us', width)
 
   // Footer
   drawFooter(ctx, business)
