@@ -15,6 +15,10 @@ export default function postRequest({ businessId, type, packageIds, numberOfPost
     throw new Error('At least one offer is required')
   }
 
+  if (type === 'offer' && ids.length > 3) {
+    throw new Error('Maximum 3 offers can be selected')
+  }
+
   if (type === 'announcement' && !description) {
     throw new Error('Description is required')
   }

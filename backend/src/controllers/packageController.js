@@ -1,4 +1,5 @@
 import Package from '../models/Package.js'
+import Currency from '../models/Currency.js'
 
 export const createPackage = async (req, res) => {
   try {
@@ -32,6 +33,7 @@ export const getPackages = async (req, res) => {
 
     const packages = await Package.find(filter)
       .populate('business', 'name')
+      .populate('currency', 'name code symbol')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -40,6 +42,19 @@ export const getPackages = async (req, res) => {
       packages,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    })
+  }
+}
+
+export const getCurrencies = async (req, res) => {
+  try {
+    const currencies = await Currency.find()
+    res.json({
+      currencies,
     })
   } catch (error) {
     res.status(500).json({
@@ -75,13 +90,9 @@ export const updatePackage = async (req, res) => {
       ...req.body,
     }
 
-    const packageData = await Package.findByIdAndUpdate(
-        req.params.id,
-        updateData,
-      {
-        new: true,
-      }
-    )
+    const packageData = await Package.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    })
 
     if (!packageData) {
       return res.status(404).json({
@@ -133,7 +144,7 @@ export const getAllPackages = async (req, res) => {
     }
 
     res.json({
-      packages
+      packages,
     })
   } catch (error) {
     res.status(500).json({

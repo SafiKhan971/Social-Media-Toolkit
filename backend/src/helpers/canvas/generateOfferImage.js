@@ -4,6 +4,9 @@ import { drawBackground } from './components/background.js'
 import { drawCTA } from './components/cta.js'
 import { drawFooter } from './components/footer.js'
 import { drawRoundedRect } from './utils/drawRoundedRect.js'
+import { wrapText } from './utils/wrapText.js'
+import { wrapTextCenter } from './utils/wrapTextCenter.js'
+
 import fs from 'fs'
 import path from 'path'
 
@@ -67,7 +70,7 @@ export async function generateOfferImage({ business, description, packages, back
       // Glass Card
       // ============================
 
-      drawRoundedRect(ctx, tableX, tableY, tableWidth, tableHeight, 18)
+      await drawRoundedRect(ctx, tableX, tableY, tableWidth, tableHeight, 18)
 
       ctx.fillStyle = 'rgba(0,0,0,0.60)'
       ctx.fill()
@@ -137,7 +140,7 @@ export async function generateOfferImage({ business, description, packages, back
         ctx.fillStyle = '#FFD166'
         ctx.font = 'bold 24px Arial'
 
-        ctx.fillText(`$${pkg.price || 0}`, tableX + titleWidth + priceWidth / 2, centerY)
+        ctx.fillText(`${pkg.currency.symbol}${pkg.price || 0}`, tableX + titleWidth + priceWidth / 2, centerY)
 
         // -------------------
         // Services
@@ -179,10 +182,13 @@ export async function generateOfferImage({ business, description, packages, back
         const x = startX + index * (cardWidth + gap)
         const y = startY
 
+        // Glass Card
         drawRoundedRect(ctx, x, y, cardWidth, cardHeight, 18)
-        ctx.fillStyle = 'rgba(255,255,255,0.02)'
+
+        ctx.fillStyle = 'rgba(0,0,0,0.60)'
         ctx.fill()
-        ctx.strokeStyle = 'rgba(255,255,255,0.8)'
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.25)'
         ctx.lineWidth = 2
         ctx.stroke()
 
@@ -190,12 +196,12 @@ export async function generateOfferImage({ business, description, packages, back
         ctx.textAlign = 'center'
         ctx.fillStyle = '#ffffff'
         ctx.font = `bold ${packageFontSize}px Arial`
-        const titlePriceText = `${pkg.title || 'Package'} - $${pkg.price || '0'}`
+        const titlePriceText = `${pkg.title || 'Package'} - ${pkg.currency.symbol}${pkg.price || '0'}`
         wrapTextCenter(ctx, titlePriceText, x + cardWidth / 2, y + 45, cardWidth - 40, 28)
 
         ctx.textAlign = 'left'
         ctx.fillStyle = '#ffffff'
-        ctx.font = `${packageFontSize}px Arial`
+        ctx.font = `italic ${packageFontSize}px Arial`
 
         let serviceY = y + 90
         services.forEach(service => {
@@ -215,7 +221,7 @@ export async function generateOfferImage({ business, description, packages, back
   drawCTA(ctx, 'Contact Us', width)
 
   // Footer
-  drawFooter(ctx, business)
+  drawFooter(ctx, business, width)
 
   // Save Image
   const buffer = canvas.toBuffer('image/png')
@@ -226,44 +232,4 @@ export async function generateOfferImage({ business, description, packages, back
   fs.writeFileSync(filePath, buffer)
 
   return `/uploads/${fileName}`
-}
-
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ')
-  let line = ''
-
-  for (let i = 0; i < words.length; i++) {
-    const testLine = line + words[i] + ' '
-    const width = ctx.measureText(testLine).width
-
-    if (width > maxWidth && i > 0) {
-      ctx.fillText(line, x, y)
-      line = words[i] + ' '
-      y += lineHeight
-    } else {
-      line = testLine
-    }
-  }
-
-  ctx.fillText(line, x, y)
-}
-
-function wrapTextCenter(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ')
-  let line = ''
-
-  for (let i = 0; i < words.length; i++) {
-    const testLine = line + words[i] + ' '
-    const width = ctx.measureText(testLine).width
-
-    if (width > maxWidth && i > 0) {
-      ctx.fillText(line, x, y)
-      line = words[i] + ' '
-      y += lineHeight
-    } else {
-      line = testLine
-    }
-  }
-
-  ctx.fillText(line, x, y)
 }

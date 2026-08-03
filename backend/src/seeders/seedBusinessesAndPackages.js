@@ -3,6 +3,7 @@ import { connectDB } from '../config/db.js'
 import Business from '../models/Business.js'
 import Package from '../models/Package.js'
 import Category from '../models/Category.js'
+import Currency from '../models/Currency.js'
 
 dotenv.config()
 
@@ -66,6 +67,7 @@ const businessesData = [
 ]
 
 // ---------- STEP 3: Packages (3 per business, all fields filled) ----------
+
 const packageTemplates = {
   'GreenBite Organic Café': [
     {
@@ -177,6 +179,41 @@ const packageTemplates = {
   ],
 }
 
+  const currencies = [
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'GBP', symbol: '£', name: 'British Pound Sterling' },
+    { code: 'PKR', symbol: '₨', name: 'Pakistani Rupee' },
+    { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+    { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham' },
+    { code: 'SAR', symbol: '﷼', name: 'Saudi Riyal' },
+    { code: 'QAR', symbol: '﷼', name: 'Qatari Riyal' },
+    { code: 'KWD', symbol: 'د.ك', name: 'Kuwaiti Dinar' },
+    { code: 'OMR', symbol: '﷼', name: 'Omani Rial' },
+    { code: 'BHD', symbol: '.د.ب', name: 'Bahraini Dinar' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+    { code: 'CNY', symbol: '¥', name: 'Chinese Yuan' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+    { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar' },
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar' },
+    { code: 'MYR', symbol: 'RM', name: 'Malaysian Ringgit' },
+    { code: 'THB', symbol: '฿', name: 'Thai Baht' },
+    { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc' },
+    { code: 'SEK', symbol: 'kr', name: 'Swedish Krona' },
+    { code: 'NOK', symbol: 'kr', name: 'Norwegian Krone' },
+    { code: 'DKK', symbol: 'kr', name: 'Danish Krone' },
+    { code: 'TRY', symbol: '₺', name: 'Turkish Lira' },
+    { code: 'ZAR', symbol: 'R', name: 'South African Rand' },
+    { code: 'EGP', symbol: 'E£', name: 'Egyptian Pound' },
+    { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka' },
+    { code: 'LKR', symbol: 'Rs', name: 'Sri Lankan Rupee' },
+    { code: 'NPR', symbol: 'Rs', name: 'Nepalese Rupee' },
+    { code: 'RUB', symbol: '₽', name: 'Russian Ruble' },
+    { code: 'BRL', symbol: 'R$', name: 'Brazilian Real' },
+    { code: 'MXN', symbol: '$', name: 'Mexican Peso' },
+  ]
+
 async function seedBusinessesAndPackages() {
   try {
     await connectDB()
@@ -184,6 +221,11 @@ async function seedBusinessesAndPackages() {
     // --- Clean existing data ---
     await Package.deleteMany()
     await Business.deleteMany()
+
+    // Insert currencies
+    const insertedCurrencies = await Currency.insertMany(currencies)
+
+
     // Categories only cleared for the 3 we manage, to avoid wiping unrelated categories
     await Category.deleteMany({ name: { $in: categoriesData.map((c) => c.name) } })
 
@@ -234,6 +276,7 @@ async function seedBusinessesAndPackages() {
     const insertedPackages = await Package.insertMany(packagesToInsert)
 
     console.log(`✅ ${insertedCategories.length} categories inserted successfully`)
+    console.log(`✅ ${insertedCurrencies.length} currencies inserted successfully`)
     console.log(`✅ ${insertedBusinesses.length} businesses inserted successfully`)
     console.log(`✅ ${insertedPackages.length} packages inserted successfully`)
 
