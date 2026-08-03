@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @utility app-gradient {
   @apply bg-gray-100;
@@ -93,12 +93,25 @@
   @apply text-lg font-semibold text-neutral-800;
 }
 
-
-div[style*="background-color: red"][style*="color: white"] {
+div[style*='background-color: red'][style*='color: white'] {
   display: none !important;
 }
 
-
-div:has(> a[href*="polotno.com/contact"]) {
+div:has(> a[href*='polotno.com/contact']) {
   display: none !important;
+}
+
+.workspace-wrap {
+  position: relative;
+}
+
+.override {
+  position: absolute;
+  top: 58px;
+  left: 0;
+  width: 240px;
+  height: 140px;
+  background: #ebe6e6;
+  z-index: 999999;
+  pointer-events: none;
 }

@@ -20,6 +20,13 @@ const packageSchema = new mongoose.Schema(
       trim: true,
     },
 
+    currency: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Currency',
+      required: false,
+      trim: true,
+    },
+
     services: [
       {
         type: String,
@@ -41,12 +48,6 @@ const packageSchema = new mongoose.Schema(
     endDate: {
       type: Date,
       required: true,
-    },
-
-    status: {
-      type: String,
-      enum: ['Active', 'Inactive'],
-      default: 'Active',
     },
 
     createdBy: {

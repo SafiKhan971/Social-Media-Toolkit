@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPackage, getPackageById, updatePackage } from '../../services/packageService'
+import api from '../../services/api'
 
 export default function PackageForm({ editId, businessId, onSuccess, onCancel }) {
   const [title, setTitle] = useState('')
@@ -7,18 +8,35 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
   const [duration, setDuration] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [status, setStatus] = useState('Active')
-
+  const [currency, setCurrency] = useState('')
   const [services, setServices] = useState([])
+  const [currencies, setCurrencies] = useState([])
   const [serviceInput, setServiceInput] = useState('')
-
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    fetchCurrencies()
     if (editId) {
       fetchPackage()
     }
   }, [editId])
+
+  async function fetchCurrencies() {
+    try {
+      const response = await api.get('currencies')
+
+      console.log(response)
+      console.log(response.data)
+
+      setCurrencies(response.data.currencies)
+    } catch (error) {
+      console.error(error)
+
+      if (error.response) {
+        console.log(error.response.data)
+      }
+    }
+  }
 
   async function fetchPackage() {
     try {
@@ -29,7 +47,7 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
       setDuration(data.duration)
       setStartDate(data.startDate?.substring(0, 10))
       setEndDate(data.endDate?.substring(0, 10))
-      setStatus(data.status)
+      setCurrency(data.currency)
       setServices(data.services || [])
     } catch (err) {
       console.error(err)
@@ -53,7 +71,7 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
     setDuration('')
     setStartDate('')
     setEndDate('')
-    setStatus('Active')
+    setCurrency('Active')
     setServices([])
     setServiceInput('')
 
@@ -73,7 +91,7 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
       duration,
       startDate,
       endDate,
-      status,
+      currency,
     }
 
     try {
@@ -96,10 +114,7 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
     <div className='page-card'>
       <div className='mb-6 flex items-center justify-between'>
         <h2 className='section-heading'>{editId ? 'Edit Offer' : 'Create Offer'}</h2>
-        <button
-          type='button'
-          onClick={onCancel}
-          className='btn-secondary'>
+        <button type='button' onClick={onCancel} className='btn-secondary'>
           <svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2}>
             <path strokeLinecap='round' strokeLinejoin='round' d='M10 19l-7-7m0 0l7-7m-7 7h18' />
           </svg>
@@ -110,64 +125,43 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
           <div>
             <label className='form-label'>Offer Title</label>
-            <input
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder='Enter package title'
-              className='form-input'
-            />
+            <input value={title} onChange={e => setTitle(e.target.value)} placeholder='Enter package title' className='form-input' />
           </div>
 
           <div>
             <label className='form-label'>Price</label>
-            <input
-              value={price}
-              onChange={e => setPrice(e.target.value)}
-              placeholder='Enter price'
-              className='form-input'
-            />
+            <input value={price} onChange={e => setPrice(e.target.value)} placeholder='Enter price' className='form-input' />
           </div>
         </div>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
           <div>
-            <label className='form-label'>Duration</label>
-            <input
-              value={duration}
-              onChange={e => setDuration(e.target.value)}
-              placeholder='Example: 6 Months'
-              className='form-input'
-            />
+            <label className='form-label'>Currency</label>
+            <select value={currency} onChange={e => setCurrency(e.target.value)} className='form-input'>
+              <option value='' disabled>
+                Select Currency
+              </option>
+              {currencies.map(currency => (
+                <option key={currency._id} value={currency._id}>
+                  {' '}
+                  {currency.name} ({currency.code}){' '}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-            <label className='form-label'>Status</label>
-            <select
-              value={status}
-              onChange={e => setStatus(e.target.value)}
-              className='form-input'>
-              <option value='Active'>Active</option>
-              <option value='Inactive'>Inactive</option>
-            </select>
+            <label className='form-label'>Duration</label>
+            <input value={duration} onChange={e => setDuration(e.target.value)} placeholder='Example: 6 Months' className='form-input' />
           </div>
         </div>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
           <div>
             <label className='form-label'>Start Date</label>
-            <input
-              type='date'
-              value={startDate}
-              onChange={e => setStartDate(e.target.value)}
-              className='form-input'
-            />
+            <input type='date' value={startDate} onChange={e => setStartDate(e.target.value)} className='form-input' />
           </div>
 
           <div>
             <label className='form-label'>End Date</label>
-            <input
-              type='date'
-              value={endDate}
-              onChange={e => setEndDate(e.target.value)}
-              className='form-input'
-            />
+            <input type='date' value={endDate} onChange={e => setEndDate(e.target.value)} className='form-input' />
           </div>
         </div>
         <div>
@@ -202,10 +196,7 @@ export default function PackageForm({ editId, businessId, onSuccess, onCancel })
         </div>
 
         <div className='mt-2 flex gap-3 border-t border-neutral-100 pt-4'>
-          <button
-            type='button'
-            onClick={resetForm}
-            className='btn-secondary flex-1'>
+          <button type='button' onClick={resetForm} className='btn-secondary flex-1'>
             Cancel
           </button>
 

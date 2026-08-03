@@ -140,7 +140,7 @@ export async function generateOfferImage({ business, description, packages, back
         ctx.fillStyle = '#FFD166'
         ctx.font = 'bold 24px Arial'
 
-        ctx.fillText(`$${pkg.price || 0}`, tableX + titleWidth + priceWidth / 2, centerY)
+        ctx.fillText(`${pkg.currency.symbol}${pkg.price || 0}`, tableX + titleWidth + priceWidth / 2, centerY)
 
         // -------------------
         // Services
@@ -196,7 +196,7 @@ export async function generateOfferImage({ business, description, packages, back
         ctx.textAlign = 'center'
         ctx.fillStyle = '#ffffff'
         ctx.font = `bold ${packageFontSize}px Arial`
-        const titlePriceText = `${pkg.title || 'Package'} - $${pkg.price || '0'}`
+        const titlePriceText = `${pkg.title || 'Package'} - ${pkg.currency.symbol}${pkg.price || '0'}`
         wrapTextCenter(ctx, titlePriceText, x + cardWidth / 2, y + 45, cardWidth - 40, 28)
 
         ctx.textAlign = 'left'

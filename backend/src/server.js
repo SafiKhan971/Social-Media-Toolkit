@@ -11,6 +11,7 @@ import categoryRoutes from './routes/categoryRoutes.js'
 import packageRoutes from './routes/packageRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import {protect} from './middlewares/auth.js'
+import {getCurrencies} from './controllers/packageController.js'
 import path from 'path'
 
 const app = express()
@@ -25,6 +26,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/businesses', protect, businessRoutes)
 app.use('/api/categories', categoryRoutes)
+app.use('/api/currencies', getCurrencies)
 app.use('/api/posts', protect, postRoutes)
 app.use('/api/packages', protect, packageRoutes)
 app.use('/api/auth', authRoutes)

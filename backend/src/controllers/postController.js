@@ -151,7 +151,7 @@ export async function generatePosts(req, res) {
           case 'offer': {
             const packages = await Package.find({
               _id: { $in: packageIds },
-            })
+            }).populate('currency', 'name code symbol')
 
             imagePath = await generateOfferImage({
               ...commonParams,
