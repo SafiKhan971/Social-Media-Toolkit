@@ -1,4 +1,4 @@
-import { groqClient } from '../helpers/groqClient.js'
+import { groqChatModel, groqClient } from '../helpers/groqClient.js'
 
 export async function generateText(business, type, seasonalType) {
   if(type === 'before_after' || type === 'external') {
@@ -35,7 +35,7 @@ export async function generateText(business, type, seasonalType) {
     }
 
     const completion = await groqClient.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: groqChatModel,
       messages: [
         {
           role: 'user',
@@ -43,10 +43,11 @@ export async function generateText(business, type, seasonalType) {
         },
       ],
       temperature: 0.8,
-      max_tokens: 60,
+      max_tokens: 512,
+      reasoning_effort: 'low',
     })
 
-    const text = completion.choices[0].message.content.trim()
+    const text = completion.choices[0]?.message?.content?.trim()
 
     if (!text) {
       throw new Error('No text generated')

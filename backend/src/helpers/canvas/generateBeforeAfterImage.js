@@ -117,7 +117,7 @@ export async function generateBeforeAfterImage({ business, description, backgrou
   drawCTA(ctx, 'Contact Us', width)
 
   // Footer
-  drawFooter(ctx, business)
+  drawFooter(ctx, business, width)
 
   // Save Image
   const buffer = canvas.toBuffer('image/png')
