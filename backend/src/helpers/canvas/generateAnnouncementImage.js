@@ -4,7 +4,6 @@ import { drawBackground } from './components/background.js'
 import { drawCTA } from './components/cta.js'
 import { drawFooter } from './components/footer.js'
 import { wrapText } from './utils/wrapText.js'
-import { getTextColor } from './utils/getTextColor.js'
 import fs from 'fs'
 import path from 'path'
 
@@ -26,7 +25,7 @@ export async function generateAnnouncementImage({ business, description, backgro
   await drawBackground(ctx, backgroundUrl, width, height)
 
   // Header
-  await drawHeader(ctx, businessName, logoUrl, width, textColor)
+  await drawHeader(ctx, businessName, logoUrl, width)
 
   // Accouncement Icon
   ctx.font = '70px Arial'
@@ -54,10 +53,10 @@ export async function generateAnnouncementImage({ business, description, backgro
   await wrapText(ctx, description, width / 2, 450, 760, 56)
 
   // CTA
-  drawCTA(ctx, 'Contact Us', width, textColor)
+  drawCTA(ctx, 'Contact Us', width)
 
   // Footer
-  drawFooter(ctx, business, textColor)
+  drawFooter(ctx, business, width)
 
   // Save Image
   const buffer = canvas.toBuffer('image/png')

@@ -69,7 +69,7 @@ export async function generateTipImage({ business, description, backgroundUrl })
   drawCTA(ctx, 'Contact Us', width)
 
   // Footer
-  drawFooter(ctx, business)
+  drawFooter(ctx, business, width)
 
   // Convert to buffer
   const buffer = canvas.toBuffer('image/png')

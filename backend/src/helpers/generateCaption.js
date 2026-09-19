@@ -1,4 +1,4 @@
-import { groqClient } from '../helpers/groqClient.js'
+import { groqChatModel, groqClient } from '../helpers/groqClient.js'
 
 export async function generateCaption(business) {
   try {
@@ -7,7 +7,7 @@ export async function generateCaption(business) {
     Business description: ${business.description}`
 
     const completion = await groqClient.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: groqChatModel,
       messages: [
         {
           role: 'user',
@@ -15,10 +15,11 @@ export async function generateCaption(business) {
         },
       ],
       temperature: 0.8,
-      max_tokens: 60,
+      max_tokens: 512,
+      reasoning_effort: 'low',
     })
 
-    const caption = completion.choices[0].message.content.trim()
+    const caption = completion.choices[0]?.message?.content?.trim()
 
     if (!caption) {
       throw new Error('No caption generated')

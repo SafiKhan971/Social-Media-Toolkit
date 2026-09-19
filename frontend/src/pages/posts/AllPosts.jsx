@@ -7,6 +7,7 @@ export default function AllPosts() {
   const [loadingPosts, setLoadingPosts] = useState(false)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [previewUrl, setPreviewUrl] = useState(null)
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL
 
@@ -95,7 +96,13 @@ export default function AllPosts() {
               <div
                 key={post._id}
                 className='flex flex-col overflow-hidden rounded-xl border border-neutral-100 bg-white shadow-sm transition hover:shadow-md'>
-                <img src={post.imageUrl} className='h-44 w-full object-cover' alt='Post' />
+                <img
+                  src={post.imageUrl}
+                  className='h-44 w-full cursor-zoom-in object-cover'
+                  alt='Post'
+                  onMouseEnter={() => setPreviewUrl(post.imageUrl)}
+                  onMouseLeave={() => setPreviewUrl(null)}
+                />
                 <div className='flex flex-1 flex-col p-4'>
                   {post.businessId?.name && <p className='mb-1 text-xs font-medium text-green-600'>{post.businessId.name}</p>}
                   <p className='flex-grow text-sm text-neutral-700 leading-relaxed line-clamp-3'>{post.caption}</p>
@@ -142,6 +149,16 @@ export default function AllPosts() {
             </button>
           </div>
         </>
+      )}
+
+      {previewUrl && (
+        <div className='fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 pointer-events-none'>
+          <img
+            src={previewUrl}
+            alt='Post preview'
+            className='max-h-[85vh] max-w-[90vw] rounded-xl object-contain shadow-2xl'
+          />
+        </div>
       )}
     </div>
   )
