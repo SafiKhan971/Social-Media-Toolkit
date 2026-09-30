@@ -7,6 +7,7 @@ import cors from 'cors'
 import { connectDB } from './config/db.js'
 import businessRoutes from './routes/businessRoutes.js'
 import postRoutes from './routes/postRoutes.js'
+import shortsRoutes from './routes/shortsRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import packageRoutes from './routes/packageRoutes.js'
 import authRoutes from './routes/authRoutes.js'
@@ -28,6 +29,7 @@ app.use('/api/businesses', protect, businessRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/currencies', getCurrencies)
 app.use('/api/posts', protect, postRoutes)
+app.use('/api/shorts', protect, shortsRoutes)
 app.use('/api/packages', protect, packageRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/uploads',express.static(

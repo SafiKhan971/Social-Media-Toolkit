@@ -1,4 +1,3 @@
-import axios from 'axios'
 import Business from '../models/Business.js'
 import Post from '../models/Post.js'
 import { generateQuoteImage } from '../helpers/canvas/generateQuoteImage.js'
@@ -10,45 +9,12 @@ import { generateSeasonalImage } from '../helpers/canvas/generateSeasonalImage.j
 import { generateExternalImage } from '../helpers/canvas/generateExternalImage.js'
 import { generateText } from '../helpers/generateText.js'
 import { generateCaption } from '../helpers/generateCaption.js'
-import path from 'path'
 import Package from '../models/Package.js'
 import postRequest from '../requests/postRequest.js'
-
-function getFallbackImage() {
-  return 'https://picsum.photos/600/400'
-}
+import { getFallbackImage, getUnsplashImageUrl, searchUnsplashImages } from '../helpers/unsplash.js'
 
 export async function getBusinessImages(query, count = 30) {
-  try {
-    const response = await axios.get('https://api.unsplash.com/search/photos', {
-      params: {
-        query,
-        order_by: 'relevant',
-        per_page: count,
-        orientation: 'squarish',
-      },
-      headers: {
-        Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
-      },
-    })
-
-    const images = response.data.results || []
-
-    if (images.length === 0) {
-      console.log(`No images found for "${query}". Using fallback image.`)
-      return [getFallbackImage()]
-    }
-
-    const shuffledImages = images.sort(() => Math.random() - 0.5)
-
-    return shuffledImages
-
-    // return images
-  } catch (err) {
-    console.error(err.message)
-    console.log('Using fallback image.')
-    return [getFallbackImage()]
-  }
+  return searchUnsplashImages(query, { count, orientation: 'squarish' })
 }
 
 // generate package posts
@@ -83,7 +49,7 @@ export async function generatePosts(req, res) {
     if (backgroundImage) {
       backgroundUrl = backgroundImage.path // or build a public URL
     } else {
-      images = await getBusinessImages(imageQuery, 30)
+      images = await searchUnsplashImages(imageQuery, { count: 30, orientation: 'squarish' })
     }
 
     // Generate posts
@@ -99,7 +65,7 @@ export async function generatePosts(req, res) {
 
         if (!backgroundImage) {
           const image = images[i % images.length]
-          currentBackground = image?.urls?.regular || image?.urls?.small
+          currentBackground = getUnsplashImageUrl(image)
         }
 
         const commonParams = {

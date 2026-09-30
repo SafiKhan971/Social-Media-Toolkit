@@ -40,6 +40,7 @@ export default function Menu() {
     { to: '/business', label: 'Business' },
     { to: '/category', label: 'Category' },
     { to: '/post', label: 'Post' },
+    { to: '/shorts', label: 'Shorts' },
     { to: '/editor', label: 'Editor' },
   ]
 
