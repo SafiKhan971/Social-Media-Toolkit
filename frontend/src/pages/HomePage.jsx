@@ -34,6 +34,12 @@ export default function HomePage() {
                 🚀 Try Generator
               </Link>
               <Link
+                to="/shorts"
+                className="rounded-lg border-2 border-white/70 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/10 active:scale-95"
+              >
+                🎬 YouTube Shorts
+              </Link>
+              <Link
                 to="/business"
                 className="rounded-lg border-2 border-white/70 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/10 active:scale-95"
               >
@@ -66,6 +72,9 @@ export default function HomePage() {
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-green-500">✔</span> Bulk download (ZIP)
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-green-500">✔</span> YouTube Shorts from a voice script
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-green-500">✔</span> Save posts to dashboard
